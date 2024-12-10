@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_d01H0LY1Ee-5BPA0eLTyag" name="ACMEAT">
+  <ownedComment xmi:type="uml:Comment" xmi:id="_QLO24LY7Ee-9J-C7mVC8Uw">
+    <body>Al momento della selezione dei locali 
+bisogna far inserire all'utente 
+o aver già inserito i dati di recapito </body>
+  </ownedComment>
+  <ownedComment xmi:type="uml:Comment" xmi:id="_lRdNQLY8Ee-9J-C7mVC8Uw">
+    <body>Il rifiuto dell'ordine comporta
+una restituzione del denaro
+all'utente</body>
+  </ownedComment>
+  <ownedComment xmi:type="uml:Comment" xmi:id="_04LOALY9Ee-9J-C7mVC8Uw">
+    <body>L'annullamento ordine avviene
+nel caso in cui nessuna società ha disponibilità</body>
+  </ownedComment>
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_d7H9ELY1Ee-5BPA0eLTyag">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_pKweQLY1Ee-5BPA0eLTyag" name="Cliente"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_9plS4LY1Ee-5BPA0eLTyag" name="ACMEAT"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_Ap5pQLY2Ee-5BPA0eLTyag" name="Lista locali convenzionati" isAbstract="true">
+    <include xmi:type="uml:Include" xmi:id="_w1vXgLY2Ee-5BPA0eLTyag" addition="_uI1FULY2Ee-5BPA0eLTyag"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_SbYt4LY2Ee-5BPA0eLTyag" name="richiede"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_b4pSgLY2Ee-5BPA0eLTyag"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_uI1FULY2Ee-5BPA0eLTyag" name="Inserimento comune di residenza"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_6hoOALY2Ee-5BPA0eLTyag" name="Selezione Locale convenzionato"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_EKVNoLY3Ee-5BPA0eLTyag" name="Locale-i"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_Fm7ugLY3Ee-5BPA0eLTyag" name="Istituto bancario"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_Hfa6ILY3Ee-5BPA0eLTyag" name="Società consegna"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="__chIwLY4Ee-9J-C7mVC8Uw" memberEnd="__ci98LY4Ee-9J-C7mVC8Uw __ci98bY4Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="__ciW4LY4Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="__ciW4bY4Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="__ci98LY4Ee-9J-C7mVC8Uw" name="selezione locale" type="_6hoOALY2Ee-5BPA0eLTyag" association="__chIwLY4Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="__ci98bY4Ee-9J-C7mVC8Uw" name="cliente" type="_pKweQLY1Ee-5BPA0eLTyag" association="__chIwLY4Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OCQDELY5Ee-9J-C7mVC8Uw" memberEnd="_OCRRMrY5Ee-9J-C7mVC8Uw _OCRRM7Y5Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_OCRRMLY5Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_OCRRMbY5Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_OCRRMrY5Ee-9J-C7mVC8Uw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_OCQDELY5Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_OCRRM7Y5Ee-9J-C7mVC8Uw" name="selezione locale convenzionato" type="_6hoOALY2Ee-5BPA0eLTyag" association="_OCQDELY5Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_cJzMkLY5Ee-9J-C7mVC8Uw" name="Pagamento ordine">
+    <extend xmi:type="uml:Extend" xmi:id="_jD8z4LY8Ee-9J-C7mVC8Uw" extendedCase="_g70pwLY8Ee-9J-C7mVC8Uw" extensionLocation="_jD9a8LY8Ee-9J-C7mVC8Uw"/>
+    <include xmi:type="uml:Include" xmi:id="_5ftWoLY5Ee-9J-C7mVC8Uw" addition="_22U5kLY5Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_pjGwALY5Ee-9J-C7mVC8Uw" memberEnd="_pjJMQLY5Ee-9J-C7mVC8Uw _pjJMQbY5Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_pjIlMLY5Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_pjIlMbY5Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_pjJMQLY5Ee-9J-C7mVC8Uw" name="pagamento ordine" type="_cJzMkLY5Ee-9J-C7mVC8Uw" association="_pjGwALY5Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_pjJMQbY5Ee-9J-C7mVC8Uw" name="cliente" type="_pKweQLY1Ee-5BPA0eLTyag" association="_pjGwALY5Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_yQZQQLY5Ee-9J-C7mVC8Uw" memberEnd="_yQbFcLY5Ee-9J-C7mVC8Uw _yQbFcbY5Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_yQaeYLY5Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_yQaeYbY5Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_yQbFcLY5Ee-9J-C7mVC8Uw" name="istituto bancario" type="_Fm7ugLY3Ee-5BPA0eLTyag" association="_yQZQQLY5Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_yQbFcbY5Ee-9J-C7mVC8Uw" name="pagamento ordine" type="_cJzMkLY5Ee-9J-C7mVC8Uw" association="_yQZQQLY5Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_22U5kLY5Ee-9J-C7mVC8Uw" name="Rilascio token"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_PD_XcLY6Ee-9J-C7mVC8Uw" name="Controllo token"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_RrtnoLY6Ee-9J-C7mVC8Uw" memberEnd="_RrwD4LY6Ee-9J-C7mVC8Uw _RrwD4bY6Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Rrvc0LY6Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Rrvc0bY6Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_RrwD4LY6Ee-9J-C7mVC8Uw" name="controllo" type="_PD_XcLY6Ee-9J-C7mVC8Uw" association="_RrtnoLY6Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_RrwD4bY6Ee-9J-C7mVC8Uw" name="istituto bancario" type="_Fm7ugLY3Ee-5BPA0eLTyag" association="_RrtnoLY6Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_YbPasLY6Ee-9J-C7mVC8Uw" memberEnd="_YbQo0bY6Ee-9J-C7mVC8Uw _YbQo0rY6Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_YbQBwLY6Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_YbQo0LY6Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_YbQo0bY6Ee-9J-C7mVC8Uw" name="controllo token" type="_PD_XcLY6Ee-9J-C7mVC8Uw" association="_YbPasLY6Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_YbQo0rY6Ee-9J-C7mVC8Uw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_YbPasLY6Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_-kOj8LY6Ee-9J-C7mVC8Uw" name="Comunicazione operatività">
+    <extend xmi:type="uml:Extend" xmi:id="_oTkv4LY7Ee-9J-C7mVC8Uw" extendedCase="_l87BkLY7Ee-9J-C7mVC8Uw" extensionLocation="_oTl-ALY7Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_CMo1ELY7Ee-9J-C7mVC8Uw" memberEnd="_CMqDMLY7Ee-9J-C7mVC8Uw _CMqDMbY7Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_CMpcILY7Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_CMpcIbY7Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_CMqDMLY7Ee-9J-C7mVC8Uw" name="comunicazione operatività" type="_-kOj8LY6Ee-9J-C7mVC8Uw" association="_CMo1ELY7Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_CMqDMbY7Ee-9J-C7mVC8Uw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_CMo1ELY7Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_DCb0oLY7Ee-9J-C7mVC8Uw" memberEnd="_DCcbsrY7Ee-9J-C7mVC8Uw _DCcbs7Y7Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_DCcbsLY7Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_DCcbsbY7Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_DCcbsrY7Ee-9J-C7mVC8Uw" name="comunicazione operatività" type="_-kOj8LY6Ee-9J-C7mVC8Uw" association="_DCb0oLY7Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_DCcbs7Y7Ee-9J-C7mVC8Uw" name="locale-i" type="_EKVNoLY3Ee-5BPA0eLTyag" association="_DCb0oLY7Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_fJFWQLY7Ee-9J-C7mVC8Uw" name="Comunicazione menu">
+    <extend xmi:type="uml:Extend" xmi:id="_w9nH0LY7Ee-9J-C7mVC8Uw" extendedCase="_utL9ULY7Ee-9J-C7mVC8Uw" extensionLocation="_w9nu4LY7Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_hA9d4LY7Ee-9J-C7mVC8Uw" memberEnd="_hA-E8rY7Ee-9J-C7mVC8Uw _hA-E87Y7Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_hA-E8LY7Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_hA-E8bY7Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_hA-E8rY7Ee-9J-C7mVC8Uw" name="comunicazione menu" type="_fJFWQLY7Ee-9J-C7mVC8Uw" association="_hA9d4LY7Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_hA-E87Y7Ee-9J-C7mVC8Uw" name="locale-i" type="_EKVNoLY3Ee-5BPA0eLTyag" association="_hA9d4LY7Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_kYidsLY7Ee-9J-C7mVC8Uw" memberEnd="_kYjr0bY7Ee-9J-C7mVC8Uw _kYjr0rY7Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_kYjEwLY7Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_kYjr0LY7Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_kYjr0bY7Ee-9J-C7mVC8Uw" name="comunicazione menu" type="_fJFWQLY7Ee-9J-C7mVC8Uw" association="_kYidsLY7Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_kYjr0rY7Ee-9J-C7mVC8Uw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_kYidsLY7Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_l87BkLY7Ee-9J-C7mVC8Uw" name="Locale non disponibile">
+    <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_oTl-ALY7Ee-9J-C7mVC8Uw" name="ExtensionPoint1"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_utL9ULY7Ee-9J-C7mVC8Uw" name="cambiamento menu">
+    <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_w9nu4LY7Ee-9J-C7mVC8Uw" name="ExtensionPoint1"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_AMr6ELY8Ee-9J-C7mVC8Uw" name="fattibilità ordine">
+    <extend xmi:type="uml:Extend" xmi:id="_LUIIkLY8Ee-9J-C7mVC8Uw" extendedCase="_JSlHkLY8Ee-9J-C7mVC8Uw" extensionLocation="_LUIvoLY8Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_Fx85cLY8Ee-9J-C7mVC8Uw" memberEnd="_Fx-HkrY8Ee-9J-C7mVC8Uw _Fx-Hk7Y8Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Fx-HkLY8Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Fx-HkbY8Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_Fx-HkrY8Ee-9J-C7mVC8Uw" name="fattibilità ordine" type="_AMr6ELY8Ee-9J-C7mVC8Uw" association="_Fx85cLY8Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_Fx-Hk7Y8Ee-9J-C7mVC8Uw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_Fx85cLY8Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_G7ZNwLY8Ee-9J-C7mVC8Uw" memberEnd="_G7Z00rY8Ee-9J-C7mVC8Uw _G7Z007Y8Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_G7Z00LY8Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_G7Z00bY8Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_G7Z00rY8Ee-9J-C7mVC8Uw" name="locale-i" type="_EKVNoLY3Ee-5BPA0eLTyag" association="_G7ZNwLY8Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_G7Z007Y8Ee-9J-C7mVC8Uw" name="fattibilità ordine" type="_AMr6ELY8Ee-9J-C7mVC8Uw" association="_G7ZNwLY8Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_JSlHkLY8Ee-9J-C7mVC8Uw" name="rifiuto ordine">
+    <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_LUIvoLY8Ee-9J-C7mVC8Uw" name="ExtensionPoint1"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_a2Y8kLY8Ee-9J-C7mVC8Uw" name="Comunicazione posizione locale"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_eB-u0LY8Ee-9J-C7mVC8Uw" memberEnd="_eB_88rY8Ee-9J-C7mVC8Uw _eB_887Y8Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_eB_88LY8Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_eB_88bY8Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_eB_88rY8Ee-9J-C7mVC8Uw" name="comunicazione posizione locale" type="_a2Y8kLY8Ee-9J-C7mVC8Uw" association="_eB-u0LY8Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_eB_887Y8Ee-9J-C7mVC8Uw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_eB-u0LY8Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_e1f2cLY8Ee-9J-C7mVC8Uw" memberEnd="_e1gdgrY8Ee-9J-C7mVC8Uw _e1hEkLY8Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_e1gdgLY8Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_e1gdgbY8Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_e1gdgrY8Ee-9J-C7mVC8Uw" name="società consegna" type="_Hfa6ILY3Ee-5BPA0eLTyag" association="_e1f2cLY8Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_e1hEkLY8Ee-9J-C7mVC8Uw" name="comunicazione posizione locale" type="_a2Y8kLY8Ee-9J-C7mVC8Uw" association="_e1f2cLY8Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_g70pwLY8Ee-9J-C7mVC8Uw" name="annullamento ordine">
+    <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_jD9a8LY8Ee-9J-C7mVC8Uw" name="ExtensionPoint1"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_-MfugLY8Ee-9J-C7mVC8Uw" name="comunicazione disponibilità">
+    <extend xmi:type="uml:Extend" xmi:id="_C_e8YLY9Ee-9J-C7mVC8Uw" extendedCase="_BTVjoLY9Ee-9J-C7mVC8Uw" extensionLocation="_C_fjcLY9Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_BTVjoLY9Ee-9J-C7mVC8Uw" name="annullamento ordine">
+    <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_C_fjcLY9Ee-9J-C7mVC8Uw" name="ExtensionPoint1"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_D-XmgLY9Ee-9J-C7mVC8Uw" memberEnd="_D-Y0obY9Ee-9J-C7mVC8Uw _D-Y0orY9Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_D-YNkLY9Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_D-Y0oLY9Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_D-Y0obY9Ee-9J-C7mVC8Uw" name="società consegna" type="_Hfa6ILY3Ee-5BPA0eLTyag" association="_D-XmgLY9Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_D-Y0orY9Ee-9J-C7mVC8Uw" name="comunicazione disponibilità" type="_-MfugLY8Ee-9J-C7mVC8Uw" association="_D-XmgLY9Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_EzU4kLY9Ee-9J-C7mVC8Uw" memberEnd="_EzVforY9Ee-9J-C7mVC8Uw _EzVfo7Y9Ee-9J-C7mVC8Uw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EzVfoLY9Ee-9J-C7mVC8Uw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EzVfobY9Ee-9J-C7mVC8Uw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_EzVforY9Ee-9J-C7mVC8Uw" name="comunicazione disponibilità" type="_-MfugLY8Ee-9J-C7mVC8Uw" association="_EzU4kLY9Ee-9J-C7mVC8Uw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_EzVfo7Y9Ee-9J-C7mVC8Uw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_EzU4kLY9Ee-9J-C7mVC8Uw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_gJVxALZJEe-9J-C7mVC8Uw" name="Selezione menu"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_2Up8oLZJEe-ijt9Q6QNZjw" memberEnd="_2U1i0LZJEe-ijt9Q6QNZjw _2U2J4LZJEe-ijt9Q6QNZjw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_2U07wLZJEe-ijt9Q6QNZjw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_2U07wbZJEe-ijt9Q6QNZjw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_2U1i0LZJEe-ijt9Q6QNZjw" name="selezione menu" type="_gJVxALZJEe-9J-C7mVC8Uw" association="_2Up8oLZJEe-ijt9Q6QNZjw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_2U2J4LZJEe-ijt9Q6QNZjw" name="acmeat" type="_9plS4LY1Ee-5BPA0eLTyag" association="_2Up8oLZJEe-ijt9Q6QNZjw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_3Q-a8LZJEe-ijt9Q6QNZjw" memberEnd="_3RA3MLZJEe-ijt9Q6QNZjw _3RA3MbZJEe-ijt9Q6QNZjw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_3Q_pELZJEe-ijt9Q6QNZjw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_3RAQILZJEe-ijt9Q6QNZjw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_3RA3MLZJEe-ijt9Q6QNZjw" name="selezione menu" type="_gJVxALZJEe-9J-C7mVC8Uw" association="_3Q-a8LZJEe-ijt9Q6QNZjw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_3RA3MbZJEe-ijt9Q6QNZjw" name="cliente" type="_pKweQLY1Ee-5BPA0eLTyag" association="_3Q-a8LZJEe-ijt9Q6QNZjw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_YujT0LbgEe-UpoY6bBkirQ" memberEnd="_YurPoLbgEe-UpoY6bBkirQ _YurPobbgEe-UpoY6bBkirQ">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_YuqBgLbgEe-UpoY6bBkirQ" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_YuqBgbbgEe-UpoY6bBkirQ" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_YurPoLbgEe-UpoY6bBkirQ" name="pagamento ordine" type="_cJzMkLY5Ee-9J-C7mVC8Uw" association="_YujT0LbgEe-UpoY6bBkirQ"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_YurPobbgEe-UpoY6bBkirQ" name="acmeat" type="_YbPasLY6Ee-9J-C7mVC8Uw" association="_YujT0LbgEe-UpoY6bBkirQ"/>
+  </packagedElement>
+</uml:Model>

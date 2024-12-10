@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://schema.omg.org/spec/UML/2.1">
+  <xmi:Documentation exporter="umbrello uml modeller 2.38.3-b9eb1f740 (Applications 23.08.3) http://umbrello.kde.org" exporterVersion="2.0.4"/>
+  <uml:Model xmi:id="m1" name="Modello UML">
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="folder" name="folder"/>
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="dataType" name="dataType"/>
+    <packagedElement xmi:type="uml:Model" xmi:id="Logical_View" name="Logical View">
+      <uml:Package xmi:id="Datatypes" name="Datatypes" stereotype="folder">
+        <packagedElement xmi:type="uml:DataType" xmi:id="u4pxMWzsZ7fj0" name="char" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="u5i81eqRErk4V" name="int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="u5v2JdPOypt8k" name="float" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uGpdYxkeK8GFW" name="double" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uwwC0BzW9GTda" name="bool" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="ucxJVUOBFMq2R" name="string" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uE5GF01s3pZIn" name="unsigned char" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uugOfOTKOUQeo" name="signed char" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uND1WJ7bihjIT" name="unsigned int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uoiBdGEZQHO66" name="signed int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uM4VPSKevTLaE" name="short int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uijlih05PmgUw" name="unsigned short int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="u4BtTB3cLZWf8" name="signed short int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uT2ZOITBRSyY2" name="long int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uzwkdKRbmGunv" name="signed long int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uwtWo6npk8agf" name="unsigned long int" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="uYvFB3aLERxIh" name="long double" stereotype="dataType"/>
+        <packagedElement xmi:type="uml:DataType" xmi:id="ui4a28CrvhQpv" name="wchar_t" stereotype="dataType"/>
+      </uml:Package>
+      <packagedElement xmi:type="uml:Class" xmi:id="uxWHNuJUFgGoC" name="inser"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="uq5sSWGoZhL0H" name="Cliente"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="u8qje83zXOOx8" name="ACMEAT"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="u6HRN9NowsiCB" name="Locale-i" comment="Questo attore rappresenta uno o più locali"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="uFTWC8U6ZlgmA" name="locale-x"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="u98BWPdFS2PiC" name="società consegna-multi"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="uzR8D7L9zXxfJ" name="Banca"/>
+      <xmi:Extension extender="umbrello">
+        <diagrams resolution="96">
+          <diagram xmi.id="uJFG3dwBJvWGj" name="diagramma delle classi" type="1" documentation="" backgroundcolor="#ffffff" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" griddotcolor="#f7f7f7" linecolor="#990000" linewidth="0" textcolor="#000000" usefillcolor="1" showattribassocs="1" showatts="1" showattsig="1" showops="1" showopsig="1" showpackage="1" showpubliconly="0" showscope="1" showstereotype="2" localid="-1" showgrid="0" snapgrid="0" snapcsgrid="0" snapx="25" snapy="25" zoom="100" canvasheight="800" canvaswidth="1100" isopen="0">
+            <widgets/>
+            <messages/>
+            <associations/>
+          </diagram>
+          <diagram xmi.id="unQQ76pLkaFGu" name="Lista-locali convenzionati" type="3" documentation="" backgroundcolor="#ffffff" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" griddotcolor="#f7f7f7" linecolor="#990000" linewidth="0" textcolor="#000000" usefillcolor="1" showattribassocs="1" showatts="1" showattsig="1" showops="1" showopsig="1" showpackage="1" showpubliconly="0" showscope="1" showstereotype="2" localid="-1" showgrid="0" snapgrid="0" snapcsgrid="1" snapx="25" snapy="25" zoom="69" canvasheight="800" canvaswidth="1200" isopen="1" autoincrementsequence="1">
+            <widgets>
+              <objectwidget xmi.id="u6HRN9NowsiCB" localid="urWnuCWAsaBmb" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="654.887" y="80" width="75" height="25" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <objectwidget xmi.id="uq5sSWGoZhL0H" localid="uIkUbA5scSflA" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="50" y="80" width="75" height="25" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <objectwidget xmi.id="u8qje83zXOOx8" localid="uXumdx5mGqrzn" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="338.827" y="80" width="125" height="25" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <boxwidget xmi.id="uetTEXhmS9QNj" localid="uJgvE1vAvvBAO" textcolor="#000000" linecolor="#000000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="391.667" y="212" width="300" height="125" isinstance="0" showstereotype="2"/>
+              <floatingtext xmi.id="ukPwBz0AuZkOA" localid="uRqUSScjelhE8" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="386.667" y="212" width="100" height="25" isinstance="0" showstereotype="2" text="[Disponibilità]" pretext="" posttext="" role="700"/>
+              <floatingtext xmi.id="uRDqgcSZT7OKO" localid="uP6wKX15MSHzK" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="386.667" y="190" width="25" height="25" isinstance="0" showstereotype="2" text="alt" pretext="" posttext="" role="700"/>
+              <floatingtext xmi.id="unQdvwE6Y8BCG" localid="uphxEBfQrI8Ey" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="393.667" y="273" width="50" height="25" isinstance="0" showstereotype="2" text="[False]" pretext="" posttext="" role="700"/>
+            </widgets>
+            <messages>
+              <messagewidget xmi.id="uHyJvwi3dYOLD" localid="uSEa2b80cZgxZ" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="88" y="359.978" width="312" height="8" isinstance="0" showstereotype="2" seqnum="1" widgetaid="uXumdx5mGqrzn" widgetbid="uIkUbA5scSflA" operation="Presentazione dei locali convenzionati" sequencemessagetype="1001" textid="uUucwh0OBmdGU">
+                <floatingtext xmi.id="uUucwh0OBmdGU" localid="uC83iAgBt1w73" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="93" y="334" width="275" height="25" isinstance="0" showstereotype="2" text="Presentazione dei locali convenzionati" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uXukrOYbw2Zt0" localid="urtSVpyiVfqrB" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="402" y="312" width="289" height="8" isinstance="0" showstereotype="2" seqnum="4" widgetaid="urWnuCWAsaBmb" widgetbid="uXumdx5mGqrzn" operation="Comunicazione non operatività" sequencemessagetype="1001" textid="uSrjnhELla1KY">
+                <floatingtext xmi.id="uSrjnhELla1KY" localid="uxQQJCOJbnPo5" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="426" y="287" width="225" height="25" isinstance="0" showstereotype="2" text="Comunicazione non operatività" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="urbreTXe5LDFx" localid="u5iH2NCCno36R" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="402" y="174" width="289" height="8" isinstance="0" showstereotype="2" seqnum="2" widgetaid="uXumdx5mGqrzn" widgetbid="urWnuCWAsaBmb" operation="Comunicazione operatività" sequencemessagetype="1001" textid="u1eRWBMS289Je">
+                <floatingtext xmi.id="u1eRWBMS289Je" localid="uXoxsYYgHL9vA" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="436" y="149" width="200" height="25" isinstance="0" showstereotype="2" text="Comunicazione operatività" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="unyQMv5TOJ6r2" localid="uD3X1vUBAglCf" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="402" y="250" width="289" height="8" isinstance="0" showstereotype="2" seqnum="3" widgetaid="urWnuCWAsaBmb" widgetbid="uXumdx5mGqrzn" operation="Conferma operatività" sequencemessagetype="1001" textid="ui3BvE9gMCNgm">
+                <floatingtext xmi.id="ui3BvE9gMCNgm" localid="uyDpRAX6GLROZ" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="436" y="225" width="175" height="25" isinstance="0" showstereotype="2" text="Conferma operatività" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uG2GXlPBhosVI" localid="uWs0DCrtvfO2T" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="79" y="147" width="322" height="20" isinstance="0" showstereotype="2" seqnum="0" widgetaid="uXumdx5mGqrzn" widgetbid="uIkUbA5scSflA" operation="Richiesta indirizzo di residenza" sequencemessagetype="1000" textid="uCCZ73OJszZBa">
+                <floatingtext xmi.id="uCCZ73OJszZBa" localid="ure1OysVVt6Q8" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="142" y="122" width="225" height="25" isinstance="0" showstereotype="2" text="Richiesta indirizzo di residenza" pretext="" posttext="" role="704"/>
+              </messagewidget>
+            </messages>
+            <associations/>
+          </diagram>
+          <diagram xmi.id="uZQcy9nbf4wSJ" name="Selezione locale convenzionato" type="3" documentation="" backgroundcolor="#ffffff" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" griddotcolor="#f7f7f7" linecolor="#990000" linewidth="0" textcolor="#000000" usefillcolor="1" showattribassocs="1" showatts="1" showattsig="1" showops="1" showopsig="1" showpackage="1" showpubliconly="0" showscope="1" showstereotype="2" localid="-1" showgrid="0" snapgrid="0" snapcsgrid="0" snapx="25" snapy="25" zoom="75" canvasheight="800" canvaswidth="1100" isopen="1" autoincrementsequence="1">
+            <widgets>
+              <combinedFragmentwidget xmi.id="uZWqyWaukQfMu" localid="uKXj6fTzPorBa" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="429.667" y="209.556" width="528.603" height="139.111" isinstance="0" showstereotype="2" combinedFragmentname="" documentation="" CombinedFragmenttype="8"/>
+              <preconditionwidget xmi.id="u8iUQfagn2O1K" localid="ufdFQgLU9k2vy" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="50" y="126" width="182" height="24" isinstance="0" showstereotype="2" widgetaid="umEJ6KPlxvgDY" preconditionname="lista locali convenzionati" documentation=""/>
+              <objectwidget xmi.id="u8qje83zXOOx8" localid="uyzkz9NudY2MP" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="379.16" y="110" width="101" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <objectwidget xmi.id="uFTWC8U6ZlgmA" localid="uYKJ9PFTeG1oD" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="607.667" y="80" width="68" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <objectwidget xmi.id="u98BWPdFS2PiC" localid="uG9RSm1pfd4Tl" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="854.778" y="80" width="168" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <combinedFragmentwidget xmi.id="uQFEb8f9LCnpl" localid="uwWxP7i2SciG3" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="429" y="288" width="507.333" height="60" isinstance="0" instancename="Min(deliver)" showstereotype="2" combinedFragmentname="Min(deliver)" documentation="Si assume che ACMEAT prenda la società con il prezzo più basso" CombinedFragmenttype="6"/>
+              <objectwidget xmi.id="uq5sSWGoZhL0H" localid="umEJ6KPlxvgDY" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="109" y="80" width="64" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+            </widgets>
+            <messages>
+              <messagewidget xmi.id="uuMyDexHmEsIn" localid="utWiXIFudZxw3" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="142" y="394.667" width="286" height="8" isinstance="0" showstereotype="2" seqnum="3" widgetaid="uyzkz9NudY2MP" widgetbid="umEJ6KPlxvgDY" operation="presentazione pagina di dettaglio del locale" sequencemessagetype="1001" textid="ud7xrXpvyvCtf">
+                <floatingtext xmi.id="ud7xrXpvyvCtf" localid="uj4wzyxIcAelh" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="147" y="376" width="286" height="18" isinstance="0" showstereotype="2" text="presentazione pagina di dettaglio del locale" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uHPAGVD5cY8au" localid="uUZgkgUtgx0or" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="430" y="367" width="210" height="8" isinstance="0" showstereotype="2" seqnum="3" widgetaid="uYKJ9PFTeG1oD" widgetbid="uyzkz9NudY2MP" operation="Invio dati richiesti" sequencemessagetype="1001" textid="u5Qy2o38dZ1c4">
+                <floatingtext xmi.id="u5Qy2o38dZ1c4" localid="ucvTglJ6Xs3wu" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="506" y="349" width="130" height="18" isinstance="0" showstereotype="2" text="Invio dati richiesti" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uc1Pyv8qRoWwE" localid="u5tROXYDTeI1i" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="430" y="269" width="507" height="8" isinstance="0" showstereotype="2" seqnum="1.b" widgetaid="uyzkz9NudY2MP" widgetbid="uG9RSm1pfd4Tl" operation="Disponibilità per consegna" sequencemessagetype="1001" textid="u2tdNwqgZlHKJ">
+                <floatingtext xmi.id="u2tdNwqgZlHKJ" localid="u6H4nuZyEVOLc" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="739" y="251" width="194" height="18" isinstance="0" showstereotype="2" text="Disponibilità per consegna" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="u5hvwDA5Jf5Kt" localid="utaFAKopaYfCp" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="430" y="248" width="210" height="8" isinstance="0" showstereotype="2" seqnum="1.a" widgetaid="uyzkz9NudY2MP" widgetbid="uYKJ9PFTeG1oD" operation="Richiesta menu e dettagli locale" sequencemessagetype="1001" textid="uV9ovjw4fa3JS">
+                <floatingtext xmi.id="uV9ovjw4fa3JS" localid="uqjYU06pYkECm" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="435" y="230" width="228" height="18" isinstance="0" showstereotype="2" text="Richiesta menu e dettagli locale" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uynLEzhDRKZEk" localid="uwV1njwtoKyO7" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="142" y="202" width="286" height="8" isinstance="0" showstereotype="2" seqnum="0" widgetaid="umEJ6KPlxvgDY" widgetbid="uyzkz9NudY2MP" operation="Selezione del locale X" sequencemessagetype="1001" textid="un1QbWCgrPfeT">
+                <floatingtext xmi.id="un1QbWCgrPfeT" localid="uTNqI0g8Rd8fh" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="238" y="184" width="154" height="18" isinstance="0" showstereotype="2" text="Selezione del locale X" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uBp9Y53kawqIj" localid="uF23wxbBJDb54" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="430" y="317" width="507" height="8" isinstance="0" showstereotype="2" seqnum="2" widgetaid="uG9RSm1pfd4Tl" widgetbid="uyzkz9NudY2MP" operation="Comunicazione disponibilità" sequencemessagetype="1001" textid="u1OyyglfqLvyL">
+                <floatingtext xmi.id="u1OyyglfqLvyL" localid="ul7a7bjsE4fvj" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="741" y="299" width="192" height="18" isinstance="0" showstereotype="2" text="Comunicazione disponibilità" pretext="" posttext="" role="704"/>
+              </messagewidget>
+            </messages>
+            <associations/>
+          </diagram>
+          <diagram xmi.id="uG00Ee6BPH8BE" name="selezione menu" type="3" documentation="" backgroundcolor="#ffffff" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" griddotcolor="#f7f7f7" linecolor="#990000" linewidth="0" textcolor="#000000" usefillcolor="1" showattribassocs="1" showatts="1" showattsig="1" showops="1" showopsig="1" showpackage="1" showpubliconly="0" showscope="1" showstereotype="2" localid="-1" showgrid="0" snapgrid="0" snapcsgrid="0" snapx="25" snapy="25" zoom="75" canvasheight="800" canvaswidth="1100" isopen="1" autoincrementsequence="1">
+            <widgets>
+              <preconditionwidget xmi.id="umrJXEsxfPQBs" localid="uLepc2DVVjJde" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="50" y="144" width="222" height="24" isinstance="0" showstereotype="2" widgetaid="uuk6AqFCA8hWx" preconditionname="selezione locale convenzionato" documentation=""/>
+              <objectwidget xmi.id="uq5sSWGoZhL0H" localid="uuk6AqFCA8hWx" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="129" y="80" width="64" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <objectwidget xmi.id="u8qje83zXOOx8" localid="uzJw7JBpuLVt1" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="391.16" y="110" width="101" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+            </widgets>
+            <messages>
+              <messagewidget xmi.id="uNtaDrfRvRcs2" localid="upKTZcqqCSral" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="162" y="225.333" width="278" height="8" isinstance="0" showstereotype="2" seqnum="0" widgetaid="uuk6AqFCA8hWx" widgetbid="uzJw7JBpuLVt1" operation="selezione menu" sequencemessagetype="1001" textid="u32QzvPSKstpP">
+                <floatingtext xmi.id="u32QzvPSKstpP" localid="utI7vV7z4J3Ed" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="318" y="207" width="118" height="18" isinstance="0" showstereotype="2" text="selezione menu" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uCO1asIgEfcl5" localid="uabQ39quQ892W" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="162" y="346.333" width="278" height="8" isinstance="0" showstereotype="2" seqnum="1" widgetaid="uzJw7JBpuLVt1" widgetbid="uuk6AqFCA8hWx" operation="presentazione conto" sequencemessagetype="1001" textid="uOEQTvWj7I0t2">
+                <floatingtext xmi.id="uOEQTvWj7I0t2" localid="uGri6t9tuPfoQ" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="290" y="328" width="146" height="18" isinstance="0" showstereotype="2" text="presentazione conto" pretext="" posttext="" role="704"/>
+              </messagewidget>
+            </messages>
+            <associations/>
+          </diagram>
+          <diagram xmi.id="uKuJsRnYwyR9i" name="pagamento ordine" type="3" documentation="" backgroundcolor="#ffffff" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" griddotcolor="#f7f7f7" linecolor="#990000" linewidth="0" textcolor="#000000" usefillcolor="1" showattribassocs="1" showatts="1" showattsig="1" showops="1" showopsig="1" showpackage="1" showpubliconly="0" showscope="1" showstereotype="2" localid="-1" showgrid="0" snapgrid="0" snapcsgrid="0" snapx="25" snapy="25" zoom="89.0595" canvasheight="800" canvaswidth="1100" isopen="1" autoincrementsequence="1">
+            <widgets>
+              <preconditionwidget xmi.id="uARc4ASH5T5Qt" localid="u1R08yh64Hilm" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="108" y="206" width="167" height="24" isinstance="0" showstereotype="2" widgetaid="uNtZgDDkQ5eVv" preconditionname="autenticazione utente" documentation="L'utente autenticato può effettuare pagamenti"/>
+              <preconditionwidget xmi.id="uKeyuaS1cf3bP" localid="uQMdSEshuxn0C" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="127" y="126" width="129" height="24" isinstance="0" showstereotype="2" widgetaid="uNtZgDDkQ5eVv" preconditionname="selezione menu" documentation=""/>
+              <objectwidget xmi.id="uzR8D7L9zXxfJ" localid="uAnvd5ZKGMgDT" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="627.46" y="80" width="59" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <objectwidget xmi.id="uq5sSWGoZhL0H" localid="uNtZgDDkQ5eVv" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="159" y="80" width="64" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <objectwidget xmi.id="u8qje83zXOOx8" localid="uufktgZfJlK4h" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="402.476" y="110" width="101" height="24" isinstance="0" showstereotype="2" drawasactor="0" multipleinstance="0" decon="0"/>
+              <combinedFragmentwidget xmi.id="ujrhIHvckS8PH" localid="uajrRlEvag8Yk" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="190.797" y="502.704" width="464.042" height="273.094" isinstance="0" showstereotype="2" combinedFragmentname="" documentation="" CombinedFragmenttype="1"/>
+              <combinedFragmentwidget xmi.id="uTDvRO4kGPwGl" localid="uQ7EaqfPxkeu3" textcolor="#000000" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="0" usesdiagramusefillcolor="0" fillcolor="#ffffc0" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="191.92" y="589.936" width="463.64" height="136.782" isinstance="0" showstereotype="2" combinedFragmentname="" documentation="" CombinedFragmenttype="8"/>
+            </widgets>
+            <messages>
+              <messagewidget xmi.id="uaD8AHm4HNKjc" localid="uuCiTSGJcli1g" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="372" width="463" height="8" isinstance="0" showstereotype="2" seqnum="4" widgetaid="uAnvd5ZKGMgDT" widgetbid="uNtZgDDkQ5eVv" operation="Rilascio token" sequencemessagetype="1001" textid="udMQ67KDFzUaV">
+                <floatingtext xmi.id="udMQ67KDFzUaV" localid="uiTbAAv9j0HR1" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="354" width="107" height="18" isinstance="0" showstereotype="2" text="Rilascio token" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="unQXoHfPre10s" localid="uEcxosnCXevTg" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="0" x="183" y="171" width="269" height="20" isinstance="0" showstereotype="2" seqnum="0" widgetaid="uufktgZfJlK4h" widgetbid="uNtZgDDkQ5eVv" operation="richiesta di pagamento ordine" sequencemessagetype="1000" textid="u3deg1tGElJfE">
+                <floatingtext xmi.id="u3deg1tGElJfE" localid="u4KaTByovYd4C" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="194" y="153" width="204" height="18" isinstance="0" showstereotype="2" text="richiesta di pagamento ordine" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="usjAjmOaEhxVi" localid="uMwAUPyoaPxvj" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="288" width="259" height="8" isinstance="0" showstereotype="2" seqnum="2" widgetaid="uufktgZfJlK4h" widgetbid="uNtZgDDkQ5eVv" operation="link redirect pagina banca" sequencemessagetype="1001" textid="uFblSnsJ5F3PZ">
+                <floatingtext xmi.id="uFblSnsJ5F3PZ" localid="uq5BHDzKelPIQ" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="270" width="180" height="18" isinstance="0" showstereotype="2" text="link redirect pagina banca" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="ulx7kKCDav5Hg" localid="utsTln433W7v6" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="453" y="419" width="202" height="8" isinstance="0" showstereotype="2" seqnum="6" widgetaid="uufktgZfJlK4h" widgetbid="uAnvd5ZKGMgDT" operation="controllo token" sequencemessagetype="1001" textid="uefF9hOmL1tgY">
+                <floatingtext xmi.id="uefF9hOmL1tgY" localid="u2elWdfvOJzbC" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="467" y="401" width="113" height="18" isinstance="0" showstereotype="2" text="controllo token" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uEvqwBEMuBHiO" localid="ucLCbeX4NioDp" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="484.05" width="259" height="8" isinstance="0" showstereotype="2" seqnum="8" widgetaid="uufktgZfJlK4h" widgetbid="uNtZgDDkQ5eVv" operation="pagamento a buon fine" sequencemessagetype="1001" textid="uT0mQiizdPdiR">
+                <floatingtext xmi.id="uT0mQiizdPdiR" localid="uU6OuexM9sSrS" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="466" width="163" height="18" isinstance="0" showstereotype="2" text="pagamento a buon fine" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uVrIpcvrfqC1i" localid="uQD6ieI9SZXWl" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="330" width="463" height="8" isinstance="0" showstereotype="2" seqnum="3" widgetaid="uNtZgDDkQ5eVv" widgetbid="uAnvd5ZKGMgDT" operation="pagamento banca" sequencemessagetype="1001" textid="udWSFKynkBiNZ">
+                <floatingtext xmi.id="udWSFKynkBiNZ" localid="uquhDwnZxfDld" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="312" width="132" height="18" isinstance="0" showstereotype="2" text="pagamento banca" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uzH7DhPdpVd2L" localid="uSVmfpg9TeOsI" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="400" width="259" height="8" isinstance="0" showstereotype="2" seqnum="5" widgetaid="uNtZgDDkQ5eVv" widgetbid="uufktgZfJlK4h" operation="Comunicazione token" sequencemessagetype="1001" textid="ub2Bssf8FjKTM">
+                <floatingtext xmi.id="ub2Bssf8FjKTM" localid="uJxuYVaanYaC5" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="382" width="153" height="18" isinstance="0" showstereotype="2" text="Comunicazione token" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uhtitEy0Ghp11" localid="uLXd5iXia0iet" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="453" y="665.625" width="202" height="8" isinstance="0" showstereotype="2" seqnum="11b" widgetaid="uAnvd5ZKGMgDT" widgetbid="uufktgZfJlK4h" operation="comunicazione rimborso" sequencemessagetype="1001" textid="uLfbD5CCJmx5i">
+                <floatingtext xmi.id="uLfbD5CCJmx5i" localid="u1pYcMncl1GGa" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="458" y="647" width="186" height="18" isinstance="0" showstereotype="2" text="comunicazione rimborso" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uKEFeiSb4dtAS" localid="uz0GFzePENU7l" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="251" width="259" height="8" isinstance="0" showstereotype="2" seqnum="1" widgetaid="uNtZgDDkQ5eVv" widgetbid="uufktgZfJlK4h" operation="accettazione richiesta di pagamento" sequencemessagetype="1001" textid="uyHYBryK4GyoT">
+                <floatingtext xmi.id="uyHYBryK4GyoT" localid="uq09I1cUGemzz" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="233" width="242" height="18" isinstance="0" showstereotype="2" text="accettazione richiesta di pagamento" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="ucoHHe4vEn4t0" localid="untCuWVQ6dJJl" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="453" y="481.294" width="202" height="8" isinstance="0" showstereotype="2" seqnum="7" widgetaid="uAnvd5ZKGMgDT" widgetbid="uufktgZfJlK4h" operation="conferma pagamento" sequencemessagetype="1001" textid="ug2461uQtReNk">
+                <floatingtext xmi.id="ug2461uQtReNk" localid="uuO6W3hCMTv6E" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="467" y="463" width="153" height="18" isinstance="0" showstereotype="2" text="conferma pagamento" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uY19CvZK553Uv" localid="uyhqEtfZTyyXA" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="548.839" width="259" height="8" isinstance="0" showstereotype="2" seqnum="9a" widgetaid="uNtZgDDkQ5eVv" widgetbid="uufktgZfJlK4h" operation="annullamento ordine" sequencemessagetype="1001" textid="ul74U9VJYSkNi">
+                <floatingtext xmi.id="ul74U9VJYSkNi" localid="up613XWeKdLkf" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="530" width="155" height="18" isinstance="0" showstereotype="2" text="annullamento ordine" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="upBF0GaNrD8nU" localid="u0ciWLExqhJaC" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="453" y="566" width="202" height="8" isinstance="0" showstereotype="2" seqnum="10a" widgetaid="uufktgZfJlK4h" widgetbid="uAnvd5ZKGMgDT" operation="richiesta rimborso cliente" sequencemessagetype="1001" textid="uO4NxM5mHLOe6">
+                <floatingtext xmi.id="uO4NxM5mHLOe6" localid="u5FpmIpD70ydp" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="458" y="548" width="191" height="18" isinstance="0" showstereotype="2" text="richiesta rimborso cliente" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uCuE1CXv2kUd5" localid="u8AoDkr32QuRe" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="688.543" width="259" height="8" isinstance="0" showstereotype="2" seqnum="11c" widgetaid="uufktgZfJlK4h" widgetbid="uNtZgDDkQ5eVv" operation="notifica rimborso" sequencemessagetype="1001" textid="uJyvUMJ4V12ro">
+                <floatingtext xmi.id="uJyvUMJ4V12ro" localid="uEWliMlUvNeHf" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="199" y="670" width="139" height="18" isinstance="0" showstereotype="2" text="notifica rimborso" pretext="" posttext="" role="704"/>
+              </messagewidget>
+              <messagewidget xmi.id="uGllIX9eXjjqD" localid="uVLTi2jtnEiym" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="192" y="634.578" width="463" height="8" isinstance="0" showstereotype="2" seqnum="11a" widgetaid="uAnvd5ZKGMgDT" widgetbid="uNtZgDDkQ5eVv" operation="rimborso cliente" sequencemessagetype="1001" textid="umfDiWYwYZ6CA">
+                <floatingtext xmi.id="umfDiWYwYZ6CA" localid="uliQDziiLkSne" textcolor="none" linecolor="#990000" linewidth="0" usefillcolor="1" usesdiagramfillcolor="1" usesdiagramusefillcolor="1" fillcolor="none" font="Sans Serif,9,-1,5,50,0,0,0,0,0" autoresize="1" x="197" y="616" width="136" height="18" isinstance="0" showstereotype="2" text="rimborso cliente" pretext="" posttext="" role="704"/>
+              </messagewidget>
+            </messages>
+            <associations/>
+          </diagram>
+        </diagrams>
+      </xmi:Extension>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Model" xmi:id="Use_Case_View" name="Use Case View"/>
+    <packagedElement xmi:type="uml:Model" xmi:id="Component_View" name="Component View"/>
+    <packagedElement xmi:type="uml:Model" xmi:id="Deployment_View" name="Deployment View"/>
+    <packagedElement xmi:type="uml:Model" xmi:id="Entity_Relationship_Model" name="Entity Relationship Model"/>
+  </uml:Model>
+  <xmi:Extension extender="umbrello">
+    <docsettings viewid="uKuJsRnYwyR9i" documentation="" uniqueid="uEWliMlUvNeHf"/>
+    <listview>
+      <listitem id="Views" type="800" open="1">
+        <listitem id="Entity_Relationship_Model" type="836" open="1"/>
+        <listitem id="Use_Case_View" type="802" open="1"/>
+        <listitem id="Component_View" type="821" open="1"/>
+        <listitem id="Deployment_View" type="827" open="1"/>
+        <listitem id="Logical_View" type="801" open="1">
+          <listitem id="u8qje83zXOOx8" type="813" open="1"/>
+          <listitem id="uzR8D7L9zXxfJ" type="813" open="1"/>
+          <listitem id="uq5sSWGoZhL0H" type="813" open="1"/>
+          <listitem id="uJFG3dwBJvWGj" type="807" label="diagramma delle classi" open="0"/>
+          <listitem id="uxWHNuJUFgGoC" type="813" open="1"/>
+          <listitem id="unQQ76pLkaFGu" type="810" label="Lista-locali convenzionati" open="0"/>
+          <listitem id="u6HRN9NowsiCB" type="813" open="1"/>
+          <listitem id="uFTWC8U6ZlgmA" type="813" open="1"/>
+          <listitem id="uKuJsRnYwyR9i" type="810" label="pagamento ordine" open="0"/>
+          <listitem id="uZQcy9nbf4wSJ" type="810" label="Selezione locale convenzionato" open="0"/>
+          <listitem id="uG00Ee6BPH8BE" type="810" label="selezione menu" open="0"/>
+          <listitem id="u98BWPdFS2PiC" type="813" open="1"/>
+          <listitem id="Datatypes" type="830" open="0">
+            <listitem id="uwwC0BzW9GTda" type="829" open="0"/>
+            <listitem id="uGpdYxkeK8GFW" type="829" open="0"/>
+            <listitem id="u5v2JdPOypt8k" type="829" open="0"/>
+            <listitem id="u5i81eqRErk4V" type="829" open="0"/>
+            <listitem id="uYvFB3aLERxIh" type="829" open="0"/>
+            <listitem id="uT2ZOITBRSyY2" type="829" open="0"/>
+            <listitem id="uM4VPSKevTLaE" type="829" open="0"/>
+            <listitem id="uugOfOTKOUQeo" type="829" open="0"/>
+            <listitem id="uoiBdGEZQHO66" type="829" open="0"/>
+            <listitem id="uzwkdKRbmGunv" type="829" open="0"/>
+            <listitem id="u4BtTB3cLZWf8" type="829" open="0"/>
+            <listitem id="ucxJVUOBFMq2R" type="829" open="0"/>
+            <listitem id="uE5GF01s3pZIn" type="829" open="0"/>
+            <listitem id="uND1WJ7bihjIT" type="829" open="0"/>
+            <listitem id="uwtWo6npk8agf" type="829" open="0"/>
+            <listitem id="uijlih05PmgUw" type="829" open="0"/>
+            <listitem id="ui4a28CrvhQpv" type="829" open="0"/>
+          </listitem>
+        </listitem>
+      </listitem>
+    </listview>
+    <codegeneration>
+      <codegenerator language="C++"/>
+    </codegeneration>
+  </xmi:Extension>
+</xmi:XMI>
