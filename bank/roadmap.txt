@@ -3,6 +3,7 @@ Occorrono diverse interfacce fra cui:
 - Una PUT che dati i dati di pagamento ritorna un token
 - Una GET che dato il token rilasciato precedentemente ritorna le informazioni del pagamento
 - Una DELETE che elimina il token e ridà i soldi ai correntisti
+- Una PUT per creare un conto corrente, il conto corrente ha un numero univoco, progressivo.
 
 Ci saranno due container in Jolie:
 * Una RestApp (Che contiene tutte le chiamate).
