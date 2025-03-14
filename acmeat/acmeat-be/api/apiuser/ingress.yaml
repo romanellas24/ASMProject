@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: acmeat.com
+    http:
+      paths:
+      - path: /User
+        pathType: Prefix
+        backend:
+          service:
+            name: apiuser-service
+            port:
+              number: 80
+        
