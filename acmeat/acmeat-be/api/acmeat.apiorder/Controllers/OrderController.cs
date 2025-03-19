@@ -18,9 +18,19 @@ namespace acmeat.api.order
         {
             Console.WriteLine($"order id: {OrderId}");
             //TO DO: MAKE REQUEST TO FAKE BANK
-            using HttpResponseMessage response = await sharedClient.GetAsync("paymentOrder/"+OrderId);
+            using HttpResponseMessage response = await sharedClient.GetAsync("paymentOrder/" + OrderId);
             return response;
 
         }
+
+        [HttpPost]
+        public async Task MakeOrder(OrderInfo orderInfo)
+        {
+            Console.WriteLine($"Order with made with userId: {orderInfo.UserId}");
+            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+
+        }
     }
+
+
 }
