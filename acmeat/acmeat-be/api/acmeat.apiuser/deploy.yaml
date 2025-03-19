@@ -4,6 +4,9 @@ kind: Deployment
 
 metadata:
   name: apiuser
+  namespace: default
+  labels:
+    app: apiorder
 
 spec:
   replicas: 1
