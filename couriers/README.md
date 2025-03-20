@@ -33,3 +33,60 @@ How to handle that problem?
 
 Is this handled by ACMEat? 
 Otherwise, any courier can set a timeout of unavailability of vehicle when the GET ../availabily is requested.
+
+
+---
+
+## COMANDI
+
+### PROGETTO
+
+Buildare il progetto
+(usare o il build o il comando mvn package)
+
+### DOCKER
+
+Creare immagine docker:
+
+    docker build -t NOME_APP:VERSIONE_APP /Path/to/Dockerfile
+
+esempio (daremo sempre questo nome):
+
+    docker build -t courier_app_asm:0.1 .
+
+Per vedere le immagini docker locali, usare:
+
+    docker images
+
+Per runnare immagine e pubblicare una porta (accedere localhost):
+
+    docker run -p 127.0.0.1:80:CONTAINER_PORT ID_IMAGE
+
+    docker run -p 127.0.0.1:80:8080 e97eda8a1e34
+
+Per pushare l'immagine, bisogna effettuare prima il tag poi il push
+
+    docker tag ID_IMAGE tiesta/NAME
+
+    docker push tiesta/NAME
+
+### MINIKUBE
+Per startare minikube, usare:
+
+    minikube start
+
+Per applicare la configurazione (yaml):
+
+    kubectl apply -f app-deployment.yaml
+
+Per vedere i deployment:
+
+    kubectl get deployments
+
+Per vedere i pods: 
+    
+    kubectl get pods
+
+
+https://benstitou-anas.medium.com/deploy-java-spring-application-with-mysql-db-on-kubernetes-1e456271c6a1
+
