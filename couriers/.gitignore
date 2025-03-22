@@ -1,5 +1,6 @@
 old*
 mysql_develop*
+k8_deploy/mysql-secrets*
 
 /target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -71,3 +72,4 @@ README.html
 *.iml
 .idea
 .exercism
+

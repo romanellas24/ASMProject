@@ -5,14 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
-@Setter
 @Getter
+@Setter
 @ToString
 @AllArgsConstructor
-public class RequestAvailDTO {
-    private AddressDTO restAddr;
-    private AddressDTO clientAddr;
+public class RequestAllocateDTO {
+    private Integer vehicle;
+    private Integer timeMinutes;
     private String expectedDeliveryTime;
 }
