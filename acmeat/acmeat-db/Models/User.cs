@@ -1,7 +1,12 @@
-namespace acmeat.api.user;
-public class UserInfo{
+using System.ComponentModel.DataAnnotations.Schema;
 
-    public UserInfo(string Address, string Mail, string Pwd)
+namespace acmeat.db.user;
+public class User{
+    public User()
+    {
+    }
+
+    public User(string Address, string Mail, string Pwd)
     {
         this.Address=Address;
         this.Mail = Mail;
@@ -9,7 +14,11 @@ public class UserInfo{
     }
 
     public int Id{get;set;}
+    [Column("INDIRIZZO")]
     public string Address {get;set;}
+     [Column("EMAIL")]
     public string Mail {get;set;}
+
+     [Column("PWD")]
     public string Pwd {get;set;}
 }

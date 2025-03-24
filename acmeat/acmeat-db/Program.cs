@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddMySqlDataSource(builder.Configuration.GetConnectionString("DbConnectionString")!);
 builder.Services.AddLogging(builder => builder.AddConsole());
+builder.Services.AddTransient<MySqlContext>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

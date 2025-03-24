@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apiorder", "acmeat-be\api\a
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acmeat.db.client", "acmeat-db\acmeat.db.client.csproj", "{8E3D0E68-3A0F-43EA-83ED-688EAE57F5A5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acmeat.domains.order.manager", "acmeat-be\server\acmeat.domains.order\acmeat.domains.order.manager.csproj", "{4ED57077-9EFA-4BA1-825F-F6AD363139B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,10 +38,16 @@ Global
 		{8E3D0E68-3A0F-43EA-83ED-688EAE57F5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E3D0E68-3A0F-43EA-83ED-688EAE57F5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E3D0E68-3A0F-43EA-83ED-688EAE57F5A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3EEC197C-C1D0-490A-92A5-3C567C2B264C} = {B72FCF21-21D5-4A7D-ACD5-C2FA4FDC93E9}
 		{2F498B0C-1657-441D-BEBF-84172FEB5861} = {3EEC197C-C1D0-490A-92A5-3C567C2B264C}
 		{741A1E82-2528-4E78-9E1F-573E8361DFC4} = {3EEC197C-C1D0-490A-92A5-3C567C2B264C}
+		{3FEF62B6-3383-4E23-B33F-DC0B33F3FE96} = {B72FCF21-21D5-4A7D-ACD5-C2FA4FDC93E9}
+		{4ED57077-9EFA-4BA1-825F-F6AD363139B1} = {3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}
 	EndGlobalSection
 EndGlobal
