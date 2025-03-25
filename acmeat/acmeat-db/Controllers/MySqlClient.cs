@@ -1,6 +1,9 @@
 using acmeat.db.user;
 using acmeat.db.order;
 using Microsoft.AspNetCore.Mvc;
+using acmeat.db.menu;
+using acmeat.db.local;
+using acmeat.db.deliveryCompany;
 
 
 namespace acmeat.db.mysql
@@ -16,6 +19,9 @@ namespace acmeat.db.mysql
         private readonly ILogger<MysqlClient> _logger = logger;
         private readonly UserContext _UserContext = new UserContext(context);
         private readonly OrderContext _OrderContext = new OrderContext(context);
+        private readonly MenuContext _MenuContext = new MenuContext(context);
+        private readonly LocalContext _LocalContext = new LocalContext(context);
+        private readonly DeliveryCompanyContext _DeliveryCompanyContext = new DeliveryCompanyContext(context);
 
         #region User
         [HttpGet]
@@ -95,6 +101,112 @@ namespace acmeat.db.mysql
         {
             _logger.LogInformation($"Deleting Order with Id: {Order.Id}");
             await _OrderContext.DeleteOrder(Order);
+        }
+        #endregion
+        
+
+        #region Menu
+        [HttpGet]
+        public List<Menu> GetMenus()
+        {
+            _logger.LogInformation("Getting Menus");
+            return _MenuContext.GetMenus();
+        }
+         [HttpGet("{id}")]
+        public Menu GetMenuById(int id)
+        {
+            _logger.LogInformation($"Getting information for Menu with id {id}");
+            return _MenuContext.GetMenuById(id);
+        }
+        [HttpPost]
+        public async Task CreateMenu(Menu Menu)
+        {
+            _logger.LogInformation($"Creating Menu with id: {Menu.Id}");
+            await _MenuContext.CreateMenu(Menu);
+        }
+
+        [HttpPatch]
+        public async Task UpdateMenu(Menu Menu)
+        {
+            _logger.LogInformation($"Updating Menu with Id: {Menu.Id}" );
+            await _MenuContext.UpdateMenu(Menu);
+        }
+
+        [HttpDelete]
+        public async Task DeleteMenu(Menu Menu)
+        {
+            _logger.LogInformation($"Deleting Menu with Id: {Menu.Id}");
+            await _MenuContext.DeleteMenu(Menu);
+        }
+        #endregion
+
+         #region Local
+        [HttpGet]
+        public List<Local> GetLocals()
+        {
+            _logger.LogInformation("Getting Locals");
+            return _LocalContext.GetLocals();
+        }
+         [HttpGet("{id}")]
+        public Local GetLocalById(int id)
+        {
+            _logger.LogInformation($"Getting information for Local with id {id}");
+            return _LocalContext.GetLocalById(id);
+        }
+        [HttpPost]
+        public async Task CreateLocal(Local Local)
+        {
+            _logger.LogInformation($"Creating Local with id: {Local.Id}");
+            await _LocalContext.CreateLocal(Local);
+        }
+
+        [HttpPatch]
+        public async Task UpdateLocal(Local Local)
+        {
+            _logger.LogInformation($"Updating Local with Id: {Local.Id}" );
+            await _LocalContext.UpdateLocal(Local);
+        }
+
+        [HttpDelete]
+        public async Task DeleteLocal(Local Local)
+        {
+            _logger.LogInformation($"Deleting Local with Id: {Local.Id}");
+            await _LocalContext.DeleteLocal(Local);
+        }
+        #endregion
+
+         #region DeliveryCompany
+        [HttpGet]
+        public List<DeliveryCompany> GetDeliveryCompanys()
+        {
+            _logger.LogInformation("Getting DeliveryCompanys");
+            return _DeliveryCompanyContext.GetDeliveryCompanies();
+        }
+         [HttpGet("{id}")]
+        public DeliveryCompany GetDeliveryCompanyById(int id)
+        {
+            _logger.LogInformation($"Getting information for DeliveryCompany with id {id}");
+            return _DeliveryCompanyContext.GetDeliveryCompanyById(id);
+        }
+        [HttpPost]
+        public async Task CreateDeliveryCompany(DeliveryCompany DeliveryCompany)
+        {
+            _logger.LogInformation($"Creating DeliveryCompany with id: {DeliveryCompany.Id}");
+            await _DeliveryCompanyContext.CreateDeliveryCompany(DeliveryCompany);
+        }
+
+        [HttpPatch]
+        public async Task UpdateDeliveryCompany(DeliveryCompany DeliveryCompany)
+        {
+            _logger.LogInformation($"Updating DeliveryCompany with Id: {DeliveryCompany.Id}" );
+            await _DeliveryCompanyContext.UpdateDeliveryCompany(DeliveryCompany);
+        }
+
+        [HttpDelete]
+        public async Task DeleteDeliveryCompany(DeliveryCompany DeliveryCompany)
+        {
+            _logger.LogInformation($"Deleting DeliveryCompany with Id: {DeliveryCompany.Id}");
+            await _DeliveryCompanyContext.DeleteDeliveryCompany(DeliveryCompany);
         }
         #endregion
 

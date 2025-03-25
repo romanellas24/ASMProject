@@ -1,4 +1,4 @@
-using acmeat.db.DeliveryCompany;
+using acmeat.db.deliveryCompany;
 using acmeat.db.local;
 using acmeat.db.menu;
 using acmeat.db.order;

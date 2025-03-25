@@ -2,9 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <InvariantGlobalization>true</InvariantGlobalization>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <OutputType>library</OutputType>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -15,11 +13,6 @@
      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
     
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="acmeat.domains.order.dataproxy/acmeat.domains.order.dataproxy.csproj"/>
-    <ProjectReference Include="acmeat.domains.order.models/acmeat.domains.order.models.csproj"/>
   </ItemGroup>
 
 </Project>

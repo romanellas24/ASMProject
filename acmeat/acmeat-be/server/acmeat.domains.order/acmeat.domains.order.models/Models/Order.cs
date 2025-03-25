@@ -1,4 +1,6 @@
-namespace acmeat.server.Order;
+
+
+namespace acmeat.server.order;
 public class Order
 {
 
@@ -22,6 +24,21 @@ public class Order
         this.TransactionId = TransactionId;
         this.MenuId = MenuId;
         this.Quantity = Quantity;
+        
+    }
+
+        public Order(acmeat.db.order.Order order)
+    {
+        this.Id = order.Id;
+        this.UserId = order.UserId;
+        this.LocalId = order.LocalId;
+        this.DeliveryCompanyId = order.DeliveryCompanyId;
+        this.DeliveryTime = order.DeliveryTime;
+        this.PurchaseTime = order.PurchaseTime;
+        this.Price = order.Price;
+        this.TransactionId = order.TransactionId;
+        this.MenuId = order.MenuId;
+        this.Quantity = order.Quantity;
         
     }
 

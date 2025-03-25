@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <InvariantGlobalization>true</InvariantGlobalization>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
-    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
+    <OutputType>library</OutputType>
+    <!-- https://stackoverflow.com/questions/61997928/errorcs0579duplicate-globalsystem-runtime-versioning-targetframeworkattribu -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,10 +15,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
     
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="acmeat.domains.order.dataproxy/acmeat.domains.order.dataproxy.csproj"/>
-    <ProjectReference Include="acmeat.domains.order.models/acmeat.domains.order.models.csproj"/>
+    <ProjectReference Include="../acmeat.domains.order.models/acmeat.domains.order.models.csproj"/>
   </ItemGroup>
 
 </Project>

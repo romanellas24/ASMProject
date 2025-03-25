@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace acmeat.db.DeliveryCompany;
+namespace acmeat.db.deliveryCompany;
 public class DeliveryCompany
 {
     public DeliveryCompany()

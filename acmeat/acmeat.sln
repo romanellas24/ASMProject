@@ -15,7 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acmeat.db.client", "acmeat-
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acmeat.domains.order.manager", "acmeat-be\server\acmeat.domains.order\acmeat.domains.order.manager.csproj", "{4ED57077-9EFA-4BA1-825F-F6AD363139B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acmeat.domains.order.manager", "acmeat-be\server\acmeat.domains.order\acmeat.domains.order.manager.csproj", "{451D7BFE-F354-4CE7-98A6-B19F4C795E3F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "acmeat.domains.order", "acmeat.domains.order", "{BC153998-0DF4-4698-A3CA-4589B5188741}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acmeat.domains.order.models", "acmeat-be\server\acmeat.domains.order\acmeat.domains.order.models\acmeat.domains.order.models.csproj", "{E260B64F-04FA-431F-90E3-EA2C4D97CD84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "acmeat.domains.order.dataproxy", "acmeat-be\server\acmeat.domains.order\acmeat.domains.order.dataproxy\acmeat.domains.order.dataproxy.csproj", "{11804883-7E41-4644-932A-A50F33C5729B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,16 +44,35 @@ Global
 		{8E3D0E68-3A0F-43EA-83ED-688EAE57F5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E3D0E68-3A0F-43EA-83ED-688EAE57F5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E3D0E68-3A0F-43EA-83ED-688EAE57F5A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4ED57077-9EFA-4BA1-825F-F6AD363139B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{341FA618-C9C3-4D07-830D-45AC860F20F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{341FA618-C9C3-4D07-830D-45AC860F20F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{341FA618-C9C3-4D07-830D-45AC860F20F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{341FA618-C9C3-4D07-830D-45AC860F20F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B944CA5-843C-4422-A591-E200A6C1D91A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B944CA5-843C-4422-A591-E200A6C1D91A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B944CA5-843C-4422-A591-E200A6C1D91A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B944CA5-843C-4422-A591-E200A6C1D91A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{451D7BFE-F354-4CE7-98A6-B19F4C795E3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{451D7BFE-F354-4CE7-98A6-B19F4C795E3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{451D7BFE-F354-4CE7-98A6-B19F4C795E3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{451D7BFE-F354-4CE7-98A6-B19F4C795E3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E260B64F-04FA-431F-90E3-EA2C4D97CD84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E260B64F-04FA-431F-90E3-EA2C4D97CD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E260B64F-04FA-431F-90E3-EA2C4D97CD84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E260B64F-04FA-431F-90E3-EA2C4D97CD84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11804883-7E41-4644-932A-A50F33C5729B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11804883-7E41-4644-932A-A50F33C5729B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11804883-7E41-4644-932A-A50F33C5729B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11804883-7E41-4644-932A-A50F33C5729B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3EEC197C-C1D0-490A-92A5-3C567C2B264C} = {B72FCF21-21D5-4A7D-ACD5-C2FA4FDC93E9}
 		{2F498B0C-1657-441D-BEBF-84172FEB5861} = {3EEC197C-C1D0-490A-92A5-3C567C2B264C}
 		{741A1E82-2528-4E78-9E1F-573E8361DFC4} = {3EEC197C-C1D0-490A-92A5-3C567C2B264C}
 		{3FEF62B6-3383-4E23-B33F-DC0B33F3FE96} = {B72FCF21-21D5-4A7D-ACD5-C2FA4FDC93E9}
-		{4ED57077-9EFA-4BA1-825F-F6AD363139B1} = {3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}
+		{451D7BFE-F354-4CE7-98A6-B19F4C795E3F} = {3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}
+		{BC153998-0DF4-4698-A3CA-4589B5188741} = {3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}
+		{E260B64F-04FA-431F-90E3-EA2C4D97CD84} = {BC153998-0DF4-4698-A3CA-4589B5188741}
+		{11804883-7E41-4644-932A-A50F33C5729B} = {BC153998-0DF4-4698-A3CA-4589B5188741}
 	EndGlobalSection
 EndGlobal

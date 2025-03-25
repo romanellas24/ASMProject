@@ -1,7 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace acmeat.db.DeliveryCompany;
+namespace acmeat.db.deliveryCompany;
 public class DeliveryCompanyContext(MySqlContext context)
 {
 
