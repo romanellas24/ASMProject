@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="acmeat.domains.order.dataproxy/acmeat.domains.order.dataproxy.csproj"/>
+     <ProjectReference Include="acmeat.domains.order.datawriter/acmeat.domains.order.datawriter.csproj"/>
     <ProjectReference Include="acmeat.domains.order.models/acmeat.domains.order.models.csproj"/>
   </ItemGroup>
 

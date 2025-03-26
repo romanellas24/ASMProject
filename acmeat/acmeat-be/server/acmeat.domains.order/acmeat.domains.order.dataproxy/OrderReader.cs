@@ -6,7 +6,10 @@ using Microsoft.Extensions.Logging;
 
 
 namespace acmeat.server.order.dataproxy;
-public class OrderReader{
+
+//https://stackoverflow.com/questions/14962066/cs0436-type-conflicts-with-the-imported-type
+#pragma warning disable 0436
+public class OrderReader :OrderDao{
 
     private readonly  MysqlClient _mysqlClient;
     private readonly ILogger<OrderReader> _logger;
@@ -18,7 +21,6 @@ public class OrderReader{
         _logger = logger;    
         _mysqlClient = mysqlClient;
     }
-    // TO DO: TEST IF IT WORKS 
     public List<acmeat.server.order.Order>GetOrders(){
         _logger.LogInformation($"Getting Orders");
        List<acmeat.db.order.Order> orders= _mysqlClient.GetOrders();
@@ -26,4 +28,10 @@ public class OrderReader{
        
     }
     
+    public Order GetOrderById(int id){
+        _logger.LogInformation($"Getting Order with id: {id}");
+      acmeat.db.order.Order order= _mysqlClient.GetOrderById(id);
+        return Utils.ConvertDbElementToServerElement(order); 
+       
+    }
 }

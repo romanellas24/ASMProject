@@ -2,5 +2,7 @@
 /obj
 /acmeat.domains.order.dataproxy/bin
 /acmeat.domains.order.dataproxy/obj
+/acmeat.domains.order.datawriter/bin
+/acmeat.domains.order.datawriter/obj
 /acmeat.domains.order.models/bin
 /acmeat.domains.order.models/obj
