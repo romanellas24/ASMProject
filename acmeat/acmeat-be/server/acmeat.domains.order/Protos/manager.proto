@@ -1,0 +1,16 @@
+syntax = "proto3";
+option csharp_namespace = "acmeat.server.order.manager";
+
+package order;
+
+service GrpcOrder {
+  rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
+}
+
+message HelloRequestClient {
+  string name = 1;
+}
+
+message HelloReplyClient {
+  string message = 1;
+}
