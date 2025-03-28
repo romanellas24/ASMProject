@@ -20,6 +20,19 @@ public class OrderInfo{
         
     }
 
+    public OrderInfo(acmeat.server.order.client.Order order){
+        
+        this.Id = order.Id;
+        this.UserId = order.UserId;
+        this.DeliveryTime = order.DeliveryTime;
+        this.PurchaseTime = order.PurchaseTime;
+        this.TransactionId = order.TransactionId;
+        this.Price = order.Price;
+        this.MenuId = order.MenuId;
+        this.Quantity = order.Quantity;
+        
+    }
+
     public int UserId{get;set;}
     public int Id {get;set;}
     public string DeliveryTime {get;set;}
@@ -28,4 +41,20 @@ public class OrderInfo{
     public int Price {get;set;}
     public int MenuId {get;set;}
     public int Quantity {get;set;}
+
+
+    public acmeat.server.order.client.Order Convert(){
+        acmeat.server.order.client.Order order = new acmeat.server.order.client.Order();
+        order.Id = this.Id;
+        order.UserId = this.UserId;
+        order.DeliveryTime = this.DeliveryTime;
+        order.PurchaseTime = this.PurchaseTime;
+        order.TransactionId = this.TransactionId;
+        order.Price = this.Price;
+        order.MenuId = this.MenuId;
+        order.Quantity = this.Quantity;
+        return order;
+    }
+
+    
 }

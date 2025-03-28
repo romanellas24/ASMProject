@@ -18,7 +18,7 @@ public static class Utils{
     }
 
     public static db.order.Order ConvertServerElementIntoDbELement(Order order){
-        return new db.order.Order(order.UserId,
+        db.order.Order orderDB = new db.order.Order(order.UserId,
                                   order.LocalId,
                                   order.DeliveryCompanyId,
                                   order.DeliveryTime,
@@ -27,5 +27,9 @@ public static class Utils{
                                   order.TransactionId,
                                   order.MenuId,
                                   order.Quantity);
+
+        orderDB.Id = order.Id;
+
+        return orderDB;
     }
 }

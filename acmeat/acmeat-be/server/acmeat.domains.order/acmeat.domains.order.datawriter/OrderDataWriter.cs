@@ -75,8 +75,8 @@ ICommandHandler<DeleteNewOrderCommand>
             {
 
                 _logger.LogInformation($"Command: {command.GetType().Name}. OrderId: {command.order.Id}");
-                await _mysqlClient.DeleteOrder(Utils.ConvertServerElementIntoDbELement(command.order));
-                _logger.LogInformation($"Order with id {command.order.Id} has been created");
+                await _mysqlClient.DeleteOrder(order);
+                _logger.LogInformation($"Order with id {command.order.Id} has been deleted");
 
             }
             else
@@ -85,6 +85,21 @@ ICommandHandler<DeleteNewOrderCommand>
             }
 
 
+        }else{
+            var order = _mysqlClient.GetOrderById(command.OrderId);
+
+            if (order != null)
+            {
+
+                _logger.LogInformation($"Command: {command.GetType().Name}. OrderId: {command.OrderId}");
+                await _mysqlClient.DeleteOrder(order);
+                _logger.LogInformation($"Order with id {command.OrderId} has been deleted");
+
+            }
+            else
+            {
+                throw new System.Exception($"Order with {command.OrderId} doesn't exist");
+            }
         }
     }
 

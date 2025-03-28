@@ -20,4 +20,8 @@
     
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="/home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-be/server/acmeat.domains.order/acmeat.domains.order.client/acmeat.domains.order.client.csproj" />
+  </ItemGroup>
+
 </Project>

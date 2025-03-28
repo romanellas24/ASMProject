@@ -5,6 +5,12 @@ package order;
 
 service GrpcOrder {
   rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
+  rpc GetOrderById(Id)returns(Order);
+  rpc GetOrders(Id) returns (OrderList);
+  rpc CreateOrder(Order) returns(GeneralResponse);
+  rpc UpdateOrder(Order) returns (GeneralResponse);
+  rpc DeleteOrder(Order) returns (GeneralResponse);
+  rpc DeleteOrderById(Order) returns (GeneralResponse);
 }
 
 message HelloRequestClient {
@@ -13,4 +19,35 @@ message HelloRequestClient {
 
 message HelloReplyClient {
   string message = 1;
+}
+
+message Id{
+  int32 id = 1;
+}
+
+message GeneralResponse{
+  string message=1;
+}
+
+message Order{
+  int32 Id =1;
+  int32 UserId =2;
+  int32 LocalId =3;
+    
+  int32 DeliveryCompanyId =4;
+  
+  string DeliveryTime = 5;
+
+  string PurchaseTime =6;
+
+  int32 Price = 7;
+
+  int32 TransactionId =8;
+
+  int32 MenuId = 9;
+  int32 Quantity = 10;
+}
+
+message OrderList {
+  repeated Order orders=1;
 }

@@ -1,13 +1,33 @@
+using acmeat.db.mysql;
 using acmeat.domains.order.Services;
+using acmeat.server.order.dataproxy;
+using acmeat.server.order.datawriter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+#pragma warning disable CS0436 // Type conflicts with imported type
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+builder.Services.AddLogging(builder => builder.AddConsole());
+
+builder.Services.AddTransient<MySqlContext>();
+
+builder.Services.AddTransient<OrderReader>();
+builder.Services.AddTransient<OrderDataWriter>();
+builder.Services.AddTransient<MysqlClient>();
+
+builder.Services.AddEndpointsApiExplorer();
+
+
+// Add services to the container. DEPENDENCIES MUST BE WRITTEN BEFORE THIS COMMENT!!!
 builder.Services.AddGrpc();
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GrpcOrderManagerService>();

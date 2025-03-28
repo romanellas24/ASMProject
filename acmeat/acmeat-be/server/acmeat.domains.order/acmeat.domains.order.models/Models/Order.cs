@@ -10,7 +10,9 @@ public class Order
 {
 
      [JsonConstructor]
-    public Order(int UserId,
+    public Order(
+                 int Id,
+                 int UserId,
                  int LocalId,
                  int DeliveryCompanyId,
                  string DeliveryTime,
@@ -21,6 +23,7 @@ public class Order
                  int Quantity
                 )
     {
+        this.Id = Id;
         this.UserId = UserId;
         this.LocalId = LocalId;
         this.DeliveryCompanyId = DeliveryCompanyId;
@@ -47,7 +50,6 @@ public class Order
         this.Quantity = order.Quantity;
         
     }
-
     public int Id { get; set; }
 
     public int UserId { get; set; }
