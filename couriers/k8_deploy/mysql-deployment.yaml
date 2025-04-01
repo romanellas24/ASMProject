@@ -36,14 +36,14 @@ spec:
   selector:
     matchLabels:
       app: courier
-      #tier: mysql
+      tier: mysql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         app: courier
-        #tier: mysql
+        tier: mysql
     spec:
       containers:
       - image: mysql:5.6

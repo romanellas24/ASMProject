@@ -9,6 +9,7 @@ import asm.couriers.courier_allocation.entity.Vehicle;
 import asm.couriers.courier_allocation.exception.VehicleNotAvailableException;
 import asm.couriers.courier_allocation.service.AllocationService;
 import asm.couriers.courier_allocation.utils.RequestDTOtoOrderMapper;
+import asm.couriers.courier_allocation.utils.VehicleToDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,7 @@ public class AllocationServiceImpl implements AllocationService {
     }
 
     @Override
-    public Integer allocate_vehicle(RequestAllocateDTO request) throws Exception {
+    public VehicleDTO allocate_vehicle(RequestAllocateDTO request) throws Exception {
 
         if (request == null || request.getVehicle() == null || request.getTimeMinutes() == null || request.getExpectedDeliveryTime() == null) {
             throw new Exception("invalid request body");
@@ -54,7 +55,8 @@ public class AllocationServiceImpl implements AllocationService {
 
         Order order = RequestDTOtoOrderMapper.convertToOrderDTO(request);
         ordersDAO.save(order);
-        return 0;
+
+        return VehicleToDtoMapper.toDto(vehicle.get());
     }
 
     @Override

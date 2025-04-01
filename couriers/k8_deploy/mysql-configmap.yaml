@@ -5,4 +5,4 @@ metadata:
 data:
   mysql-server: mysql_courier       # The name of mysql service
   mysql-database-name: CourierDB    # The name of the database used by the app
-  mysql-user-username: user         # A user fot app 
+  mysql-user-username: courier_be         # A user for app 

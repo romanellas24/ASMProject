@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 public interface AllocationService {
     Integer vehicle_available(Integer deliveryTime, LocalDateTime expectedDelivery) throws VehicleNotAvailableException;
-    Integer allocate_vehicle(RequestAllocateDTO request) throws Exception;
+    VehicleDTO allocate_vehicle(RequestAllocateDTO request) throws Exception;
     VehicleDTO getVehicleById(Long id);
     VehicleDTO changeStateById(Long id);
 }

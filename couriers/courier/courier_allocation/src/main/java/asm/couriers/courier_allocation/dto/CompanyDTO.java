@@ -5,14 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
 @Setter
+@Getter
 @ToString
 @AllArgsConstructor
-public class RequestAllocateDTO {
-    private Integer vehicle;
-    private Integer timeMinutes;
-    private String expectedDeliveryTime;
-    private String companyName;
+public class CompanyDTO {
+    private String name;
     private String hash;
 }
