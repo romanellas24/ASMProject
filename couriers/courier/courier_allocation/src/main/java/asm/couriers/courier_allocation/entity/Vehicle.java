@@ -18,6 +18,6 @@ public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    @Column(name="state")
-    Boolean state;
+    @Column(name="available")
+    Boolean available;
 }

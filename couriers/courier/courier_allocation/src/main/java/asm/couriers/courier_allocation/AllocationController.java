@@ -1,7 +1,6 @@
 package asm.couriers.courier_allocation;
 
 import asm.couriers.courier_allocation.dto.*;
-import asm.couriers.courier_allocation.entity.Vehicle;
 import asm.couriers.courier_allocation.exception.UnauthorizedException;
 import asm.couriers.courier_allocation.service.AllocationService;
 import asm.couriers.courier_allocation.service.AuthService;
@@ -9,14 +8,12 @@ import asm.couriers.courier_allocation.service.MapsService;
 import asm.couriers.courier_allocation.utils.Const;
 import asm.couriers.courier_allocation.utils.StringToLocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @RestController
-@RequestMapping("/courier/availability")
+@RequestMapping()
 public class AllocationController {
     @Autowired
     private AllocationService allocationService;

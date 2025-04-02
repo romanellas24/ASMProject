@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VehiclesDAO extends JpaRepository<Vehicle, Integer> {
-    Integer countVehiclesByStateIsFalse();
+    Integer countVehiclesByAvailableIsTrue();
     @Query("SELECT v FROM Vehicle v WHERE v.id NOT IN ( " +
             "SELECT o.vehicle.id FROM Order o " +
             "WHERE (o.start_delivery_time < :expectedDelivery AND :expectedDelivery < o.end_delivery_time) " +
