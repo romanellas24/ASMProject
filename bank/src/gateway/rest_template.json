@@ -1,0 +1,14 @@
+{
+  "pay": {
+    "method":"put",
+    "template":"/token/"
+  },
+  "getPay": {
+    "method":"get",
+    "template":"/token/{tokenId}"
+  },
+  "refund": {
+    "method":"delete",
+    "template":"/token/{tokenId}"
+  }
+}

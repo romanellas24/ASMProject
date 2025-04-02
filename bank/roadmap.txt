@@ -10,8 +10,8 @@ Occorrono diverse interfacce fra cui:
 - Una PUT per creare un conto corrente, il conto corrente ha un numero univoco, progressivo.
 
 Ci saranno dei container in Jolie:
-* Una RestApp (Che contiene tutte le chiamate dei pagamenti).
-* Una RestApp (Che contiene tutte le chiamate dei conti (1)).
-* Un server statico (Contine il FE per pagare).
-* API Gateway GRPC
-
+* Una RestApp (Che contiene tutte le chiamate dei pagamenti). [POD 1]
+* Una RestApp (Che contiene tutte le chiamate dei conti (1)). [POD 1]
+* Un server statico (Contine il FE per pagare). [POD 1]
+* API Gateway GRPC [POD 2]
+* Mysql Server [POD 3]
