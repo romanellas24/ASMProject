@@ -1,9 +1,9 @@
 {
-  "pay": {
-    "method":"put",
+  "postPay": {
+    "method":"post",
     "template":"/token/"
   },
-  "getPay": {
+  "checkPay": {
     "method":"get",
     "template":"/token/{tokenId}"
   },
