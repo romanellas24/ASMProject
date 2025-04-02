@@ -53,13 +53,42 @@ namespace acmeat.api.order
 
         }
 
+        [HttpGet]
+        public async Task<List<OrderInfo>> GetOrders()
+        {
+            _logger.LogInformation($"Getting orders ");
+            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+
+            var orders = await _orderClient.GetOrderList();
+            return orders.Orders.Select(x => new OrderInfo(x)).ToList();
+
+        }
+
         [HttpPost]
         public async Task<GeneralResponse> CreateOrder(OrderInfo orderInfo)
         {
             Console.WriteLine($"Order with made with userId: {orderInfo.UserId}");
             
-            OrderClient client = new OrderClient();
-            return await client.CreateOrder(orderInfo.Convert());
+            return await _orderClient.CreateOrder(orderInfo.Convert());
+
+        }
+
+         [HttpPatch]
+        public async Task<GeneralResponse> UpdateOrder(OrderInfo orderInfo)
+        {
+            Console.WriteLine($"Order with Id: {orderInfo.Id} updating...");
+            
+            return await _orderClient.UpdateOrder(orderInfo.Convert());
+
+        }
+
+
+         [HttpDelete("{Id}")]
+        public async Task<GeneralResponse> DeleteOrderById(int Id)
+        {
+            Console.WriteLine($"Order with Id: {Id} deleting...");
+            
+            return await _orderClient.DeleteOrder( new Order{Id=Id});
 
         }
     }

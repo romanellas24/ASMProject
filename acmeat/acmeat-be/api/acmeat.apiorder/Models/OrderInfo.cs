@@ -1,7 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace acmeat.api.order;
 public class OrderInfo{
 
-    public OrderInfo(int UserId,
+
+
+    [JsonConstructor]
+    public OrderInfo(
+                    int UserId,
                      string DeliveryTime,
                      string PurchaseTime,
                      int TransactionId,
@@ -10,6 +16,7 @@ public class OrderInfo{
                      int Quantity
                      )
     {
+        this.Id = new Random().Next();
         this.UserId = UserId;
         this.DeliveryTime = DeliveryTime;
         this.PurchaseTime = PurchaseTime;
