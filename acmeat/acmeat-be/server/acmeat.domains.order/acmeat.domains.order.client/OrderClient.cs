@@ -21,7 +21,7 @@ namespace acmeat.server.order.client
             _httpClientHandler = new HttpClientHandler();
             _httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
 
-            _channel = GrpcChannel.ForAddress("http://localhost:5201", new GrpcChannelOptions { HttpHandler = _httpClientHandler });
+            _channel = GrpcChannel.ForAddress("http://ordermanager-service:5201", new GrpcChannelOptions { HttpHandler = _httpClientHandler });
 
 
 

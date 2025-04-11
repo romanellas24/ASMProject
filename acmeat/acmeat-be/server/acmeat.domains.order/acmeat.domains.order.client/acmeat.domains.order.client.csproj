@@ -4,6 +4,9 @@
     <TargetFramework>net9.0</TargetFramework>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageId>Acmeat.Server.Order.ClientTest</PackageId>
+    <Version>1.0.1</Version>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

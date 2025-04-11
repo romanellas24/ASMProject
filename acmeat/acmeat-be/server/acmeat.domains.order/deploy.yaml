@@ -6,10 +6,10 @@ metadata:
   name: ordermanager
   namespace: default
   labels:
-    app: apiorder
+    app: ordermanager
 
 spec:
-  replicas: 1
+  replicas: 2
 
   selector:
     matchLabels:
@@ -34,4 +34,4 @@ spec:
                 cpu: "500m"
 
           ports:
-            - containerPort: 5001
+            - containerPort: 5201
