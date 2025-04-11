@@ -2,22 +2,25 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace acmeat.db.deliveryCompany;
-public class DeliveryCompanyContext(MySqlContext context)
+public class DeliveryCompanyContext:MySqlContext
 {
 
-    private readonly MySqlContext _context = context;
 
-        public List<DeliveryCompany> GetDeliveryCompanies()
+    public DeliveryCompanyContext(IConfiguration configuration) : base(configuration)
+    {
+    }
+
+    public List<DeliveryCompany> GetDeliveryCompanies()
     {
         //  _logger.LogInformation("Getting DeliveryCompanys");
-        List<DeliveryCompany> DeliveryCompanys = _context.SOCIETÀ_CONSEGNA
+        List<DeliveryCompany> DeliveryCompanys = SOCIETÀ_CONSEGNA
         .ToList();
 
         return DeliveryCompanys;
     }
-
+     //fix update -> https://stackoverflow.com/questions/48202403/instance-of-entity-type-cannot-be-tracked-because-another-instance-with-same-key
     public DeliveryCompany GetDeliveryCompanyById(int id){
-        DeliveryCompany DeliveryCompany = _context.SOCIETÀ_CONSEGNA
+        DeliveryCompany DeliveryCompany = SOCIETÀ_CONSEGNA.AsNoTracking()
         .Where( (DeliveryCompany) => DeliveryCompany.Id == id)
         .AsEnumerable()
         .First();
@@ -26,25 +29,25 @@ public class DeliveryCompanyContext(MySqlContext context)
     }
 
     public async Task CreateDeliveryCompany(DeliveryCompany DeliveryCompany){
-        await _context.SOCIETÀ_CONSEGNA.AddAsync(DeliveryCompany);
-        await _context.SaveChangesAsync();
+        await SOCIETÀ_CONSEGNA.AddAsync(DeliveryCompany);
+        await SaveChangesAsync();
     }  
 
 
     public async Task UpdateDeliveryCompany(DeliveryCompany DeliveryCompany){
-        _context.SOCIETÀ_CONSEGNA.Update(DeliveryCompany);
-        await _context.SaveChangesAsync();
+        SOCIETÀ_CONSEGNA.Update(DeliveryCompany);
+        await SaveChangesAsync();
     }
 
     
     public async Task DeleteDeliveryCompany(DeliveryCompany DeliveryCompany){
-        _context.SOCIETÀ_CONSEGNA.Remove(DeliveryCompany);
-        await _context.SaveChangesAsync();
+        SOCIETÀ_CONSEGNA.Remove(DeliveryCompany);
+        await SaveChangesAsync();
     }
     public async Task DeleteDeliveryCompanyById(int id)
     {
         DeliveryCompany DeliveryCompanyToDelete = new DeliveryCompany() { Id = id };
-        _context.Entry(DeliveryCompanyToDelete).State = EntityState.Deleted;
-        await _context.SaveChangesAsync();
+        Entry(DeliveryCompanyToDelete).State = EntityState.Deleted;
+        await SaveChangesAsync();
     }
 }

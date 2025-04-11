@@ -49,7 +49,7 @@ ICommandHandler<DeleteNewOrderCommand>
             if (order != null)
             {
                 _logger.LogInformation($"Command: {command.GetType().Name}. OrderId: {command.order.Id}");
-                await _mysqlClient.UpdateOrder(Utils.ConvertServerElementIntoDbELement(command.order));
+                await _mysqlClient.UpdateOrder(command.order.Convert());
                 _logger.LogInformation($"Order with id {command.order.Id} has been updated");
             }else{
                 throw new System.Exception($"Order {command.order.Id} has not been found");

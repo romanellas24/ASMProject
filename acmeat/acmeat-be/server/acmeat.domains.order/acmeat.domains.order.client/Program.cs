@@ -1,6 +1,4 @@
-using System;
-using System.Text.Json;
-using System.Threading.Tasks;
+
 
 namespace acmeat.server.order.client
 {
@@ -10,7 +8,7 @@ namespace acmeat.server.order.client
     class Program
     {
 
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
         }
 

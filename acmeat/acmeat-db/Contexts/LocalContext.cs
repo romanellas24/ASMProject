@@ -2,22 +2,25 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace acmeat.db.local;
-public class LocalContext(MySqlContext context)
+public class LocalContext:MySqlContext
 {
 
-    private readonly MySqlContext _context = context;
 
-        public List<Local> GetLocals()
+    public LocalContext(IConfiguration configuration) : base(configuration)
+    {
+    }
+
+    public List<Local> GetLocals()
     {
         //  _logger.LogInformation("Getting Locals");
-        List<Local> Locals = _context.LOCALE
+        List<Local> Locals = LOCALE
         .ToList();
 
         return Locals;
     }
-
+     //fix update -> https://stackoverflow.com/questions/48202403/instance-of-entity-type-cannot-be-tracked-because-another-instance-with-same-key
     public Local GetLocalById(int id){
-        Local Local = _context.LOCALE
+        Local Local = LOCALE.AsNoTracking()
         .Where( (Local) => Local.Id == id)
         .AsEnumerable()
         .First();
@@ -26,26 +29,26 @@ public class LocalContext(MySqlContext context)
     }
 
     public async Task CreateLocal(Local Local){
-        await _context.LOCALE.AddAsync(Local);
-        await _context.SaveChangesAsync();
+        await LOCALE.AddAsync(Local);
+        await SaveChangesAsync();
     }  
 
 
     public async Task UpdateLocal(Local Local){
-        _context.LOCALE.Update(Local);
-        await _context.SaveChangesAsync();
+        LOCALE.Update(Local);
+        await SaveChangesAsync();
     }
 
     
     public async Task DeleteLocal(Local Local){
-        _context.LOCALE.Remove(Local);
-        await _context.SaveChangesAsync();
+        LOCALE.Remove(Local);
+        await SaveChangesAsync();
     }
 
     public async Task DeleteLocalById(int id)
     {
         Local LocalToDelete = new Local() { Id = id };
-        _context.Entry(LocalToDelete).State = EntityState.Deleted;
-        await _context.SaveChangesAsync();
+        Entry(LocalToDelete).State = EntityState.Deleted;
+        await SaveChangesAsync();
     }
 }

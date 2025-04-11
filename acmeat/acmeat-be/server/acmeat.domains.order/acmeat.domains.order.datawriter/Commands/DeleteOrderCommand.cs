@@ -7,7 +7,7 @@ namespace acmeat.server.order.datawriter;
 public class DeleteNewOrderCommand : ICommand
 {
 
-    public DeleteNewOrderCommand(acmeat.server.order.Order order){
+    public DeleteNewOrderCommand(Order order){
         this.Id = Guid.NewGuid();
         this.order =order;
     }
@@ -18,5 +18,5 @@ public class DeleteNewOrderCommand : ICommand
     }
     public Guid Id {get;set;}
     public int OrderId{get;set;}
-    public acmeat.server.order.Order? order{get;set;}
+    public Order? order{get;set;}
 }

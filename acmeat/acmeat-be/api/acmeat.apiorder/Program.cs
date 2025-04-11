@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 builder.Services.AddLogging(builder => builder.AddConsole());
-builder.Services.AddTransient<OrderClient>();
+builder.Services.AddScoped<OrderClient>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

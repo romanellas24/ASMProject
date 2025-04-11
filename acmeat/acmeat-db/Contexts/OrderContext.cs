@@ -4,22 +4,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace acmeat.db.order;
 
-public class OrderContext(MySqlContext context)
+public class OrderContext:MySqlContext
 {
+    public OrderContext(IConfiguration configuration) : base(configuration)
+    {
+    }
 
-    private readonly MySqlContext _context = context;
+    // private readonly MySqlContext context = context;
 
-      public List<Order> GetOrders()
+    public List<Order> GetOrders()
     {
         //  _logger.LogInformation("Getting Orders");
-        List<Order> Orders = _context.ORDINE
+        List<Order> Orders = ORDINE
         .ToList();
 
         return Orders;
     }
-
+    //fix update -> https://stackoverflow.com/questions/48202403/instance-of-entity-type-cannot-be-tracked-because-another-instance-with-same-key
     public Order GetOrderById(int id){
-        Order Order = _context.ORDINE
+        Order Order = ORDINE.AsNoTracking()
         .Where( (Order) => Order.Id == id)
         .AsEnumerable()
         .First();
@@ -28,25 +31,26 @@ public class OrderContext(MySqlContext context)
     }
 
     public async Task CreateOrder(Order Order){
-        await _context.ORDINE.AddAsync(Order);
-        await _context.SaveChangesAsync();
+        await ORDINE.AddAsync(Order);
+        await SaveChangesAsync();
     }  
 
 
     public async Task UpdateOrder(Order Order){
-        _context.ORDINE.Update(Order);
-        await _context.SaveChangesAsync();
+       
+        ORDINE.Update(Order);
+        await SaveChangesAsync();
     }
 
     
     public async Task DeleteOrder(Order Order){
-        _context.ORDINE.Remove(Order);
-        await _context.SaveChangesAsync();
+        ORDINE.Remove(Order);
+        await SaveChangesAsync();
     }
     public async Task DeleteOrderById(int id)
     {
         Order OrderToDelete = new Order() { Id = id };
-        _context.Entry(OrderToDelete).State = EntityState.Deleted;
-        await _context.SaveChangesAsync();
+        Entry(OrderToDelete).State = EntityState.Deleted;
+        await SaveChangesAsync();
     }
 }

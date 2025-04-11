@@ -68,4 +68,17 @@ public class Order
     public int MenuId { get; set; }
 
     public int Quantity { get; set; }
+
+    public acmeat.db.order.Order Convert(){
+        acmeat.db.order.Order order = new acmeat.db.order.Order();
+        order.Id = this.Id;
+        order.UserId = this.UserId;
+        order.DeliveryTime = this.DeliveryTime;
+        order.PurchaseTime = this.PurchaseTime;
+        order.TransactionId = this.TransactionId;
+        order.Price = this.Price;
+        order.MenuId = this.MenuId;
+        order.Quantity = this.Quantity;
+        return order;
+    }
 }

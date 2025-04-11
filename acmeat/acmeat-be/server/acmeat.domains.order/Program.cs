@@ -13,11 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging(builder => builder.AddConsole());
 
-builder.Services.AddTransient<MySqlContext>();
+// builder.Services.AddScoped<MySqlContext>();
 
-builder.Services.AddTransient<OrderReader>();
-builder.Services.AddTransient<OrderDataWriter>();
-builder.Services.AddTransient<MysqlClient>();
+builder.Services.AddScoped<OrderReader>();
+builder.Services.AddScoped<OrderDataWriter>();
+builder.Services.AddScoped<MysqlClient>();
 
 builder.Services.AddEndpointsApiExplorer();
 

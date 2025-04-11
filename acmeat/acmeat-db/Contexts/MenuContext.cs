@@ -2,22 +2,26 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace acmeat.db.menu;
-public class MenuContext(MySqlContext context)
+public class MenuContext:MySqlContext
 {
 
-    private readonly MySqlContext _context = context;
 
-      public List<Menu> GetMenus()
+    public MenuContext(IConfiguration configuration) : base(configuration)
+    {
+    }
+
+    public List<Menu> GetMenus()
     {
         //  _logger.LogInformation("Getting Menus");
-        List<Menu> Menus = _context.MENU
+        List<Menu> Menus = MENU
         .ToList();
 
         return Menus;
     }
 
+     //fix update -> https://stackoverflow.com/questions/48202403/instance-of-entity-type-cannot-be-tracked-because-another-instance-with-same-key
     public Menu GetMenuById(int id){
-        Menu Menu = _context.MENU
+        Menu Menu = MENU.AsNoTracking()
         .Where( (Menu) => Menu.Id == id)
         .AsEnumerable()
         .First();
@@ -26,25 +30,25 @@ public class MenuContext(MySqlContext context)
     }
 
     public async Task CreateMenu(Menu Menu){
-        await _context.MENU.AddAsync(Menu);
-        await _context.SaveChangesAsync();
+        await MENU.AddAsync(Menu);
+        await SaveChangesAsync();
     }  
 
 
     public async Task UpdateMenu(Menu Menu){
-        _context.MENU.Update(Menu);
-        await _context.SaveChangesAsync();
+        MENU.Update(Menu);
+        await SaveChangesAsync();
     }
 
     
     public async Task DeleteMenu(Menu Menu){
-        _context.MENU.Remove(Menu);
-        await _context.SaveChangesAsync();
+        MENU.Remove(Menu);
+        await SaveChangesAsync();
     }
     public async Task DeleteMenuById(int id)
     {
         Menu MenuToDelete = new Menu() { Id = id };
-        _context.Entry(MenuToDelete).State = EntityState.Deleted;
-        await _context.SaveChangesAsync();
+        Entry(MenuToDelete).State = EntityState.Deleted;
+        await SaveChangesAsync();
     }
 }

@@ -4,23 +4,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace acmeat.db.user;
 
-public class UserContext(MySqlContext context)
+public class UserContext:MySqlContext
 {
 
-    private readonly MySqlContext _context = context;
+
+    public UserContext(IConfiguration configuration) : base(configuration)
+    {
+    }
 
     public List<User> GetUsers()
     {
         //  _logger.LogInformation("Getting users");
-        List<User> users = _context.UTENTE
+        List<User> users = UTENTE
         .ToList();
 
         return users;
     }
-
+     //fix update -> https://stackoverflow.com/questions/48202403/instance-of-entity-type-cannot-be-tracked-because-another-instance-with-same-key
     public User GetUserById(int id)
     {
-        User user = _context.UTENTE
+        User user = UTENTE.AsNoTracking()
         .Where((user) => user.Id == id)
         .AsEnumerable()
         .First();
@@ -30,28 +33,28 @@ public class UserContext(MySqlContext context)
 
     public async Task CreateUser(User user)
     {
-        await _context.UTENTE.AddAsync(user);
-        await _context.SaveChangesAsync();
+        await UTENTE.AddAsync(user);
+        await SaveChangesAsync();
     }
 
 
     public async Task UpdateUser(User user)
     {
-        _context.UTENTE.Update(user);
-        await _context.SaveChangesAsync();
+        UTENTE.Update(user);
+        await SaveChangesAsync();
     }
 
 
     public async Task DeleteUser(User user)
     {
-        _context.UTENTE.Remove(user);
-        await _context.SaveChangesAsync();
+        UTENTE.Remove(user);
+        await SaveChangesAsync();
     }
 
     public async Task DeleteUserById(int id)
     {
         User UserToDelete = new User() { Id = id };
-        _context.Entry(UserToDelete).State = EntityState.Deleted;
-        await _context.SaveChangesAsync();
+        Entry(UserToDelete).State = EntityState.Deleted;
+        await SaveChangesAsync();
     }
 }

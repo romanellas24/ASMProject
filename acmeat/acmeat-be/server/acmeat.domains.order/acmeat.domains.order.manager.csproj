@@ -11,11 +11,11 @@
 
   <ItemGroup>
   
-       <PackageReference Include="Acmeat.Db.ClientTest" Version="1.0.2" />
+       <!-- <PackageReference Include="Acmeat.Db.ClientTest" Version="1.0.2" /> -->
        <PackageReference Include="Google.Protobuf" Version="3.30.2" />
      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
+    <!-- <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" /> -->
     
     
   </ItemGroup>
@@ -24,6 +24,7 @@
     <ProjectReference Include="acmeat.domains.order.dataproxy/acmeat.domains.order.dataproxy.csproj" />
      <ProjectReference Include="acmeat.domains.order.datawriter/acmeat.domains.order.datawriter.csproj" />
     <ProjectReference Include="acmeat.domains.order.models/acmeat.domains.order.models.csproj" />
+    <ProjectReference Include="/home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-db/acmeat.db.client.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -29,6 +29,7 @@ public class MySqlContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         connectionString = _configuration["DbConnectionString:connectionString"];
+        optionsBuilder.EnableSensitiveDataLogging();
         if(connectionString != null)
             optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         else
