@@ -6,14 +6,6 @@ include "database.iol"
 
 execution{ concurrent }
 
-inputPort BANK_GATEWAY {
-  Location: "local"
-  Protocol: sodep
-  Interfaces: BankGatewayInterface
-}
-
-execution{ concurrent }
-
 
 
 init {

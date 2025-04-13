@@ -14,7 +14,7 @@ type PostPayRequest: void {
     .expire_year: int
     .card_holder_first_name: string
     .card_holder_last_name: string
-    .dest_account: int,
+    .dest_account: int
     .amount: double
 }
 
@@ -35,4 +35,13 @@ interface BankGatewayInterface {
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
         postPay(PostPayRequest)(PostPayResponse),
         deleteRefund(RefundRequest)(RefundResponse)
+}
+
+inputPort BANK_GATEWAYServicePort {
+    Location: "socket://localhost:9001"
+    Protocol: soap {
+	    .wsdl = "file:/home/romanellas/WebstormProjects/ASMProject/bank/src/gateway/wsdl.xml";
+	    .wsdl.port = "BankGatewayInterface"
+    }
+    Interfaces: BankGatewayInterface
 }
