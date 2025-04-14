@@ -30,24 +30,15 @@ type RefundResponse: void {
     .status: string
 }
 
-interface BankGatewayInterface {
+interface BankPaymentsInterface {
     RequestResponse:
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
         postPay(PostPayRequest)(PostPayResponse),
         deleteRefund(RefundRequest)(RefundResponse)
 }
 
-inputPort BANK_GATEWAYServicePort {
-    Location: "socket://localhost:9001"
-    Protocol: soap {
-	    .wsdl = "file:/home/romanellas/WebstormProjects/ASMProject/bank/src/gateway/wsdl.xml";
-	    .wsdl.port = "BankGatewayInterface"
-    }
-    Interfaces: BankGatewayInterface
-}
-
-outputPort BankPaymentsPort {
+inputPort BankPaymentsPort {
     Location: "socket://localhost:9002"
     Protocol: xmlrpc { .debug = true }
-    Interfaces: BankGatewayInterface
+    Interfaces: BankPaymentsInterface
 }
