@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: public
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - host: acmeat.com
+    http:
+      paths:
+      - path: /Order(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: apiorder-service
+            port:
+              number: 8080
+      - path: /User(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: apiuser-service
+            port:
+              number: 8080
+        

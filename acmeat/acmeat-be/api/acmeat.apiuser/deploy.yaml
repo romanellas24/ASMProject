@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: apiuser
+  namespace: default
+  labels:
+    app: apiorder
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: apiuser
+
+  template:
+    metadata:
+      labels:
+        app: apiuser
+
+    spec:
+      containers:
+        - name: apiuser
+
+          image: docker.io/er4ikk/apiuser
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: apiorder
+  namespace: default
+  labels:
+    app: apiorder
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: apiorder
+
+  template:
+    metadata:
+      labels:
+        app: apiorder
+
+    spec:
+      containers:
+        - name: apiorder
+
+          image: docker.io/er4ikk/apiorder
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080
