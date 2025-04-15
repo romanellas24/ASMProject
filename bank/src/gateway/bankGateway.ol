@@ -47,12 +47,12 @@ init {
 
 main {
     [ getCheckPay( request )( response ) {
-        payRequest = {};
-        payRequest.transactionId = request.transactionId;
-        payRequest.transactionId = "AAAAAAAAAAAAAAAAAA";
-        getCheckPay@BankPaymentsPort(payRequest)(resPay);
-        response.amount = resPay.amount;
-        response.status = resPay.status
+        payRequest = {}
+        payRequest.param.transactionId = request.transactionId
+        payRequest.param.transactionId = "AAAAAAAAAAAAAAAAAA"
+        getCheckPay@BankPaymentsPort(payRequest)(resPay)
+        response.amount = resPay.param.amount
+        response.status = resPay.param.status
     }]
 
     [ postPay( request )( response ) {

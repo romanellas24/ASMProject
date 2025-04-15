@@ -30,11 +30,25 @@ type RefundResponse: void {
     .status: string
 }
 
+type GetCheckPayRequestBe: void {
+    .param: GetCheckPayRequest
+}
+
+type GetCheckPayResponseBe: void {
+    .param: GetCheckPayResponse
+}
+
 interface BankGatewayInterface {
     RequestResponse:
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
         postPay(PostPayRequest)(PostPayResponse),
         deleteRefund(RefundRequest)(RefundResponse)
+}
+
+interface BankGatewayInterfaceBe {
+    RequestResponse:
+        getCheckPay(GetCheckPayRequestBe)(GetCheckPayResponseBe)
+        
 }
 
 inputPort BANK_GATEWAYServicePort {
@@ -48,6 +62,8 @@ inputPort BANK_GATEWAYServicePort {
 
 outputPort BankPaymentsPort {
     Location: "socket://localhost:9002"
-    Protocol: xmlrpc { .debug = true }
-    Interfaces: BankGatewayInterface
+    Protocol: xmlrpc { 
+        .compression = false
+    }
+    Interfaces: BankGatewayInterfaceBe
 }

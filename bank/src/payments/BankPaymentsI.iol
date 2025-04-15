@@ -30,6 +30,14 @@ type RefundResponse: void {
     .status: string
 }
 
+type GetCheckPayRequestBe: void {
+    .param: GetCheckPayRequest
+}
+
+type GetCheckPayResponseBe: void {
+    .param: GetCheckPayResponse
+}
+
 interface BankPaymentsInterface {
     RequestResponse:
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
@@ -37,8 +45,15 @@ interface BankPaymentsInterface {
         deleteRefund(RefundRequest)(RefundResponse)
 }
 
+interface BankPaymentsInterfaceBe {
+    RequestResponse:
+        getCheckPay(GetCheckPayRequestBe)(GetCheckPayResponseBe)
+}
+
 inputPort BankPaymentsPort {
     Location: "socket://localhost:9002"
-    Protocol: xmlrpc { .debug = true }
-    Interfaces: BankPaymentsInterface
+    Protocol: xmlrpc { 
+        .compression = false
+    }
+    Interfaces: BankPaymentsInterfaceBe
 }

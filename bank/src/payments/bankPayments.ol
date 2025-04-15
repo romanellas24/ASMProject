@@ -23,9 +23,11 @@ init {
 
 main {
     [ getCheckPay( request )( response ) {
-        response.amount = 10.5
-        response.status = "Ok"
+        response.param.amount = 10.5
+        response.param.status = "Ok"
     }]
+
+    /*
 
     [ postPay( request )( response ) {
         response.status = "Ok"
@@ -34,4 +36,5 @@ main {
     [deleteRefund(request)(response) {
         response.status = "Ok"
     }]
+    */
 }
