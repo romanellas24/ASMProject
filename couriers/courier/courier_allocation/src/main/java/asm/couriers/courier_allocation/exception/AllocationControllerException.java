@@ -14,11 +14,12 @@ public class AllocationControllerException {
     /*
         Handle vehicle not available to deliver.
         i.e. all vehicle are currently not available.
+        TODO:DA CAMBIARE CODICE ERRORE
      */
     @ExceptionHandler(VehicleNotAvailableException.class)
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public ResponseEntity<ExceptionDTO> vehicleNotAvailable(Exception ex) {
-        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 400);
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 404);
         return new ResponseEntity<>(exception, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
@@ -39,9 +40,22 @@ public class AllocationControllerException {
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<ExceptionDTO> unauthorized(Exception ex) {
-        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 400);
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 401);
         return new ResponseEntity<>(exception, HttpStatus.UNAUTHORIZED);
     }
+
+    /*
+        Handle generic errors (400)
+     */
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDTO> exception(Exception ex) {
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 400);
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+    }
+
+
 
 
 }

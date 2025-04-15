@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Courier Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+</head>
+</head>
+<body class="w-100">
+<script>
+
+    const COURIER_ID = [[${courier_id}]];
+    const WSURL = "[[${WSurl}]]";
+    const DEFMSG = "<h2>Non ci sono consegne da effettuare!</h2>"
+    let webSocket = {};
+
+    deleteOrderHTML = (orderId) => {
+        document.getElementById("customMsg").innerHTML = DEFMSG;
+        let message = JSON.stringify({
+            "orderId": orderId,
+            "courierId": COURIER_ID,
+            "delivered": true,
+        })
+        webSocket.send(message)
+    }
+
+    insertOrderHTML = (orderId) => {
+        let msg = `<h2>Hai una consegna (id:${orderId})! Quando hai consegnato, premi il bottone per indicare che la consegna é avvenuta con successo.</h2>`
+        let btn = "<button type=\"button\" class=\"btn btn-primary\" onclick='deleteOrderHTML()'>Consegnato</button>"
+
+        document.getElementById("customMsg").innerHTML = msg + btn;
+    }
+
+    errorHTML = (error) => {
+        document.getElementById("customMsg").innerHTML = error + "<h3>Ricarica la pagina</h3>"
+    }
+
+    connectWS = () => webSocket = new WebSocket("ws://" + WSURL + "?courierId=" + COURIER_ID);
+    closeWS = () => webSocket.close();
+
+    connectWS();
+    webSocket.onmessage = (event) => {
+        try{
+            let data = JSON.parse(event.data)
+            insertOrderHTML(data.orderId);
+        } catch (e) {
+            console.log(event.data)
+        }
+    }
+
+    webSocket.onerror = (event) => {
+        console.log("WebSocket error: ", event);
+        errorHTML(event)
+    }
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+<div class="d-flex flex-column p-3">
+    <h1>Welcome courier <span th:text="${courier_id}">[courier_id]</span>!</h1>
+    <div id="customMsg">
+        <h2>Non ci sono consegne da effettuare!</h2>
+    </div>
+</div>
+</body>
+
+</html>

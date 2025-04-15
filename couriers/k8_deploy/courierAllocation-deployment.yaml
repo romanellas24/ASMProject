@@ -17,7 +17,7 @@ spec:
       containers:
       - name: courier-allocation
         image: tiesta/asm_courier_allocation:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
           - name: http
             containerPort: 8080

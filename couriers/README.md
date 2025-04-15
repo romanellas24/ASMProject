@@ -90,3 +90,5 @@ Per vedere i pods:
 
 https://benstitou-anas.medium.com/deploy-java-spring-application-with-mysql-db-on-kubernetes-1e456271c6a1
 
+
+

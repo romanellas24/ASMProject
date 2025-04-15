@@ -9,5 +9,5 @@ import lombok.ToString;
 @ToString
 public class VehicleDTO {
     private Integer id;
-    private Boolean state;
+    private Boolean available;
 }

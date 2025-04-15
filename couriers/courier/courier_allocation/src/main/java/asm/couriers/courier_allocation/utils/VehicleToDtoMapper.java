@@ -7,7 +7,7 @@ public class VehicleToDtoMapper {
     public static VehicleDTO toDto(Vehicle vehicle) {
         VehicleDTO dto = new VehicleDTO();
         dto.setId(vehicle.getId());
-        dto.setState(vehicle.getAvailable());
+        dto.setAvailable(vehicle.getAvailable());
         return dto;
     }
 }

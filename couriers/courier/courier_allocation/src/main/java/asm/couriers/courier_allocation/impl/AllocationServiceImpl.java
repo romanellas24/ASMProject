@@ -6,6 +6,7 @@ import asm.couriers.courier_allocation.dto.RequestAllocateDTO;
 import asm.couriers.courier_allocation.dto.VehicleDTO;
 import asm.couriers.courier_allocation.entity.Order;
 import asm.couriers.courier_allocation.entity.Vehicle;
+import asm.couriers.courier_allocation.exception.NotFoundException;
 import asm.couriers.courier_allocation.exception.VehicleNotAvailableException;
 import asm.couriers.courier_allocation.service.AllocationService;
 import asm.couriers.courier_allocation.utils.RequestDTOtoOrderMapper;
@@ -43,14 +44,10 @@ public class AllocationServiceImpl implements AllocationService {
     @Override
     public VehicleDTO allocate_vehicle(RequestAllocateDTO request) throws Exception {
 
-        if (request == null || request.getVehicle() == null || request.getTimeMinutes() == null || request.getExpectedDeliveryTime() == null) {
-            throw new Exception("invalid request body");
-        }
-
         Optional<Vehicle> vehicle = vehiclesDAO.findById(request.getVehicle());
 
         if (vehicle.isEmpty()) {
-            throw new Exception("Invalid vehicle ID");
+            throw new NotFoundException("Vehicle ID");
         }
 
         Order order = RequestDTOtoOrderMapper.convertToOrderDTO(request);

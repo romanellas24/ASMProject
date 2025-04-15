@@ -9,4 +9,13 @@ public class StringToLocalDateTime {
     public static LocalDateTime convertStringToLocalDateTime(String date) {
         return LocalDateTime.parse(date, formatter);
     }
+
+    public static boolean isStringValid(String date) {
+        try {
+            LocalDateTime.parse(date, formatter);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

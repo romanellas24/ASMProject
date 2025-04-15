@@ -50,6 +50,14 @@ public class AllocationController {
     @ResponseBody
     VehicleDTO allocateVehicle(@RequestBody RequestAllocateDTO request) throws Exception {
 
+        if (request == null || request.getVehicle() == null || request.getTimeMinutes() == null || request.getExpectedDeliveryTime() == null) {
+            throw new Exception("Invalid request body");
+        }
+
+        if (!StringToLocalDateTime.isStringValid(request.getExpectedDeliveryTime())) {
+            throw new Exception("Invalid date format");
+        }
+
         CompanyDTO company = new CompanyDTO(request.getCompanyName(), request.getHash());
 
         if (!authService.isHashValid(company)) {

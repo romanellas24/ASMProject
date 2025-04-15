@@ -3,22 +3,23 @@ kind: Service
 metadata:
   name: mysql-courier
   labels:
-    app: courier
+    app: mysql-courier
 spec:
   ports:
     - port: 3306
       targetPort: 3306
   selector:
-    app: courier
+    app: mysql-courier
     tier: mysql
-  clusterIP: None
+  # clusterIP: None
+  type: NodePort
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pvc
   labels:
-    app: courier
+    app: mysql-courier
 spec:
   accessModes:
     - ReadWriteOnce
@@ -31,47 +32,56 @@ kind: Deployment
 metadata:
   name: mysql-courier
   labels:
-    app: courier
+    app: mysql-courier
 spec:
   selector:
     matchLabels:
-      app: courier
+      app: mysql-courier
       tier: mysql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: courier
+        app: mysql-courier
         tier: mysql
     spec:
       containers:
-      - image: mysql:5.6
+      - image: docker.io/tiesta/asm_courier_db:0.10
         name: mysql
-        env:
-        - name: MYSQL_DATABASE
-          valueFrom:
-            configMapKeyRef:
-              name: mysql-config-map
-              key: mysql-database-name
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-pass
-              key: mysql-root-password
-        - name: MYSQL_USER
-          valueFrom:
-            configMapKeyRef:
-              name: mysql-config-map
-              key: mysql-user-username
-        - name: MYSQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-pass
-              key: mysql-user-password
+        # env:
+        # - name: MYSQL_DATABASE
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: mysql-config-map
+        #       key: mysql-database-name
+        # - name: MYSQL_USER
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: mysql-config-map
+        #       key: mysql-user-username
+        # - name: MYSQL_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mysql-pass
+        #       key: mysql-user-password
+        # - name: MYSQL_ROOT_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mysql-pass
+        #       key: mysql-root-password
         livenessProbe:
           tcpSocket:
             port: 3306
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          timeoutSeconds: 1
         ports:
         - containerPort: 3306
           name: mysql
