@@ -1,4 +1,5 @@
 include "BankGatewayInterface.iol"
+include "../payments/BankPaymentsI.iol"
 
 include "console.iol"
 include "string_utils.iol"
@@ -6,7 +7,22 @@ include "database.iol"
 
 execution{ concurrent }
 
+inputPort BANK_GATEWAY {
+    Location: "socket://localhost:9001"
+    Protocol: soap {
+        .wsdl = "file:/home/romanellas/WebstormProjects/ASMProject/bank/src/gateway/wsdl.xml";
+	    .wsdl.port = "BankGatewayInterface"
+    }
+    Interfaces: BankGatewayInterface
+}
 
+outputPort BankPaymentsPort {
+    Location: "socket://localhost:9002"
+    Protocol: xmlrpc { 
+        .compression = false
+    }
+    Interfaces: BankPaymentsI
+}
 
 init {
     // connect to DB
@@ -20,6 +36,7 @@ init {
     };
     connect@Database( connectionInfo )( void );
 
+    /*
     scope (createAccountTable) {
         install (SQLException => println@Console("SqlException: Mysql Error")());
         update@Database(
@@ -41,22 +58,29 @@ init {
         )(ret)
         println@Console("CREATED table tbl_transactions with result: " + ret)()
     }
+    */
     
     println@Console("Bank is running...")()
 }
 
 main {
     [ getCheckPay( request )( response ) {
+        /*
         payRequest = {}
         payRequest.param.transactionId = request.transactionId
         payRequest.param.transactionId = "AAAAAAAAAAAAAAAAAA"
         getCheckPay@BankPaymentsPort(payRequest)(resPay)
         response.amount = resPay.param.amount
         response.status = resPay.param.status
+        */
+        response.status = "Ok"
     }]
 
     [ postPay( request )( response ) {
-        response.status = "Ok"
+        internalReq.param.dest_account = request.dest_account;
+        internalReq.param.amount = request.amount;
+        postPay@BankPaymentsPort(internalReq)(internalRes);
+        response.token = internalRes.param.token
     }]
 
     [deleteRefund(request)(response) {

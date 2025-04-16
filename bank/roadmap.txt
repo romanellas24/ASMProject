@@ -2,7 +2,8 @@ Occorrono diverse interfacce fra cui:
 - Un'interfaccia con file statici per realizzare il pagamento, all'interno di questa pagina deve essere inviata (via GET) la chiave primaria che identifica l'ordine da ACMEAT (che non sappiamo)
 
 Payments
-- Una PUT che dati i dati di pagamento ritorna un token
+- Una POST che genera un token
+- Una PUT che dati i dati di pagamento imposta come pagato un token e crea la transazione
 - Una GET che dato il token rilasciato precedentemente ritorna le informazioni del pagamento
 - Una DELETE che elimina il token e ridà i soldi ai correntisti
 

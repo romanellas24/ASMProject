@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions targetNamespace="http://tbc.org.wsdl" xmlns:xsd1="http://tbc.org.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://tbc.org.wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+<wsdl:definitions targetNamespace="http://www.w3.org/2001/XMLSchema.wsdl" xmlns:xsd1="http://www.w3.org/2001/XMLSchema.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.w3.org/2001/XMLSchema.wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
   <wsdl:types>
-    <xs:schema targetNamespace="http://tbc.org.xsd" xmlns:sch="http://tbc.org.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="getCheckPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="transactionId" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getCheckPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_first_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_last_name" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deleteRefund"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deleteRefundResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element></xs:schema>
+    <xs:schema targetNamespace="http://www.w3.org/2001/XMLSchema.xsd" xmlns:sch="http://www.w3.org/2001/XMLSchema.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="getCheckPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="transactionId" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getCheckPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deleteRefund"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deleteRefundResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_first_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_last_name" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_first_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_last_name" type="xs:string"/></xs:sequence></xs:complexType></xs:element></xs:schema>
   </wsdl:types>
   <wsdl:message name="GetCheckPayResponse">
     <wsdl:part name="body" element="xsd1:getCheckPayResponse">
@@ -11,20 +11,24 @@
     <wsdl:part name="body" element="xsd1:deleteRefundResponse">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="PostPayRequest">
-    <wsdl:part name="body" element="xsd1:postPay">
+  <wsdl:message name="PutPayRequest">
+    <wsdl:part name="body" element="xsd1:putPayResponse">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="GetCheckPayRequest">
-    <wsdl:part name="body" element="xsd1:getCheckPay">
+  <wsdl:message name="RefundRequest">
+    <wsdl:part name="body" element="xsd1:deleteRefund">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="PostPayResponse">
     <wsdl:part name="body" element="xsd1:postPayResponse">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="RefundRequest">
-    <wsdl:part name="body" element="xsd1:deleteRefund">
+  <wsdl:message name="GetCheckPayRequest">
+    <wsdl:part name="body" element="xsd1:getCheckPay">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PostPayRequest">
+    <wsdl:part name="body" element="xsd1:postPay">
     </wsdl:part>
   </wsdl:message>
   <wsdl:portType name="BANK_GATEWAY">
@@ -44,6 +48,12 @@
       <wsdl:input message="tns:RefundRequest">
     </wsdl:input>
       <wsdl:output message="tns:RefundResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="putPay">
+      <wsdl:input message="tns:PutPayRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:PutPayRequest">
     </wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
@@ -76,10 +86,19 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="putPay">
+      <soap:operation soapAction="putPay" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="BANK_GATEWAYService">
     <wsdl:port name="BANK_GATEWAYServicePort" binding="tns:BANK_GATEWAYSOAPBinding">
-      <soap:address location="localhost:8080"/>
+      <soap:address location="localhost:9001"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
