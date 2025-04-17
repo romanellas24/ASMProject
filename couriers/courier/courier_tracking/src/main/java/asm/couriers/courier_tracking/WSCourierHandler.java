@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,11 +45,31 @@ public class WSCourierHandler implements WebSocketHandler {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+    private void sendError(WebSocketSession session, String message) {
+        try {
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("type", "ERROR");
+            payload.put("message", message);
+            String json = objectMapper.writeValueAsString(payload);
+            session.sendMessage(new TextMessage(json));
+        } catch (IOException e) {
+            log.error("Error sending WebSocket error message: {}", e.getMessage());
+        }
+    }
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String query = session.getUri().getQuery();
         if (query != null && query.startsWith("courierId=")) {
             Integer courierId = Integer.parseInt(query.split("=")[1]);
+            //check if user is already connected
+            if (sessions.containsKey(courierId)) {
+                log.warn("Courier {} is already connected", courierId);
+                sendError(session, "Courier already connected");
+                session.close(new CloseStatus(4001, "Courier already connected"));
+                return;
+            }
+
             // update hashmaps
             sessions.put(courierId, session);
             sessionIds.put(session.getId(), courierId);
@@ -95,12 +117,9 @@ public class WSCourierHandler implements WebSocketHandler {
         if (courier != null) {
             sessions.remove(courier);
             sessionIds.remove(session.getId());
-        } else {
-            sessions.entrySet().removeIf(entry -> entry.getValue().getId().equals(session.getId()));
+            checkOrdersScheduler.cancelSchedule(courier);
+            log.info("Connection closed on session: {} with status: {}", session.getId(), closeStatus.getCode());
         }
-
-        checkOrdersScheduler.cancelSchedule(courier);
-        log.info("Connection closed on session: {} with status: {}", session.getId(), closeStatus.getCode());
     }
 
     @Override
