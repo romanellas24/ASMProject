@@ -1,4 +1,5 @@
 SET AUTOCOMMIT  = 0;
+
 create table tbl_account
 (
     id    int auto_increment
@@ -32,60 +33,71 @@ create table tbl_deposit
 )
     comment 'General table for deposits';
 
+create table tbl_token_transactions
+(
+    token          varchar(96)                        not null
+        primary key,
+    card           varchar(16)                        not null,
+    transaction_on datetime default CURRENT_TIMESTAMP not null,
+    constraint tbl_token_transactions_tbl_debit_cards_PAN_fk
+        foreign key (card) references tbl_debit_cards (PAN)
+            on update cascade on delete cascade
+);
+
 create table tbl_tokens
 (
-    id                   int auto_increment
-        primary key,
-    payment_request_time datetime default CURRENT_TIMESTAMP not null,
-    amount               decimal(20, 10)                    not null,
-    dest_account         int                                not null,
-    token                varchar(96)                        null,
+    token                varchar(96)                               not null,
+    payment_request_time datetime        default CURRENT_TIMESTAMP not null,
+    amount               decimal(20, 10) default 0.0000000000      not null,
+    dest_account         int                                       null,
+    constraint tbl_tokens_pk
+        unique (token),
     constraint tbl_tokens_tbl_account_id_fk
         foreign key (dest_account) references tbl_account (id)
 );
 
-create table tbl_token_transactions
-(
-    token_id       int                                not null
-        primary key,
-    card           varchar(16)                        not null,
-    amount         decimal(20, 10)                    not null,
-    dest_account   int                                null,
-    transaction_on datetime default CURRENT_TIMESTAMP not null,
-    constraint tbl_token_transactions_tbl_account_id_fk
-        foreign key (dest_account) references tbl_account (id),
-    constraint tbl_token_transactions_tbl_debit_cards_PAN_fk
-        foreign key (card) references tbl_debit_cards (PAN)
-            on update cascade on delete cascade,
-    constraint tbl_token_transactions_tbl_tokens_id_fk
-        foreign key (token_id) references tbl_tokens (id)
-);
-
 create definer = romanellas@`%` view view_balances as
-select `asm_developing`.`view_transaction_list`.`account`              AS `account`,
-       sum(`asm_developing`.`view_transaction_list`.`variation_value`) AS `balance`
-from `asm_developing`.`view_transaction_list`
-group by `asm_developing`.`view_transaction_list`.`account`;
+select `jolie_bank`.`view_transaction_list`.`account`              AS `account`,
+       sum(`jolie_bank`.`view_transaction_list`.`variation_value`) AS `balance`
+from `jolie_bank`.`view_transaction_list`
+group by `jolie_bank`.`view_transaction_list`.`account`;
 
 create definer = romanellas@`%` view view_transaction_list as
-select `asm_developing`.`tbl_deposit`.`account`       AS `account`,
-       `asm_developing`.`tbl_deposit`.`deposit_value` AS `variation_value`,
-       `asm_developing`.`tbl_deposit`.`deposit_on`    AS `deposit_on`
-from `asm_developing`.`tbl_deposit`
+select `jolie_bank`.`tbl_deposit`.`account`       AS `account`,
+       `jolie_bank`.`tbl_deposit`.`deposit_value` AS `variation_value`,
+       `jolie_bank`.`tbl_deposit`.`deposit_on`    AS `deposit_on`
+from `jolie_bank`.`tbl_deposit`
 union
-select `asm_developing`.`tbl_debit_cards`.`refer_account`          AS `account`,
-       (-(1) * `asm_developing`.`tbl_token_transactions`.`amount`) AS `variation_value`,
-       `asm_developing`.`tbl_token_transactions`.`transaction_on`  AS `deposit_on`
-from (`asm_developing`.`tbl_token_transactions` join `asm_developing`.`tbl_debit_cards`
-      on ((`asm_developing`.`tbl_token_transactions`.`card` = `asm_developing`.`tbl_debit_cards`.`PAN`)))
+select `jolie_bank`.`tbl_debit_cards`.`refer_account`         AS `account`,
+       (-(1) * `tkn`.`amount`)                                AS `variation_value`,
+       `jolie_bank`.`tbl_token_transactions`.`transaction_on` AS `deposit_on`
+from ((`jolie_bank`.`tbl_token_transactions` join `jolie_bank`.`tbl_debit_cards`
+       on ((`jolie_bank`.`tbl_token_transactions`.`card` =
+            `jolie_bank`.`tbl_debit_cards`.`PAN`))) join `jolie_bank`.`tbl_tokens` `tkn`
+      on ((`tkn`.`token` = `jolie_bank`.`tbl_token_transactions`.`token`)))
 union
-select `asm_developing`.`tbl_token_transactions`.`dest_account`   AS `account`,
-       `asm_developing`.`tbl_token_transactions`.`amount`         AS `variation_value`,
-       `asm_developing`.`tbl_token_transactions`.`transaction_on` AS `deposit_on`
-from `asm_developing`.`tbl_token_transactions`;
+select `jolie_bank`.`tbl_tokens`.`dest_account`               AS `account`,
+       `jolie_bank`.`tbl_tokens`.`amount`                     AS `variation_value`,
+       `jolie_bank`.`tbl_token_transactions`.`transaction_on` AS `deposit_on`
+from (`jolie_bank`.`tbl_token_transactions` join `jolie_bank`.`tbl_tokens`
+      on ((`jolie_bank`.`tbl_token_transactions`.`token` = `jolie_bank`.`tbl_tokens`.`token`)))
+order by `deposit_on` desc, `variation_value` desc;
 
 create
-    definer = romanellas@`%` function CREATE_TOKEN(token_id DECIMAL(20,10), ts datetime) returns char(96) deterministic
-    RETURN CONCAT(SHA2((ts * token_id),256), MD5(ts * token_id));
+    definer = romanellas@`%` function CREATE_TOKEN(token_id decimal(20, 10), ts datetime) returns char(96) deterministic
+BEGIN
+ DECLARE TOKEN_FNC VARCHAR(96) DEFAULT "";
+ DECLARE NUM_ROWS INT DEFAULT 0;
+  SELECT CONCAT(SHA2((ts * token_id),256), MD5(ts * token_id)) INTO TOKEN_FNC;
+  SELECT COUNT(*) FROM tbl_tokens WHERE token = TOKEN_FNC INTO NUM_ROWS;
+  IF NUM_ROWS = 0 THEN
+      INSERT INTO tbl_tokens(token) VALUE (TOKEN_FNC);
+    RETURN TOKEN_FNC;
+  ELSE
+      RETURN CREATE_TOKEN(token_id - 0.01, ts);
+    END IF;
+END;
+
+
 
 COMMIT;

@@ -13,8 +13,35 @@ outputPort BANK_GATEWAY {
 
 main
 {
+    //Creating token
+    println@Console("Creating token...")();
     request.amount = 15.26;
-    request.dest_account = 1;
+    request.dest_account = 2;
     postPay@BANK_GATEWAY( request )( response );
-    println@Console( response.status )()
+    token = response.token;
+    println@Console( "Token:" + token )()
+    undef(request);
+    undef(response);
+    //Paying - Invalid params
+    request.pan = "0101020203030404";
+    request.cvv = 250;
+    request.expire_month = 9;
+    request.expire_year = 2075;
+    request.card_holder_first_name = "";
+    request.card_holder_last_name = "Romanella";
+    request.token = token;
+    putPay@BANK_GATEWAY( request )( response );
+    println@Console( "Response: " + response.status )()
+    undef(request);
+    undef(response);
+    //Paying - Invalid card - payment info
+    request.pan = "0101020203030404";
+    request.cvv = 250;
+    request.expire_month = 9;
+    request.expire_year = 2075;
+    request.card_holder_first_name = "Daniele";
+    request.card_holder_last_name = "Romanella";
+    request.token = token + "AAA";
+    putPay@BANK_GATEWAY( request )( response );
+    println@Console( "Response: " + response.status )()
 }

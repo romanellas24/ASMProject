@@ -23,12 +23,12 @@ type PutPayRequest: void {
     .expire_year: int
     .card_holder_first_name: string
     .card_holder_last_name: string
-    .dest_account: int
-    .amount: double
+    .token: string
 }
 
 type PutPayResponse: void {
     .status: string
+    .code: int
 }
 
 type RefundRequest: void {
@@ -51,7 +51,7 @@ interface BankGatewayInterface {
     RequestResponse:
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
         postPay(PostPayRequest)(PostPayResponse),
-        putPay(PutPayRequest)(PutPayRequest),
+        putPay(PutPayRequest)(PutPayResponse),
         deleteRefund(RefundRequest)(RefundResponse)
 }
 
