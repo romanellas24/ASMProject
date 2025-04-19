@@ -85,7 +85,8 @@ define checkPaymentData
         "INNER JOIN tbl_account AS accounts ON (accounts.id = cards.refer_account) " +
         "INNER JOIN view_balances AS balances ON (balances.account = accounts.id) " +
         "WHERE EXISTS (SELECT * FROM tbl_tokens WHERE token = :token AND amount <= balances.balance) " +
-        "AND PAN = :pan AND cvv = :cvv AND owner = :fullname AND MONTH(expiry_on) = :expire_month AND YEAR(expiry_on) = :expire_year";
+        "AND PAN = :pan AND cvv = :cvv AND UPPER(owner) = UPPER(:fullname) AND MONTH(expiry_on) = :expire_month AND YEAR(expiry_on) = :expire_year AND expiry_on > CURRENT_TIMESTAMP() " + 
+        "AND NOT EXISTS(SELECT token FROM tbl_token_transactions WHERE token = :token )";
         install ( SQLException =>
             println@Console("---------------------------------")();
             println@Console("Failed Query: ")();
@@ -108,7 +109,83 @@ define checkPaymentData
         queryRequest.expire_month = expire_month;
         queryRequest.expire_year = expire_year;
         query@Database( queryRequest )( queryReturn );
-        cnt = queryReturn.row[0].a
+        cnt = queryReturn.row[0].cnt
+    }
+}
+
+//Requires: token, pan
+define registerPayment
+{
+    scope ( registerPaymentScope ) {
+        sql_cmd = "INSERT INTO tbl_token_transactions (token, card) VALUES (:token, :pan)";
+        install ( SQLException =>
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("token:" + token)();
+            println@Console("pan:" + pan)();
+            println@Console(registerPaymentScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.token = token;
+        queryRequest.pan = pan;
+        update@Database( queryRequest )( queryReturn )
+    }
+}
+
+//Requires: token, result
+/*
+result = 0 => "Not payed"
+result = 1 => "Payed"
+result = -1 => "Not exists"
+*/
+define checkToken
+{
+    scope ( checkTokenScope ) {
+        sql_cmd = "SELECT tbl_tokens.token, COUNT(tbl_token_transactions.token) AS cnt " +
+                   "FROM tbl_tokens " +
+                    "LEFT JOIN tbl_token_transactions ON (tbl_tokens.token = tbl_token_transactions.token) " +
+                    "WHERE tbl_tokens.token = :token " + 
+                    "GROUP BY tbl_tokens.token";                    
+        install ( SQLException =>
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("token:" + token)();
+            println@Console(checkTokenScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.token = token;
+        query@Database( queryRequest )( queryReturn );
+        result = -1;
+        if(#queryReturn.row > 0){
+            if(queryReturn.row[0].cnt == 0){
+                result = 0
+            } else {
+                result = 1
+            }
+        }
+    }
+}
+
+//Requires: token
+define deleteTransaction
+{
+    scope ( deleteTransactionScope ) {
+        sql_cmd = "DELETE FROM tbl_token_transactions WHERE token = :token";
+        install ( SQLException =>
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("token:" + token)();
+            println@Console(deleteTransactionScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.token = token;
+        update@Database( queryRequest )( queryReturn )
     }
 }
 
@@ -155,27 +232,48 @@ main {
             cnt = 0;
             checkPaymentData;
             if(cnt != 1){
-                response.param.status = "Payment sent not valid, but semantically correct.";
+                response.param.status = "Payment information sent not valid, but semantically correct.";
                 response.param.code = 400
             } else {
-                //TODO CONTINUE HERE!
+                registerPayment;
                 response.param.status = "Ok.";
                 response.param.code = 200
-            }
-            
+            }   
         }
-
     }]
 
-    /*
-
-    [ postPay( request )( response ) {
-        response.status = "Ok"
+    
+    [ getCheckPay( request )( response ) {
+        token = request.param.token;
+        checkToken;
+        if(result == -1) {
+            response.param.status = "Not found";
+            response.param.code = 404
+        } else if (result == 0) {
+            response.param.status = "Not paid";
+            response.param.code = 200
+        } else {
+            //result == 1
+            response.param.status = "Paid";
+            response.param.code = 200
+        }
     }]
 
-    [deleteRefund(request)(response) {
-        response.status = "Ok"
+    [deletePay(request)(response) {
+        token = request.param.token;
+        checkToken;
+        if(result == -1) {
+            response.param.status = "Not found";
+            response.param.code = 404
+        } else if (result == 0) {
+            response.param.status = "Not paid";
+            response.param.code = 400
+        } else {
+            //result == 1, We have to refound. (Deleting transaction)
+            deleteTransaction;
+            response.param.status = "Deleted";
+            response.param.code = 200
+        }
     }]
-    */
 }
 

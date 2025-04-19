@@ -1,10 +1,10 @@
 type GetCheckPayRequest: void {
-    .transactionId: string
+    .token: string
 }
 
 type GetCheckPayResponse: void {
-    .amount: double
     .status: string
+    .code: int
 }
 
 type PostPayRequest: void {
@@ -37,14 +37,7 @@ type RefundRequest: void {
 
 type RefundResponse: void {
     .status: string
-}
-
-type GetCheckPayRequestBe: void {
-    .param: GetCheckPayRequest
-}
-
-type GetCheckPayResponseBe: void {
-    .param: GetCheckPayResponse
+    .code: int
 }
 
 interface BankGatewayInterface {
@@ -52,7 +45,7 @@ interface BankGatewayInterface {
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
         postPay(PostPayRequest)(PostPayResponse),
         putPay(PutPayRequest)(PutPayResponse),
-        deleteRefund(RefundRequest)(RefundResponse)
+        deletePay(RefundRequest)(RefundResponse)
 }
 
 

@@ -30,12 +30,12 @@ init {
 
 main {
     [ getCheckPay( request )( response ) {
-        response.status = "Ok"
+        internalReq.param << request;
+        getCheckPay@BankPaymentsPort(internalReq)(internalRes);
+        response << internalRes.param
     }]
 
     [ postPay( request )( response ) {
-        //internalReq.param.dest_account = request.dest_account;
-        //internalReq.param.amount = request.amount;
         internalReq.param << request;
         postPay@BankPaymentsPort(internalReq)(internalRes);
         response << internalRes.param
@@ -47,7 +47,9 @@ main {
         response << internalRes.param
     }]
 
-    [deleteRefund(request)(response) {
-        response.status = "Ok"
+    [deletePay(request)(response) {
+        internalReq.param << request;
+        deletePay@BankPaymentsPort(internalReq)(internalRes);
+        response << internalRes.param
     }]
 }

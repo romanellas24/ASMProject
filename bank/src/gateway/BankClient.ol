@@ -44,4 +44,48 @@ main
     request.token = token + "AAA";
     putPay@BANK_GATEWAY( request )( response );
     println@Console( "Response: " + response.status )()
+    undef(request);
+    undef(response);
+    //Paying valid info
+    request.pan = "5353530123456789";
+    request.cvv = 123;
+    request.expire_month = 5;
+    request.expire_year = 2025;
+    request.card_holder_first_name = "Daniele";
+    request.card_holder_last_name = "Romanella";
+    request.token = token;
+    putPay@BANK_GATEWAY( request )( response );
+    println@Console( "Response: " + response.status )();
+    undef(request);
+    undef(response);
+    //Paying check - All OK
+    request.token = token;
+    getCheckPay@BANK_GATEWAY( request )( response );
+    println@Console( "Response: " + response.status )();
+    undef(request);
+    undef(response);
+    //Paying check - Undefined token
+    request.token = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    getCheckPay@BANK_GATEWAY( request )( response );
+    println@Console( "Response: " + response.status )();
+    undef(request);
+    undef(response);
+    //Paying check - Unpaid token
+    request.amount = 90;
+    request.dest_account = 1;
+    postPay@BANK_GATEWAY( request )( response );
+    notPaid = response.token;
+    undef(request);
+    undef(response);
+    request.token = notPaid;
+    getCheckPay@BANK_GATEWAY( request )( response );
+    println@Console( "Response: " + response.status )();
+    undef(request);
+    undef(response);
+    //Refund
+    request.token = token
+    deletePay@BANK_GATEWAY( request )( response );
+    println@Console( "Response: " + response.status )();
+    undef(request);
+    undef(response)
 }
