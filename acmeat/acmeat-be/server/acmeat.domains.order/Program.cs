@@ -3,6 +3,7 @@ using acmeat.domains.order.Services;
 using acmeat.server.order.dataproxy;
 using acmeat.server.order.datawriter;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -33,4 +34,5 @@ var app = builder.Build();
 app.MapGrpcService<GrpcOrderManagerService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
+app.Urls.Add("http://*:5201");
 app.Run();

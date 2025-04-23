@@ -4,10 +4,10 @@ metadata:
   name: ordermanager-service
   namespace: default
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: ordermanager
   ports:
     - protocol: TCP
-      port: 5201
-      targetPort: 5201
+      port: 8080
+      targetPort: 8080

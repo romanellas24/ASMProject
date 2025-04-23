@@ -6,7 +6,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 # RUN apk add --no-cache libc6-compat
 # ARG TARGETARCH
 WORKDIR /source
-
+ENV ASPNETCORE_URLS=http://+:5201
 # Copy project file and restore as distinct layers. Must not copy client directory
 COPY . ./
 # RUN dotnet restore -a $TARGETARCH
@@ -28,7 +28,7 @@ EXPOSE 5201
 WORKDIR /app
 COPY --link --from=build /app .
 USER $APP_UID
-ENTRYPOINT [ "./ordermanager" ]
+ENTRYPOINT [ "./ordermanager","--server.urls", "https://+:5201"]
 
 # CMD ["dotnet","run"]
 
