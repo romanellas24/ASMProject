@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
+  namespace: default
+  labels:
+    app: mysql
 spec:
   selector:
     matchLabels:
@@ -14,14 +17,8 @@ spec:
         app: mysql
     spec:
       containers:
-      - image: mysql:latest
+      - image: docker.io/er4ikk/mysql
         name: mysql
-        env:
-        - name: MY_SQL_USER
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: name
         ports:
         - containerPort: 3306
           name: mysql

@@ -5,7 +5,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>Acmeat.Server.Order.ClientTest</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -13,8 +13,6 @@
   <Protobuf Include="Protos\client.proto" GrpcServices="Client" />
   </ItemGroup>
   <ItemGroup>
-  
-       <PackageReference Include="Acmeat.Db.ClientTest" Version="1.0.2" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.32.0" />
        <PackageReference Include="Google.Protobuf" Version="3.30.2" />
   

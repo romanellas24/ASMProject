@@ -8,15 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging(builder => builder.AddConsole());
 builder.Services.AddScoped<OrderClient>();
 
+builder.Services.AddOptions<OrderClientOptions>().BindConfiguration(nameof(OrderClientOptions));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-   app.UseSwagger();
+    app.UseSwagger();
     app.UseSwaggerUI();
 }
 

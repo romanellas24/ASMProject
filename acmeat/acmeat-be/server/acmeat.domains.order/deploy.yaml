@@ -24,7 +24,7 @@ spec:
       containers:
         - name: ordermanager
 
-          image: docker.io/er4ikk/ordermanager
+          image: er4ikk/ordermanager
           resources:
               requests:
                 memory: "64Mi"

@@ -1,7 +1,8 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
-
+using Microsoft.Extensions.Options;
+//PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.order.client
 {
 
@@ -11,17 +12,19 @@ namespace acmeat.server.order.client
 
         private GrpcChannel _channel;
         private GrpcOrder.GrpcOrderClient _client;
+        private readonly OrderClientOptions _options;
 
 
-        public OrderClient(
+        public OrderClient(IOptions<OrderClientOptions>  options
 
 
             )
         {
+            _options = options.Value;
             _httpClientHandler = new HttpClientHandler();
             _httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
 
-            _channel = GrpcChannel.ForAddress("http://ordermanager-service:8080", new GrpcChannelOptions { HttpHandler = _httpClientHandler });
+            _channel = GrpcChannel.ForAddress(_options.OrderManagerConnectionString, new GrpcChannelOptions { HttpHandler = _httpClientHandler });
 
 
 
