@@ -8,8 +8,9 @@ public class Menu{
     {
     }
 
-    public Menu(string Descritpion, string Type, int Price)
+    public Menu(int Id,string Descritpion, string Type, int Price)
     {
+        this.Id = Id;
         this.Descritpion=Descritpion;
         this.Type = Type;
         this.Price = Price;

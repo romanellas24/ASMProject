@@ -1,0 +1,42 @@
+syntax = "proto3";
+option csharp_namespace = "acmeat.server.user.manager";
+
+package user;
+
+service GrpcUser {
+  rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
+  rpc GetUserById(Id)returns(User);
+  rpc GetUsers(Id) returns (UserList);
+  rpc CreateUser(User) returns(GeneralResponse);
+  rpc UpdateUser(User) returns (GeneralResponse);
+  rpc DeleteUser(User) returns (GeneralResponse);
+  rpc DeleteUserById(User) returns (GeneralResponse);
+}
+
+message HelloRequestClient {
+  string name = 1;
+}
+
+message HelloReplyClient {
+  string message = 1;
+}
+
+message Id{
+  int32 id = 1;
+}
+
+message GeneralResponse{
+  string message=1;
+}
+
+message User{
+  int32 Id =1;
+  string Address =2;
+  string Mail =3;
+    
+  string Pwd =4;
+}
+
+message UserList {
+  repeated User users=1;
+}

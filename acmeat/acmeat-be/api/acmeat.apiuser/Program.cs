@@ -1,3 +1,6 @@
+using acmeat.server.order.client;
+using acmeat.server.user.client;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<UserClient>();
+
+builder.Services.AddOptions<UserClientOptions>().BindConfiguration(nameof(UserClientOptions));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

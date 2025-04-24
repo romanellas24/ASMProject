@@ -8,13 +8,16 @@ public class Local{
     {
     }
 
-    public Local(string Name,
+    public Local( 
+                 int Id,
+                 string Name,
                  string OpeningTime,
                  string ClosingTime,
                  string Address,
                  string OpeningDays,
                  bool Available)
     {
+        this.Id = Id;
         this.Name=Name;
         this.OpeningTime = OpeningTime;
         this.ClosingTime = ClosingTime;

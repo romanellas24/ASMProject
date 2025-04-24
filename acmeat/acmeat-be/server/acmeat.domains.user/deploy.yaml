@@ -3,28 +3,28 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: apiuser
+  name: usermanager
   namespace: default
   labels:
-    app: apiuser
+    app: usermanager
 
 spec:
-  replicas: 1
+  replicas: 2
 
   selector:
     matchLabels:
-      app: apiuser
+      app: usermanager
 
   template:
     metadata:
       labels:
-        app: apiuser
+        app: usermanager
 
     spec:
       containers:
-        - name: apiuser
+        - name: usermanager
 
-          image: docker.io/er4ikk/apiuser
+          image: docker.io/er4ikk/usermanager
           resources:
               requests:
                 memory: "64Mi"

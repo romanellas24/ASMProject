@@ -8,8 +8,9 @@ public class User{
     {
     }
 
-    public User(string Address, string Mail, string Pwd)
-    {
+    public User(int Id,string Address, string Mail, string Pwd)
+    {   
+        this.Id = Id;
         this.Address=Address;
         this.Mail = Mail;
         this.Pwd = Pwd;

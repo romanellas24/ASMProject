@@ -9,8 +9,9 @@ public class DeliveryCompany
     {
     }
 
-    public DeliveryCompany(string Address, int Price, bool Available)
+    public DeliveryCompany(int Id, string Address, int Price, bool Available)
     {
+        this.Id = Id;
         this.Address = Address;
         this.Price = Price;
         this.Available = Available;
