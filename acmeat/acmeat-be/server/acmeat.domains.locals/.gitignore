@@ -1,0 +1,11 @@
+/bin
+/obj
+/acmeat.domains.local.dataproxy/bin
+/acmeat.domains.local.dataproxy/obj
+/acmeat.domains.local.datawriter/bin
+/acmeat.domains.local.datawriter/obj
+/acmeat.domains.local.models/bin
+/acmeat.domains.local.models/obj
+/acmeat.domains.local.client/bin
+/acmeat.domains.local.client/obj
+
