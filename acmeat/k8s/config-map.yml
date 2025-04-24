@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: config
-data:
-  # property-like keys; each key maps to a simple value
-  DbConnectionOptions.connectionString: "Server=localhost;User ID=root;Password=;Database=ACMEAT"
-  OrderClientOptions.OrderManagerConnectionString: "http://ordermanager-service:8080"
- 

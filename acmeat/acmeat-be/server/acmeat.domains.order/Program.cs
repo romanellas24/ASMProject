@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging(builder => builder.AddConsole());
 
+builder.Services.AddOptions<DbConnectionOptions>().BindConfiguration(nameof(DbConnectionOptions));
+
 // builder.Services.AddScoped<MySqlContext>();
 
 builder.Services.AddScoped<OrderReader>();
