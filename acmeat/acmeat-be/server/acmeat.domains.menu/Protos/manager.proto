@@ -1,0 +1,46 @@
+syntax = "proto3";
+option csharp_namespace = "acmeat.server.menu.manager";
+
+package menu;
+
+service GrpcMenu {
+  rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
+  rpc GetMenuById(Id)returns(Menu);
+  rpc GetMenus(Id) returns (MenuList);
+  rpc CreateMenu(Menu) returns(GeneralResponse);
+  rpc UpdateMenu(Menu) returns (GeneralResponse);
+  rpc DeleteMenu(Menu) returns (GeneralResponse);
+  rpc DeleteMenuById(Menu) returns (GeneralResponse);
+}
+
+message HelloRequestClient {
+  string name = 1;
+}
+
+message HelloReplyClient {
+  string message = 1;
+}
+
+message Id{
+  int32 id = 1;
+}
+
+message GeneralResponse{
+  string message=1;
+}
+message Menu{
+  int32 Id=1 ;
+
+   string Description=2 ;
+
+   string Type=3 ;
+
+   int32 Price=4 ;
+
+   
+}
+
+
+message MenuList {
+  repeated Menu menus=1;
+}

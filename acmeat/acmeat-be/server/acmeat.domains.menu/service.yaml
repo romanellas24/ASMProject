@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: menumanager-service
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: menumanager
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

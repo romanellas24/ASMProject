@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: apimenu
+  namespace: default
+  labels:
+    app: apimenu
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: apimenu
+
+  template:
+    metadata:
+      labels:
+        app: apimenu
+
+    spec:
+      containers:
+        - name: apimenu
+
+          image: docker.io/er4ikk/apimenu
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080
