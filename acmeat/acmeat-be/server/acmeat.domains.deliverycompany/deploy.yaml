@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: deliverycompanymanager
+  namespace: default
+  labels:
+    app: deliverycompanymanager
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: deliverycompanymanager
+
+  template:
+    metadata:
+      labels:
+        app: deliverycompanymanager
+
+    spec:
+      containers:
+        - name: deliverycompanymanager
+
+          image: docker.io/er4ikk/deliverycompanymanager
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080

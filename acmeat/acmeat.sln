@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "menumanager", "acmeat-be\se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apimenu", "acmeat-be\api\acmeat.apimenu\apimenu.csproj", "{56912C9D-16BD-4A54-AB72-959978CF9CA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "deliverycompanymanager", "acmeat-be\server\acmeat.domains.deliverycompany\deliverycompanymanager.csproj", "{88AF9406-0F63-4A11-899A-CB8FE2B2A852}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apideliverycompany", "acmeat-be\api\acmeat.apideliverycompany\apideliverycompany.csproj", "{0B155E6B-C945-40D7-A20A-7B466E12109B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +98,14 @@ Global
 		{56912C9D-16BD-4A54-AB72-959978CF9CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56912C9D-16BD-4A54-AB72-959978CF9CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56912C9D-16BD-4A54-AB72-959978CF9CA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88AF9406-0F63-4A11-899A-CB8FE2B2A852}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88AF9406-0F63-4A11-899A-CB8FE2B2A852}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88AF9406-0F63-4A11-899A-CB8FE2B2A852}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88AF9406-0F63-4A11-899A-CB8FE2B2A852}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B155E6B-C945-40D7-A20A-7B466E12109B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B155E6B-C945-40D7-A20A-7B466E12109B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B155E6B-C945-40D7-A20A-7B466E12109B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B155E6B-C945-40D7-A20A-7B466E12109B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3EEC197C-C1D0-490A-92A5-3C567C2B264C} = {B72FCF21-21D5-4A7D-ACD5-C2FA4FDC93E9}
@@ -109,5 +121,7 @@ Global
 		{B18F4FA2-878A-46C7-B204-7E417CD34DA8} = {3EEC197C-C1D0-490A-92A5-3C567C2B264C}
 		{8A5B73B1-1D08-4CD9-B9E2-2D971607B96C} = {3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}
 		{56912C9D-16BD-4A54-AB72-959978CF9CA8} = {3EEC197C-C1D0-490A-92A5-3C567C2B264C}
+		{88AF9406-0F63-4A11-899A-CB8FE2B2A852} = {3FEF62B6-3383-4E23-B33F-DC0B33F3FE96}
+		{0B155E6B-C945-40D7-A20A-7B466E12109B} = {3EEC197C-C1D0-490A-92A5-3C567C2B264C}
 	EndGlobalSection
 EndGlobal
