@@ -8,3 +8,4 @@ define generateRandomSeed {
     roundRequest.decimals = 10;
     round@Math(roundRequest)(seed)
 }
+
