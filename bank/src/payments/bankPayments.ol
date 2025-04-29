@@ -22,7 +22,7 @@ init {
     with ( connectionInfo ) {
         .username = "romanellas";
         .password = "59741404";
-        .host = "localhost";
+        .host = "192.168.24.5";
         .database = "jolie_bank";
         .driver = "mysql"
     };

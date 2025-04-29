@@ -40,12 +40,43 @@ type RefundResponse: void {
     .code: int
 }
 
+
+type PostAccountRequest: void {
+    .owner: string
+}
+
+type PostAccountResponse: void {
+    .identifier: int
+}
+
+type WithdrawRequest: void {
+    .amount: int
+    .account: int
+}
+
+type WithdrawResponse: void {
+    .status: string
+}
+
+type DepositRequest: void {
+    .amount: int
+    .account: int
+}
+
+type DepositResponse: void {
+    .status: string
+}
+
+
 interface BankGatewayInterface {
     RequestResponse:
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
         postPay(PostPayRequest)(PostPayResponse),
         putPay(PutPayRequest)(PutPayResponse),
-        deletePay(RefundRequest)(RefundResponse)
+        deletePay(RefundRequest)(RefundResponse),
+        postAccount(PostAccountRequest)(PostAccountResponse),
+        putWithdraw(WithdrawRequest)(WithdrawResponse),
+        putDeposit(DepositRequest)(DepositResponse)
 }
 
 

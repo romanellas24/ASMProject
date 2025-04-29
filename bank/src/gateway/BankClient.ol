@@ -87,5 +87,47 @@ main
     deletePay@BANK_GATEWAY( request )( response );
     println@Console( "Response: " + response.status )();
     undef(request);
+    undef(response);
+    //Create account
+    request.owner = "Mario Rossi";
+    postAccount@BANK_GATEWAY( request )( response );
+    println@Console( "Account created account with ID: " + response.identifier )();
+    account_id = response.identifier;
+    undef(request);
+    undef(response);
+    //Withdraw - No money
+    request.amount = 100;
+    request.account = account_id;
+    putWithdraw@BANK_GATEWAY( request )( response );
+    println@Console( "Withdraw status: " + response.status )();
+    undef(request);
+    undef(response);
+    //Withdraw - Negative amount
+    request.amount = -100;
+    request.account = account_id;
+    putWithdraw@BANK_GATEWAY( request )( response );
+    println@Console( "Withdraw status: " + response.status )();
+    undef(request);
+    undef(response)
+    //Deposit
+    request.amount = 100;
+    request.account = account_id;
+    putDeposit@BANK_GATEWAY( request )( response );
+    println@Console( "Deposit status: " + response.status )();
+    undef(request);
+    undef(response);
+    //Deposit - invalid account
+    request.amount = 100;
+    request.account = -1;
+    putDeposit@BANK_GATEWAY( request )( response );
+    println@Console( "Deposit status: " + response.status )();
+    undef(request);
+    undef(response);
+    //Withdraw - No money
+    request.amount = 100;
+    request.account = account_id;
+    putWithdraw@BANK_GATEWAY( request )( response );
+    println@Console( "Withdraw status: " + response.status )();
+    undef(request);
     undef(response)
 }

@@ -1,5 +1,6 @@
 include "BankGatewayInterface.iol"
 include "../payments/BankPaymentsI.iol"
+include "../accounts/BankAccountsI.iol"
 
 include "console.iol"
 include "string_utils.iol"
@@ -22,6 +23,14 @@ outputPort BankPaymentsPort {
         .compression = false
     }
     Interfaces: BankPaymentsI
+}
+
+outputPort BankAccountsPort {
+    Location: "socket://localhost:9003"
+    Protocol: xmlrpc { 
+        .compression = false
+    }
+    Interfaces: BankAccountsI
 }
 
 init {
@@ -52,4 +61,23 @@ main {
         deletePay@BankPaymentsPort(internalReq)(internalRes);
         response << internalRes.param
     }]
+
+    [postAccount(request)(response) {
+        internalReq.param << request;
+        postAccount@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [putWithdraw(request)(response) {
+        internalReq.param << request;
+        putWithdraw@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [putDeposit(request)(response) {
+        internalReq.param << request;
+        putDeposit@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
 }
