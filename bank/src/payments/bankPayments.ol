@@ -134,7 +134,7 @@ define registerPayment
     }
 }
 
-//Requires: token, result
+//Requires: token, result, beneficiary, amount
 /*
 result = 0 => "Not payed"
 result = 1 => "Payed"
@@ -143,9 +143,10 @@ result = -1 => "Not exists"
 define checkToken
 {
     scope ( checkTokenScope ) {
-        sql_cmd = "SELECT tbl_tokens.token, COUNT(tbl_token_transactions.token) AS cnt " +
+        sql_cmd = "SELECT tbl_tokens.token, COUNT(tbl_token_transactions.token) AS cnt, tbl_account.owner AS beneficiary, tbl_tokens.amount " +
                    "FROM tbl_tokens " +
                     "LEFT JOIN tbl_token_transactions ON (tbl_tokens.token = tbl_token_transactions.token) " +
+                    "INNER JOIN tbl_account ON (tbl_tokens.dest_account = tbl_account.id) " +
                     "WHERE tbl_tokens.token = :token " + 
                     "GROUP BY tbl_tokens.token";                    
         install ( SQLException =>
@@ -166,6 +167,8 @@ define checkToken
             } else {
                 result = 1
             }
+            beneficiary = queryReturn.row[0].beneficiary;
+            amount = queryReturn.row[0].amount
         }
     }
 }
@@ -245,17 +248,24 @@ main {
     
     [ getCheckPay( request )( response ) {
         token = request.param.token;
+        response.param.beneficiary = "";
+        amount = 0.00;
         checkToken;
         if(result == -1) {
             response.param.status = "Not found";
-            response.param.code = 404
+            response.param.code = 404;
+            response.param.amount = amount
         } else if (result == 0) {
             response.param.status = "Not paid";
-            response.param.code = 200
+            response.param.code = 200;
+            response.param.beneficiary = beneficiary;
+            response.param.amount = amount
         } else {
             //result == 1
             response.param.status = "Paid";
-            response.param.code = 200
+            response.param.code = 200;
+            response.param.beneficiary = beneficiary;
+            response.param.amount = amount
         }
     }]
 

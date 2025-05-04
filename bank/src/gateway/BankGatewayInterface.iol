@@ -5,6 +5,8 @@ type GetCheckPayRequest: void {
 type GetCheckPayResponse: void {
     .status: string
     .code: int
+    .beneficiary: string
+    .amount: double
 }
 
 type PostPayRequest: void {

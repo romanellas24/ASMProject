@@ -9,7 +9,15 @@ include "database.iol"
 execution{ concurrent }
 
 inputPort BANK_GATEWAY {
+    Location: "local"
+    Protocol: sodep
+    Interfaces: BankGatewayInterface
+}
+
+inputPort BANK_GATEWAY_2 {
     Location: "socket://localhost:9001"
+    //Location: "local"
+    //Protocol: sodep
     Protocol: soap {
         .wsdl = "file:/home/romanellas/WebstormProjects/ASMProject/bank/src/gateway/wsdl.xml";
 	    .wsdl.port = "BankGatewayInterface"

@@ -1,14 +1,30 @@
 {
-  "postPay": {
-    "method":"post",
-    "template":"/token/"
-  },
-  "checkPay": {
+  "getCheckPay": {
     "method":"get",
-    "template":"/token/{tokenId}"
+    "template":"/payments/{token}"
   },
-  "refund": {
+  "postPay" : {
+    "method":"post",
+    "template":"/payments/"
+  },
+  "putPay" : {
+    "method":"put",
+    "template":"/payments/{token}"
+  },
+  "deletePay": {
     "method":"delete",
-    "template":"/token/{tokenId}"
+    "template":"/payments/{token}"
+  },
+  "postAccount": {
+    "method":"post",
+    "template":"/account/"
+  },
+  "putWithdraw": {
+    "method":"put",
+    "template":"/account/withdraw"
+  },
+  "putDeposit": {
+    "method":"put",
+    "template":"/account/deposit"
   }
 }
