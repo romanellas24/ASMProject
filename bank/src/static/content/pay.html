@@ -728,24 +728,12 @@
                         expire_month: month,
                         expire_year: year,
                         card_holder_first_name: firstName,
-                        card_holder_last_name: lastName
+                        card_holder_last_name: lastName,
+                        token: token
                     }),
                 });
                 const json = await response.json();
-                if (json.code === 200) {
-                    amount = json.amount;
-                    beneficiary = json.beneficiary;
-                    let amountHtml = document.getElementById("pay_amount");
-                    let beneficiaryHtml = document.getElementById("pay_beneficiary");
-                    amountHtml.innerHTML = amount;
-                    beneficiaryHtml.innerHTML = beneficiary;
-                } else if (json.status === "Paid") {
-                    alert("Hai già pagato!");
-                    window.location.replace("https://www.google.com");
-                } else {
-                    alert("Errore generico!");
-                    window.location.replace("https://www.google.com");
-                }
+                console.log(json);
             } catch (error) {
                 console.error(error.message);
             }
@@ -876,7 +864,7 @@
         <input id="name" maxlength="20" type="text">
     </div>
     <div class="field-container">
-        <!-- <label for="cardnumber">Card Number</label><span id="generatecard">generate random</span> -->
+        <label for="cardnumber">Card Number</label> <!-- <span id="generatecard">generate random</span> -->
         <input id="cardnumber" type="text" pattern="[0-9]*" inputmode="numeric">
         <svg id="ccicon" class="ccicon" width="750" height="471" viewBox="0 0 750 471" version="1.1"
              xmlns="http://www.w3.org/2000/svg"
