@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CompaniesDAO extends JpaRepository<Company, Integer> {
 
     Company findCompanyByName(String name);
+    Boolean existsByName(String name);
 }

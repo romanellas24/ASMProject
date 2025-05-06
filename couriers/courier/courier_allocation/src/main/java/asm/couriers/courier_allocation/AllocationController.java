@@ -1,7 +1,6 @@
 package asm.couriers.courier_allocation;
 
 import asm.couriers.courier_allocation.dto.*;
-import asm.couriers.courier_allocation.exception.UnauthorizedException;
 import asm.couriers.courier_allocation.service.AllocationService;
 import asm.couriers.courier_allocation.service.AuthService;
 import asm.couriers.courier_allocation.service.MapsService;
@@ -48,7 +47,7 @@ public class AllocationController {
 
     @PutMapping(produces = "application/json")
     @ResponseBody
-    VehicleDTO allocateVehicle(@RequestBody RequestAllocateDTO request) throws Exception {
+    OrderInfoDTO allocateVehicle(@RequestBody RequestAllocateDTO request) throws Exception {
 
         if (request == null || request.getVehicle() == null || request.getTimeMinutes() == null || request.getExpectedDeliveryTime() == null) {
             throw new Exception("Invalid request body");
@@ -58,12 +57,29 @@ public class AllocationController {
             throw new Exception("Invalid date format");
         }
 
-        CompanyDTO company = new CompanyDTO(request.getCompanyName(), request.getHash());
+        CompanyDTO company = authService.getCompanyFromNameAndHash(request.getCompanyName(), request.getHash());
 
-        if (!authService.isHashValid(company)) {
-            throw new UnauthorizedException("Unauthorized");
+        return allocationService.allocate_vehicle(request, company);
+    }
+
+    @DeleteMapping(produces = "application/json")
+    @ResponseBody
+    public DeleteInfoDTO deleteOrder(@RequestBody RequestDeleteDTO request) throws Exception {
+
+        if (request == null || request.getOrderId() == null || request.getHash() == null || request.getCompanyName()== null) {
+            throw new Exception("Invalid request body");
         }
 
-        return allocationService.allocate_vehicle(request);
+        CompanyDTO company = authService.getCompanyFromNameAndHash(request.getCompanyName(), request.getHash());
+
+        Boolean deleted = allocationService.delete_order(request.getOrderId(), company);
+
+        DeleteInfoDTO deleteInfoDTO = new DeleteInfoDTO();
+        deleteInfoDTO.setOrderId(request.getOrderId());
+        deleteInfoDTO.setDeleted(deleted);
+
+        return deleteInfoDTO;
     }
+
+
 }

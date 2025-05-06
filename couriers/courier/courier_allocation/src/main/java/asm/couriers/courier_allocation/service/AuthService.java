@@ -1,6 +1,8 @@
 package asm.couriers.courier_allocation.service;
 
 import asm.couriers.courier_allocation.dto.CompanyDTO;
+import asm.couriers.courier_allocation.exception.NotFoundException;
+import asm.couriers.courier_allocation.exception.UnauthorizedException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -26,5 +28,6 @@ public interface AuthService {
     }
 
          */
-    public Boolean isHashValid(CompanyDTO companyAuth) throws NoSuchAlgorithmException;
+    //public Boolean isHashValid(CompanyDTO companyAuth) throws NoSuchAlgorithmException;
+    public CompanyDTO getCompanyFromNameAndHash(String name, String hash) throws NotFoundException, UnauthorizedException;
 }

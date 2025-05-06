@@ -13,11 +13,16 @@ import java.time.LocalDateTime;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer order_id;
+    @Column(name="order_id")
+    Integer orderId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vehicle_id")
     Vehicle vehicle;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id")
+    Company company;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_delivery_time")

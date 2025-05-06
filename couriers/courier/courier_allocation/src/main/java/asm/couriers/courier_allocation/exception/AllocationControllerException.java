@@ -48,6 +48,13 @@ public class AllocationControllerException {
         Handle generic errors (400)
      */
 
+    @ExceptionHandler(DeleteRequestTooLateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDTO> deleteRequestTooLate(Exception ex) {
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 400);
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ExceptionDTO> exception(Exception ex) {

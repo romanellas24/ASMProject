@@ -4,7 +4,9 @@ import asm.couriers.courier_allocation.dao.CompaniesDAO;
 import asm.couriers.courier_allocation.dto.CompanyDTO;
 import asm.couriers.courier_allocation.entity.Company;
 import asm.couriers.courier_allocation.exception.NotFoundException;
+import asm.couriers.courier_allocation.exception.UnauthorizedException;
 import asm.couriers.courier_allocation.service.AuthService;
+import asm.couriers.courier_allocation.utils.CompanyToDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,14 +43,16 @@ public class AuthServiceImpl implements AuthService {
      */
 
     @Override
-    public Boolean isHashValid(CompanyDTO companyAuth) throws NotFoundException {
-
-        Company company = companiesDAO.findCompanyByName(companyAuth.getName());
-
-        if (company == null) {
+    public CompanyDTO getCompanyFromNameAndHash(String name, String hash) throws NotFoundException, UnauthorizedException {
+        if (!companiesDAO.existsByName(name)){
             throw new NotFoundException("Company name");
         }
 
-        return Objects.equals(companyAuth.getHash(), company.getHash());
+        Company company = companiesDAO.findCompanyByName(name);
+        if(!Objects.equals(hash, company.getHash())){
+            throw new UnauthorizedException("Invalid password");
+        }
+
+        return CompanyToDtoMapper.toDto(company);
     }
 }

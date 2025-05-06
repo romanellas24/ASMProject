@@ -1,5 +1,6 @@
 package asm.couriers.courier_allocation.utils;
 
+import asm.couriers.courier_allocation.dto.CompanyDTO;
 import asm.couriers.courier_allocation.dto.RequestAllocateDTO;
 import asm.couriers.courier_allocation.entity.Order;
 import asm.couriers.courier_allocation.entity.Vehicle;
@@ -19,6 +20,13 @@ public class RequestDTOtoOrderMapper {
         order.setEnd_delivery_time(expectedDeliveryTime);
         order.setStart_delivery_time(startDeliveryTime);
         order.setVehicle(vehicle);
+
+        return order;
+    }
+
+    public static Order convertToOrderDTO(RequestAllocateDTO requestDTO, CompanyDTO company) {
+        Order order = convertToOrderDTO(requestDTO);
+        order.setCompany(CompanyToDtoMapper.toEntity(company));
 
         return order;
     }
