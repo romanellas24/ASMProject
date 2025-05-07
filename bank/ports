@@ -1,0 +1,6 @@
+Gateway => 9001
+Payments => 9002
+Accounts => 9003
+Mysql => 3306
+FE => 9004
+HTTP Aggregator => 9005
