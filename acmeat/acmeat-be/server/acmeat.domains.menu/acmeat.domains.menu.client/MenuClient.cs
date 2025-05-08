@@ -39,6 +39,13 @@ namespace acmeat.server.menu.client
             return await _client.GetMenuByIdAsync(id1);
         }
 
+        public async Task<MenuList> GetMenuByLocalId(int id)
+        {
+            Id id1 = new Id();
+            id1.Id_ = id;
+            return await _client.GetMenusByLocalIdAsync(id1);
+        }
+
         public async Task<MenuList> GetMenuList()
         {
             Id id1 = new Id();

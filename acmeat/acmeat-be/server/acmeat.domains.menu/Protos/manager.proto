@@ -6,6 +6,7 @@ package menu;
 service GrpcMenu {
   rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
   rpc GetMenuById(Id)returns(Menu);
+  rpc GetMenusByLocalId(Id)returns(MenuList);
   rpc GetMenus(Id) returns (MenuList);
   rpc CreateMenu(Menu) returns(GeneralResponse);
   rpc UpdateMenu(Menu) returns (GeneralResponse);
@@ -36,6 +37,8 @@ message Menu{
    string Type=3 ;
 
    int32 Price=4 ;
+
+   int32 LocalId=5;
 
    
 }

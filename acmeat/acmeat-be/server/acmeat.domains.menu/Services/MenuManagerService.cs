@@ -48,6 +48,19 @@ public class GrpcMenuManagerService : server.menu.manager.GrpcMenu.GrpcMenuBase
         );
     }
 
+     public override Task<server.menu.manager.MenuList> GetMenusByLocalId(Id id, ServerCallContext context)
+    {
+
+        List<server.menu.Menu> menus= _menuReader.GetMenusByLocalId(id.Id_);
+        MenuList menuList =  new server.menu.manager.MenuList();
+
+        menuList.Menus.AddRange(ConvertServerListToGrpc(menus));
+
+        return Task.FromResult(
+            menuList
+          );
+    }
+
      public override Task<server.menu.manager.MenuList> GetMenus(Id id, ServerCallContext context)
     {
         List<server.menu.Menu> menus=  _menuReader.GetMenus();
@@ -127,7 +140,7 @@ public class GrpcMenuManagerService : server.menu.manager.GrpcMenu.GrpcMenuBase
     }
 
     public server.menu.Menu ConvertGrpcToServerModel(server.menu.manager.Menu menu){
-        return new server.menu.Menu(menu.Id,menu.Description,menu.Type,menu.Price );
+        return new server.menu.Menu(menu.Id,menu.Description,menu.Type,menu.Price,menu.LocalId );
     }
 
 
@@ -137,6 +150,7 @@ public class GrpcMenuManagerService : server.menu.manager.GrpcMenu.GrpcMenuBase
         menut.Description = menu.Descritpion;
         menut.Type = menu.Type;
         menut.Price = menu.Price;
+        menut.LocalId = menu.LocalId;
         return menut;
 
     }

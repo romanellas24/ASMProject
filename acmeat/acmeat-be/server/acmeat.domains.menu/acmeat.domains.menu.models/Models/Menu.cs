@@ -10,13 +10,14 @@ public class Menu
 
     [JsonConstructor]
     public Menu(
-               int Id,string Descritpion, string Type, int Price
+               int Id,string Descritpion, string Type, int Price, int LocalId
                )
     {
         this.Id = Id;
         this.Descritpion=Descritpion;
         this.Type = Type;
         this.Price = Price;
+        this.LocalId = LocalId;
 
 
     }
@@ -27,6 +28,7 @@ public class Menu
         this.Descritpion=menu.Descritpion;
         this.Type = menu.Type;
         this.Price = menu.Price;
+        this.LocalId = menu.LocalId;
 
     }
     public int Id { get; set; }
@@ -34,8 +36,9 @@ public class Menu
     public string Descritpion { get; set; }
     public string Type { get; set; }
 
-
     public int Price { get; set; }
+
+    public int LocalId {get;set;}
 
     public acmeat.db.menu.Menu Convert()
     {
@@ -44,6 +47,7 @@ public class Menu
         menu.Descritpion =  this.Descritpion;
         menu.Type = this.Type;
         menu.Price = this.Price ;
+        menu.LocalId = this.LocalId;
         return menu;
     }
 }

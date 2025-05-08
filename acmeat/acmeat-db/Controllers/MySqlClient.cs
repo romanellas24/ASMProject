@@ -113,6 +113,12 @@ namespace acmeat.db.mysql
             _logger.LogInformation($"Getting information for Menu with id {id}");
             return _MenuContext.GetMenuById(id);
         }
+
+         public List<Menu> GetMenusByLocalId(int id)
+        {
+            _logger.LogInformation($"Getting Menus for Local with id {id}");
+            return _MenuContext.GetMenusByLocalId(id);
+        }
           
         public async Task CreateMenu(Menu Menu)
         {

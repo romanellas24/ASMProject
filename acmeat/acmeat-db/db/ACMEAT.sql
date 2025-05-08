@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Creato il: Apr 23, 2025 alle 16:51
+-- Creato il: Mag 08, 2025 alle 17:46
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.0.30
 
@@ -44,7 +44,9 @@ CREATE TABLE `LOCALE` (
 --
 
 INSERT INTO `LOCALE` (`ID`, `NOME`, `ORA_APERTURA`, `ORA_CHIUSURA`, `INDIRIZZO`, `GIORNI_APERTURA`, `DISPONIBILE`) VALUES
-(1, 'Pizzeria Primavera', '09:00', '18:00', 'VIa Aldrovanni 16, Bologna', 'Lun,\r\nMar,\r\nMer,\r\nGio,\r\nVen,\r\nDom', 1);
+(1, 'Pizzeria Primavera', '09:00', '18:00', 'VIa Aldrovanni 16, Bologna', 'Lun,\r\nMar,\r\nMer,\r\nGio,\r\nVen,\r\nDom', 1),
+(1156626705, 'via Ciccio Ingrassia', '09:00', '10:00', 'via Ciccio Ingrassia', 'L,M,G,V', 1),
+(1680778671, 'Pizzeria Cosmo', '09:00', '17:00', 'Via Calzone 23', 'Lun.Mar,Mer', 1);
 
 -- --------------------------------------------------------
 
@@ -56,15 +58,19 @@ CREATE TABLE `MENU` (
   `ID` int(11) NOT NULL,
   `DESCRIZIONE` varchar(500) NOT NULL,
   `TIPO` varchar(50) NOT NULL,
-  `PREZZO` int(11) NOT NULL
+  `PREZZO` int(11) NOT NULL,
+  `ID_LOCALE` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dump dei dati per la tabella `MENU`
 --
 
-INSERT INTO `MENU` (`ID`, `DESCRIZIONE`, `TIPO`, `PREZZO`) VALUES
-(1, 'il menu è buono', 'Giorno', 30);
+INSERT INTO `MENU` (`ID`, `DESCRIZIONE`, `TIPO`, `PREZZO`, `ID_LOCALE`) VALUES
+(1, 'il menu è buono', 'Giorno', 30, 1156626705),
+(23, 'Prova 1', 'Cena', 23, 23),
+(559034578, 'è buono', 'Cena', 50, 0),
+(998091917, 'ahahhaahahah', 'cena', 409, 1156626705);
 
 -- --------------------------------------------------------
 
@@ -94,7 +100,11 @@ INSERT INTO `ORDINE` (`ID_UTENTE`, `ID`, `ID_LOCALE`, `ID_SOC_C`, `ORA_CONSEGNA`
 (0, 6, 0, 0, '', '', 0, 500, 0, 0),
 (0, 7, 0, 0, '', '', 0, 500, 0, 0),
 (2, 9, 0, 0, '19:45', '10:00', 3, 20, 2, 1),
-(6, 1602168585, 0, 0, '18:56', '17:30', 2, 20, 3, 50);
+(3, 215315170, 0, 0, '19:00', '18:45', 123213, 23, 3, 10),
+(0, 345355649, 4, 0, 'string', 'string', 0, 0, 0, 0),
+(0, 651092467, 2, 0, 'string', 'string', 0, 0, 0, 0),
+(6, 1602168585, 0, 0, '18:56', '17:30', 2, 20, 3, 50),
+(0, 2064889089, 1, 0, 'string', 'string', 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -180,19 +190,19 @@ ALTER TABLE `UTENTE`
 -- AUTO_INCREMENT per la tabella `LOCALE`
 --
 ALTER TABLE `LOCALE`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1680778672;
 
 --
 -- AUTO_INCREMENT per la tabella `MENU`
 --
 ALTER TABLE `MENU`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=998091918;
 
 --
 -- AUTO_INCREMENT per la tabella `ORDINE`
 --
 ALTER TABLE `ORDINE`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1602168586;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2064889090;
 
 --
 -- AUTO_INCREMENT per la tabella `SOCIETÀ_CONSEGNA`
@@ -204,7 +214,37 @@ ALTER TABLE `SOCIETÀ_CONSEGNA`
 -- AUTO_INCREMENT per la tabella `UTENTE`
 --
 ALTER TABLE `UTENTE`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1170620788;
+
+
+--
+-- Metadati
+--
+USE `phpmyadmin`;
+
+--
+-- Metadati per tabella LOCALE
+--
+
+--
+-- Metadati per tabella MENU
+--
+
+--
+-- Metadati per tabella ORDINE
+--
+
+--
+-- Metadati per tabella SOCIETÀ_CONSEGNA
+--
+
+--
+-- Metadati per tabella UTENTE
+--
+
+--
+-- Metadati per database ACMEAT
+--
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

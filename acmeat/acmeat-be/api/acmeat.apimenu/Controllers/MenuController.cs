@@ -35,6 +35,17 @@ namespace acmeat.api.menu
 
         }
 
+         [HttpGet("{LocalId}")]
+        public async Task<List<MenuInfo>> GetMenusByLocalId(int LocalId)
+        {
+            _logger.LogInformation($"Getting menus from Local with Id: {LocalId}");
+
+
+            var menus = await _menuClient.GetMenuByLocalId(LocalId);
+            return menus.Menus.Select(x => new MenuInfo(x)).ToList();
+
+        }
+
         [HttpGet]
         public async Task<List<MenuInfo>> GetMenus()
         {

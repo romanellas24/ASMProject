@@ -8,5 +8,8 @@ namespace acmeat.server.menu.dataproxy;
 public interface MenuDao
   {
     public Menu GetMenuById(int MenuId);
+    public List<Menu> GetMenusByLocalId(int LocalId);
     public List<Menu> GetMenus();
+
+
   }

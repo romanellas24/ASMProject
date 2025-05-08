@@ -29,6 +29,10 @@ public class MenuContext:MySqlContext
         return Menu;
     }
 
+    public List<Menu> GetMenusByLocalId(int LocalId){
+        return MENU.Where(menu => menu.LocalId == LocalId).ToList();
+    }
+
     public async Task CreateMenu(Menu Menu){
         await MENU.AddAsync(Menu);
         await SaveChangesAsync();
