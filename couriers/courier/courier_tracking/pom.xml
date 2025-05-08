@@ -10,7 +10,7 @@
     </parent>
     <groupId>ASM.couriers</groupId>
     <artifactId>courier_tracking</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <name>courier_tracking</name>
     <description>courier_tracking</description>
     <url/>

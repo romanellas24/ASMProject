@@ -70,13 +70,18 @@
         </div>`;
     }
 
-    const connectWS = () => {webSocket = new WebSocket("ws://" + WSURL + "?courierId=" + COURIER_ID); console.log("connected to ws;")}
+    const connectWS = () => {
+        webSocket = new WebSocket(WSURL + "/notification?courierId=" + COURIER_ID);
+        console.log("WSURL: " + WSURL + "/notification?courierId=" + COURIER_ID);
+        console.log("connected to ws;")
+    }
 
     connectWS();
 
     webSocket.onmessage = (event) => {
         try {
             const data = JSON.parse(event.data);
+            console.log(data);
             if (data.type === 'ERROR') {
                 console.error("Errore:", data.message);
                 errorHTML(data.message);

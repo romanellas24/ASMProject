@@ -13,7 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WSCourierConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(deliveryHandler(), "/notification").setAllowedOrigins("*");
+        registry.addHandler(deliveryHandler(), "/tracking/notification").setAllowedOrigins("*");
     }
 
     @Bean

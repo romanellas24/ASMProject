@@ -1,26 +1,23 @@
 package asm.couriers.courier_tracking;
 
-import asm.couriers.courier_tracking.dao.OrdersDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 @RestController
-@RequestMapping()
+@RequestMapping("/tracking")
 public class TrackingController {
 
     @Autowired
-    private OrdersDAO ordersDAO;
+    private String wsUrl;
 
     @GetMapping(value = "")
     public String test() {
-        return "pippo coca";
+        return "test";
     }
 
     @GetMapping(value="/state/{vehicle_id}",produces = "application/json")
     public Integer getState(@PathVariable String vehicle_id) {
-        //new CheckOrderTask(ordersDAO,Integer.valueOf(vehicle_id)).run();
         return Integer.valueOf(vehicle_id);
     }
 
@@ -29,7 +26,7 @@ public class TrackingController {
         ModelAndView modelAndView = new ModelAndView("index");
         // add all html template objects
         modelAndView.addObject("courier_id", courier_id);
-        modelAndView.addObject("WSurl", "localhost:8080/notification");
+        modelAndView.addObject("WSurl", wsUrl);
         return modelAndView;
 
     }
