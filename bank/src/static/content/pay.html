@@ -664,7 +664,7 @@
         }
 
         async function getData() {
-            const url = "http://www.joliebank.local:9100/payments/" + token;
+            const url = "http://localhost:9006/payments/" + token;
             try {
                 const response = await fetch(url);
                 const json = await response.json();
@@ -718,7 +718,7 @@
             let year = expire[1];
 
 
-            const url = "http://www.joliebank.local:9100/payments/" + token;
+            const url = "http://localhost:9006/payments/" + token;
             try {
                 const response = await fetch(url, {
                     method: "PUT",

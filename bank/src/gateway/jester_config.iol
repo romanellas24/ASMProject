@@ -88,35 +88,4 @@ outputPort BANK_GATEWAY {
 }
 
 
-type incomingHeaderHandlerRequest:void {
-  .headers[1,1]:undefined
-  .operation[1,1]:string
-}
-
-type incomingHeaderHandlerResponse:undefined
-
-type outgoingHeaderHandlerRequest:void {
-  .response[0,1]:undefined
-  .operation[1,1]:string
-}
-
-type outgoingHeaderHandlerResponse:undefined
-
-interface HeaderPortInterface {
-RequestResponse:
-  incomingHeaderHandler( incomingHeaderHandlerRequest )( incomingHeaderHandlerResponse ),
-  outgoingHeaderHandler( outgoingHeaderHandlerRequest )( outgoingHeaderHandlerResponse )
-}
-
-
-
-outputPort HeaderPort {
-  Protocol:sodep
-  Location:"local"
-  Interfaces:HeaderPortInterface
-}
-
-
 embedded { Jolie: "bankGateway.ol" in BANK_GATEWAY }
-
-embedded { Jolie: "RestHandler.ol" in HeaderPort }

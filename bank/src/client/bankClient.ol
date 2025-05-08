@@ -1,9 +1,10 @@
 include "console.iol"
 include "../gateway/BankGatewayInterface.iol"
 include "../payments/BankPaymentsI.iol"
+include "../locations.ol"
 
 outputPort BANK_GATEWAY {
-    Location: "socket://localhost:9001"
+    Location: LOCATIONS_API_GATEWAY_SOAP
     Protocol: soap {
         .wsdl = "file:/home/romanellas/WebstormProjects/ASMProject/bank/src/gateway/wsdl.xml";
 	    .wsdl.port = "BankGatewayInterface"

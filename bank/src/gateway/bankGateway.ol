@@ -1,10 +1,12 @@
-include "BankGatewayInterface.iol"
+include "bankGatewayI.iol"
 include "../payments/BankPaymentsI.iol"
 include "../accounts/BankAccountsI.iol"
 
 include "console.iol"
 include "string_utils.iol"
 include "database.iol"
+
+include "../locations.ol"
 
 execution{ concurrent }
 
@@ -15,7 +17,7 @@ inputPort BANK_GATEWAY {
 }
 
 inputPort BANK_GATEWAY_2 {
-    Location: "socket://localhost:9001"
+    Location: LOCATIONS_API_GATEWAY_SOAP
     //Location: "local"
     //Protocol: sodep
     Protocol: soap {
@@ -26,7 +28,7 @@ inputPort BANK_GATEWAY_2 {
 }
 
 outputPort BankPaymentsPort {
-    Location: "socket://localhost:9002"
+    Location: LOCATIONS_API_PAYMENTS
     Protocol: xmlrpc { 
         .compression = false
     }
@@ -34,7 +36,7 @@ outputPort BankPaymentsPort {
 }
 
 outputPort BankAccountsPort {
-    Location: "socket://localhost:9003"
+    Location: LOCATIONS_API_ACCOUNTS
     Protocol: xmlrpc { 
         .compression = false
     }

@@ -1,14 +1,15 @@
-include "../gateway/BankGatewayInterface.iol"
+include "../gateway/bankGatewayI.iol"
 include "BankAccountsI.iol"
 
 include "console.iol"
 include "string_utils.iol"
 include "database.iol"
+include "../locations.ol"
 
 execution{ concurrent }
 
 inputPort BankAccountsPort {
-    Location: "socket://localhost:9003"
+    Location: LOCATIONS_API_ACCOUNTS
     Protocol: xmlrpc { 
         .compression = false
     }
@@ -21,7 +22,7 @@ init {
     with ( connectionInfo ) {
         .username = "romanellas";
         .password = "59741404";
-        .host = "192.168.24.5";
+        .host = "10.147.20.82";
         .database = "jolie_bank";
         .driver = "mysql"
     };
