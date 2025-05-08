@@ -1,5 +1,7 @@
 #!/usr/bin/env jolie
 
+include "../locations.ol"
+
 /*
    Copyright 2020-2021 Fabrizio Montesi <famontesi@gmail.com>
 
@@ -32,7 +34,7 @@ service Launcher {
 			config.wwwDir = dir
 		}
 
-		config.location = "socket://localhost:8080"
+		config.location = LOCATIONS_STATIC
 		config.defaultPage = "index.html"
 
 		getRealServiceDirectory@file()( home )

@@ -24,7 +24,7 @@ init {
     with ( connectionInfo ) {
         .username = "romanellas";
         .password = "59741404";
-        .host = "10.147.20.82";
+        .host = MYSQL_HOST;
         .database = "jolie_bank";
         .driver = "mysql"
     };
@@ -115,9 +115,10 @@ define checkPaymentData
     }
 }
 
-//Requires: token, pan
+//Requires: token, pan, error
 define registerPayment
 {
+    error = 0
     scope ( registerPaymentScope ) {
         sql_cmd = "INSERT INTO tbl_token_transactions (token, card) VALUES (:token, :pan)";
         install ( SQLException =>
@@ -127,6 +128,7 @@ define registerPayment
             println@Console("token:" + token)();
             println@Console("pan:" + pan)();
             println@Console(registerPaymentScope.SQLException.Error)();
+            error = 1;
             println@Console("---------------------------------")()
         );
         queryRequest = sql_cmd;
@@ -219,6 +221,8 @@ main {
         card_holder_last_name = request.param.card_holder_last_name;
         token = request.param.token;
 
+        expire_year = expire_year + 2000;
+
         if(pan == "" || 
                 cvv <= 0 || 
                 expire_month <= 0 || 
@@ -241,8 +245,14 @@ main {
                 response.param.code = 400
             } else {
                 registerPayment;
-                response.param.status = "Ok.";
-                response.param.code = 200
+                if(error == 0) {
+                    response.param.status = "Ok.";
+                    response.param.code = 200
+                } else {
+                    response.param.status = "Internal server error";
+                    response.param.code = 500
+                }
+                
             }   
         }
     }]

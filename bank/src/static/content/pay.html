@@ -375,7 +375,7 @@
             const output = document.getElementById('output');
             const ccicon = document.getElementById('ccicon');
             const ccsingle = document.getElementById('ccsingle');
-            const generatecard = document.getElementById('generatecard');
+
 
 
             let cctype = null;
@@ -578,9 +578,6 @@
                 let randomNumber = Math.floor(Math.random() * testCards.length);
                 cardnumber_mask.unmaskedValue = testCards[randomNumber];
             }
-            generatecard.addEventListener('click', function () {
-                randomCard();
-            });
 
 
 // CREDIT CARD IMAGE JS
@@ -703,13 +700,6 @@
             let expirationDate = document.getElementById("expirationdate").value;
             let cvv = document.getElementById("securitycode").value;
 
-            console.log(
-                fullName,
-                pan,
-                expirationDate,
-                cvv
-            );
-
             let spaceIndex = fullName.indexOf(" ");
             let firstName = fullName.substring(0, spaceIndex);
             let lastName = fullName.substring(spaceIndex + 1);
@@ -717,16 +707,20 @@
             let month = expire[0];
             let year = expire[1];
 
+            const customHeaders = new Headers();
+            customHeaders.append("Content-Type", "application/json");
 
+            pan = pan.replaceAll(' ', "");
             const url = "http://localhost:9006/payments/" + token;
             try {
                 const response = await fetch(url, {
                     method: "PUT",
+                    headers: customHeaders,
                     body: JSON.stringify({
                         pan: pan,
-                        cvv: cvv,
-                        expire_month: month,
-                        expire_year: year,
+                        cvv: parseInt(cvv),
+                        expire_month: parseInt(month),
+                        expire_year: parseInt(year),
                         card_holder_first_name: firstName,
                         card_holder_last_name: lastName,
                         token: token

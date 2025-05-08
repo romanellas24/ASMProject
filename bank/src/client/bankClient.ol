@@ -1,5 +1,5 @@
 include "console.iol"
-include "../gateway/BankGatewayInterface.iol"
+include "../gateway/bankGatewayI.iol"
 include "../payments/BankPaymentsI.iol"
 include "../locations.ol"
 

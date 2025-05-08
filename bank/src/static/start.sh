@@ -1,0 +1,1 @@
+clear && jolie leonardo-master/launcher.ol ./content/
