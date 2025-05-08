@@ -13,7 +13,8 @@ public class OrderInfo{
                      int TransactionId,
                      int Price,
                      int MenuId,
-                     int Quantity
+                     int Quantity,
+                     int LocalId
                      )
     {
         this.Id = new Random().Next();
@@ -24,6 +25,7 @@ public class OrderInfo{
         this.Price = Price;
         this.MenuId = MenuId;
         this.Quantity = Quantity;
+        this.LocalId = LocalId;
         
     }
 
@@ -37,6 +39,7 @@ public class OrderInfo{
         this.Price = order.Price;
         this.MenuId = order.MenuId;
         this.Quantity = order.Quantity;
+        this.LocalId = order.LocalId;
         
     }
 
@@ -48,6 +51,7 @@ public class OrderInfo{
     public int Price {get;set;}
     public int MenuId {get;set;}
     public int Quantity {get;set;}
+    public int LocalId{get;set;}
 
 
     public acmeat.server.order.client.Order Convert(){
@@ -60,6 +64,7 @@ public class OrderInfo{
         order.Price = this.Price;
         order.MenuId = this.MenuId;
         order.Quantity = this.Quantity;
+        order.LocalId = this.LocalId;
         return order;
     }
 

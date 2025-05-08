@@ -62,7 +62,6 @@ namespace acmeat.api.order
 
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
-
         private string GenerateJwtToken(string username)
         {
             var claims = new[]

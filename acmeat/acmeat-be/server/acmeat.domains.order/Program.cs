@@ -1,5 +1,7 @@
 using acmeat.db.mysql;
 using acmeat.domains.order.Services;
+using acmeat.server.local.client;
+using acmeat.server.order.client;
 using acmeat.server.order.dataproxy;
 using acmeat.server.order.datawriter;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +23,8 @@ builder.Services.AddOptions<DbConnectionOptions>().BindConfiguration(nameof(DbCo
 builder.Services.AddScoped<OrderReader>();
 builder.Services.AddScoped<OrderDataWriter>();
 builder.Services.AddScoped<MysqlClient>();
+builder.Services.AddScoped<LocalClient>();
+builder.Services.AddOptions<LocalClientOptions>().BindConfiguration(nameof(LocalClientOptions));
 
 builder.Services.AddEndpointsApiExplorer();
 

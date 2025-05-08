@@ -87,8 +87,8 @@ namespace acmeat.api.order
         public async Task<GeneralResponse> DeleteOrderById(int Id)
         {
             Console.WriteLine($"Order with Id: {Id} deleting...");
-            
-            return await _orderClient.DeleteOrder( new Order{Id=Id});
+            Order order = await _orderClient.GetOrderById(Id);
+            return await _orderClient.DeleteOrder(order);
 
         }
     }
