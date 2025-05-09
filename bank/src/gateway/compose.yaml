@@ -1,0 +1,12 @@
+services:
+  mysql-db:
+    container_name: joliebank_gateway-container
+    image: joliebank-gateway:latest
+    environment:
+      - TERM=xterm
+    expose:
+      - "9001"
+      - "9005"
+    ports:
+      - "9001:9001"
+      - "9005:9005"

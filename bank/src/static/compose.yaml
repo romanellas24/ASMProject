@@ -1,0 +1,8 @@
+services:
+  mysql-db:
+    container_name: joliebank_static-container
+    image: joliebank-static:latest
+    expose:
+      - "9004"
+    ports:
+      - "9004:9004"
