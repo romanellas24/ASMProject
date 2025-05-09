@@ -9,6 +9,7 @@ builder.Services.AddLogging(builder => builder.AddConsole());
 builder.Services.AddScoped<OrderClient>();
 
 builder.Services.AddOptions<OrderClientOptions>().BindConfiguration(nameof(OrderClientOptions));
+builder.Services.AddOptions<BankConnectionOptions>().BindConfiguration(nameof(BankConnectionOptions));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

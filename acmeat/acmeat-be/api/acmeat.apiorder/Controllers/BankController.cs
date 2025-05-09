@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using acmeat.server.order.client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -20,11 +21,32 @@ namespace acmeat.api.order
     [ApiController]
     public class BankController : ControllerBase
     {
+
+
+      
+        private readonly OrderClient _orderClient;
+        private readonly ILogger<BankController> _logger;
+
         //TO DO INSERT FAKEBANK URL
         private static HttpClient sharedClient = new()
         {
             BaseAddress = new Uri("https://jsonplaceholder.typicode.com"),
         };
+
+
+         public BankController(
+            OrderClient orderClient,
+            ILogger<BankController> logger
+
+         ){
+
+            _logger = logger;
+            _orderClient = orderClient;
+            
+        }
+
+        //TO DO INSERT FAKEBANK URL
+       
         [HttpPut]
         public async Task<string> Pay(PaymentInfo paymentInfo)
         {
@@ -44,13 +66,12 @@ namespace acmeat.api.order
         public async Task<PaymentInfo> GetPaymentInfo(string Token)
         {
             Console.WriteLine($"Token received: {Token}. Getting Payment info");
+            
 
-            // TO DO REMOVE WHEN BANK ENDPOINT IS READY
-            var mock = Mock.Create<ITaskAsync>();
-            Mock.Arrange(() => mock.AsyncExecute(Token));
-            await mock.AsyncExecute(Token);
+            return  new PaymentInfo(await _orderClient.GetPaymentInfo(Token));
 
-            return new PaymentInfo("AHAHAHAHHA", "BIGLIETTO", 30,2);
+            // TO DO REMOVE WHEN BANK ENDPOINT IS READY THE REQUEST MUST BE DONE BY THE BANK CLIENT
+          
         }
 
         [HttpDelete("{Token}")]

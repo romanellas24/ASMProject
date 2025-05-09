@@ -11,6 +11,13 @@ spec:
   - host: acmeat.com
     http:
       paths:
+      - path: /Bank(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: apiorder-service
+            port:
+              number: 8080
       - path: /Order(/|$)(.*)
         pathType: Prefix
         backend:
