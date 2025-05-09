@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: mysql-config-map
 data:
-  mysql-server: mysql_courier       # The name of mysql service
-  mysql-database-name: courier_db    # The name of the database used by the app
-  mysql-user-username: courier_be         # A user for app 
+  mysql-server: mysql_courier         # The name of mysql service
+  mysql-database-name: courier_db     # The name of the database used by the app
+  mysql-user-username: courier_be     # A user for app 

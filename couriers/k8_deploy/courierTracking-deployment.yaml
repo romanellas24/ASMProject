@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: courier-tracking
+  labels:
+    app: courier-tracking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: courier-tracking
+  template:
+    metadata:
+      labels:
+        app: courier-tracking
+    spec:
+      containers:
+        - name: courier-tracking
+          image: tiesta/asm_courier_tracking:0.7
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: ws
+              containerPort: 8080
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-pass
+                  key: mysql-user-password
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: mysql-server
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: mysql-database-name
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: mysql-user-username
+            - name: WS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: ws-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: courier-tracking
+  labels:
+    app: courier-tracking
+spec:
+  selector:
+    app: courier-tracking
+  ports:
+    - protocol: TCP
+      name: ws
+      port: 8080
+      targetPort: 8080

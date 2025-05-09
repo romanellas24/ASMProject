@@ -5,14 +5,11 @@ metadata:
   labels:
     app: mysql-courier
 spec:
+  type: NodePort  # Solo per sviluppo locale con Minikube
   ports:
     - port: 3306
-      targetPort: 3306
   selector:
     app: mysql-courier
-    tier: mysql
-  # clusterIP: None
-  type: NodePort
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -34,42 +31,22 @@ metadata:
   labels:
     app: mysql-courier
 spec:
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: mysql-courier
-      tier: mysql
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
         app: mysql-courier
-        tier: mysql
     spec:
       containers:
-      - image: docker.io/tiesta/asm_courier_db:0.10
-        name: mysql
-        # env:
-        # - name: MYSQL_DATABASE
-        #   valueFrom:
-        #     configMapKeyRef:
-        #       name: mysql-config-map
-        #       key: mysql-database-name
-        # - name: MYSQL_USER
-        #   valueFrom:
-        #     configMapKeyRef:
-        #       name: mysql-config-map
-        #       key: mysql-user-username
-        # - name: MYSQL_PASSWORD
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: mysql-pass
-        #       key: mysql-user-password
-        # - name: MYSQL_ROOT_PASSWORD
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: mysql-pass
-        #       key: mysql-root-password
+      - name: mysql
+        image: docker.io/tiesta/asm_courier_db:0.10
+        ports:
+        - containerPort: 3306
+          name: mysql
         livenessProbe:
           tcpSocket:
             port: 3306
@@ -82,9 +59,6 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 2
           timeoutSeconds: 1
-        ports:
-        - containerPort: 3306
-          name: mysql
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
