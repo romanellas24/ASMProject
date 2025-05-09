@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using acmeat.server.order.client;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
+using Telerik.JustMock;
 //PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.deliverycompany.client
 {
@@ -15,8 +16,35 @@ namespace acmeat.server.deliverycompany.client
         private GrpcDeliveryCompany.GrpcDeliveryCompanyClient _client;
         private readonly DeliveryCompanyClientOptions _options;
 
+        public class AvailabilityPayload
+        {
+            public AvailabilityPayload(
+        string LocalAddress,
+        string UserAddress,
+        string DeliveryTime,
+        int DeliveryCompanyId
+    )
+            {
+                this.LocalAddress = LocalAddress;
+                this.UserAddress = UserAddress;
+                this.DeliveryTime = DeliveryTime;
+                this.DeliveryCompanyId = DeliveryCompanyId;
+            }
 
-        public DeliveryCompanyClient(IOptions<DeliveryCompanyClientOptions>  options
+
+
+            public string LocalAddress { get; set; }
+            public string UserAddress { get; set; }
+            public string DeliveryTime { get; set; }
+            public int DeliveryCompanyId {get;set;}
+
+        }
+                 public interface ITaskAsync
+    {
+        Task<int> AsyncExecute(AvailabilityPayload value);
+    }
+
+        public DeliveryCompanyClient(IOptions<DeliveryCompanyClientOptions> options
 
 
             )
@@ -62,6 +90,30 @@ namespace acmeat.server.deliverycompany.client
         public async Task<GeneralResponse> DeleteDeliveryCompany(DeliveryCompany deliverycompany)
         {
             return await _client.DeleteDeliveryCompanyAsync(deliverycompany);
+        }
+        
+        // TO DO CHANGE WITH THE ENDPOINT
+        public async Task<GeneralResponse> CheckAvailability(AvailabilityPayload availabilityPayload)
+        {
+            var mock = Mock.Create<ITaskAsync>();
+                    Mock.Arrange(() => mock.AsyncExecute(availabilityPayload));
+                    await mock.AsyncExecute(availabilityPayload);
+
+            GeneralResponse generalResponse = new GeneralResponse();
+            generalResponse.Message = "OK";
+            return generalResponse;
+        }
+
+        // TO DO CHANGE WITH THE ENDPOINT
+        public async Task<GeneralResponse> CommunicateOrder(AvailabilityPayload availabilityPayload)
+        {
+            var mock = Mock.Create<ITaskAsync>();
+                    Mock.Arrange(() => mock.AsyncExecute(availabilityPayload));
+                    await mock.AsyncExecute(availabilityPayload);
+
+            GeneralResponse generalResponse = new GeneralResponse();
+            generalResponse.Message = "OK";
+            return generalResponse;
         }
     }
 }

@@ -11,6 +11,9 @@ using System.Linq;
 using System;
 using acmeat.server.local.client;
 using System.Globalization;
+using acmeat.server.deliverycompany.client;
+using acmeat.server.user.client;
+using static acmeat.server.deliverycompany.client.DeliveryCompanyClient;
 
 namespace acmeat.domains.order.Services;
 
@@ -24,15 +27,21 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     private OrderReader _orderReader;
     private OrderDataWriter _orderDataWriter;
     private readonly LocalClient _localClient;
+    private readonly DeliveryCompanyClient _deliveryCompanyClient;
+    private readonly UserClient _userClient;
     public GrpcOrderManagerService(
         ILogger<GrpcOrderManagerService> logger,
         OrderReader orderReader,
         LocalClient localClient,
+        DeliveryCompanyClient deliveryCompanyClient,
+        UserClient userClient,
         OrderDataWriter orderDataWriter)
     {
         _logger = logger;
         _orderDataWriter = orderDataWriter;
         _orderReader = orderReader;
+        _deliveryCompanyClient = deliveryCompanyClient;
+        _userClient = userClient;
         _localClient = localClient;
     }
 
@@ -70,18 +79,57 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         server.order.Order serverOrder = ConvertGrpcToServerModel(order);
         db.order.Order dbOrder = serverOrder.Convert();
-        try
-        {
-            var response =_localClient.CheckOrderAvailability(dbOrder, dbOrder.LocalId);
-            generalResponse.Message = response.Message;
-        }
-        catch (Exception ex)
-        {
-            generalResponse.Message = ex.Message;
-        }
+    
+            //LOCAL AVAILABILITY FLOW
+            var localAvailabilityResponse = _localClient.CheckOrderAvailability(dbOrder, dbOrder.LocalId);
 
-        if (generalResponse.Message == "OK")
-        {
+            if (localAvailabilityResponse.Message != "OK")
+                throw new Exception("The local is unavailable.");
+            
+
+            //DELIVERY COMPANY FLOW
+            Local local = await _localClient.GetLocalById(order.LocalId);
+            User user = await _userClient.GetUserById(order.UserId);
+            DateTime deliveryTime = DateTime.Now.AddHours(1);
+            order.DeliveryTime = deliveryTime.Hour + ":" + deliveryTime.Minute;
+            DateTime startTime;
+            // DateTime endTime;
+
+
+
+
+            DeliveryCompanyList deliveryCompanyList = await _deliveryCompanyClient.GetDeliveryCompanyList();
+            DeliveryCompanyList availableCompanies = new DeliveryCompanyList();
+
+
+            foreach (DeliveryCompany deliveryCompany in deliveryCompanyList.Deliverycompanys)
+            {
+                //TO DO:CHECK IF IT'S 10 KM RANGE
+                if (deliveryCompany.Address != null)
+                {
+                    _logger.LogInformation($"Checking availability for deliveryCompany with id : {deliveryCompany.Id}");
+                    startTime = DateTime.Now;
+                   // TO DO COUNT UNTIL 15 THEN DELETE THE TASK IF IS NOT RESPONDING
+
+                    var deliveryCompanyResponse = await _deliveryCompanyClient.CheckAvailability(new AvailabilityPayload(local.Address, user.Address, deliveryTime.ToString(),deliveryCompany.Id));
+
+
+
+                    if (deliveryCompanyResponse.Message == "OK")
+                        availableCompanies.Deliverycompanys.Add(deliveryCompany);
+                }
+            }
+            
+            if(availableCompanies.Deliverycompanys.Count <= 0)
+                throw new Exception("No delivery company is available");
+            
+            DeliveryCompany bestCompany = availableCompanies.Deliverycompanys.OrderBy( d => d.Price).First();
+
+            _logger.LogInformation($"Delivery company selected  with id {bestCompany.Id}");
+
+            await _deliveryCompanyClient.CommunicateOrder(new AvailabilityPayload(local.Address, user.Address, deliveryTime.ToString(),bestCompany.Id));
+
+       
             try
             {
                 await _orderDataWriter.SendAsync(
@@ -100,11 +148,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                 generalResponse
             );
 
-        }
-        else
-        {
-            return generalResponse;
-        }
+
 
 
 
@@ -137,12 +181,13 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     {
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         DateTime now = DateTime.Now;
-        DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime,"HH:mm",CultureInfo.InvariantCulture);
+        DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime, "HH:mm", CultureInfo.InvariantCulture);
         _logger.LogInformation($"Current time {now.Hour}:{now.Minute}, delivery time: {order.DeliveryTime}, time between now and delivery time is:{Math.Abs((now - deliveryTime).Hours)} hours");
 
-        if(Math.Abs((now - deliveryTime).Hours) > 1){
+        if (Math.Abs((now - deliveryTime).Hours) > 1)
+        {
             _logger.LogInformation("Cannot delete the order, you can delete it only one hour before the delivery time");
-            generalResponse.Message  = "Cannot delete the order, you can delete it only one hour before the delivery time";
+            generalResponse.Message = "Cannot delete the order, you can delete it only one hour before the delivery time";
             return generalResponse;
         }
 
