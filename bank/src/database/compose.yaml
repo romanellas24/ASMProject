@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  mysql-db:
+    container_name: jolie-bank-db
+    image: mysql:8.0.42
+    environment:
+      - MYSQL_ROOT_PASSWORD=jolie_bank
+      - MYSQL_DATABASE=jolie_bank
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./my_volume:/var/lib/mysql
+      - ./1.init.sql:/docker-entrypoint-initdb.d/1.init.sql
+      - ./2.init.sql:/docker-entrypoint-initdb.d/2.init.sql

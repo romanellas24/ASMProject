@@ -666,6 +666,10 @@
                 const response = await fetch(url);
                 const json = await response.json();
                 if (json.code === 200) {
+                    if (json.status === "Paid") {
+                        alert("Hai già pagato!");
+                        window.location.replace("https://www.google.com");
+                    }
                     amount = json.amount;
                     beneficiary = json.beneficiary;
                     let amountHtml = document.getElementById("pay_amount");
@@ -728,6 +732,7 @@
                 });
                 const json = await response.json();
                 console.log(json);
+                alert("Pagato!")
             } catch (error) {
                 console.error(error.message);
             }

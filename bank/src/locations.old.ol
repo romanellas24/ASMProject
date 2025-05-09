@@ -6,5 +6,5 @@ constants {
     LOCATIONS_API_GATEWAY_HTTP = "socket://localhost:9005/",
     LOCATIONS_AGGREGATOR = "socket://localhost:9006/", //USED IN Ngnix
     // MYSQL_HOST = "192.168.24.5"
-    MYSQL_HOST = "localhost"
+    MYSQL_HOST = "10.147.20.82"
 }
