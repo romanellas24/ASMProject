@@ -220,7 +220,7 @@ ALTER TABLE `UTENTE`
 --
 -- Metadati
 --
-USE `phpmyadmin`;
+USE `ACMEAT`;
 
 --
 -- Metadati per tabella LOCALE

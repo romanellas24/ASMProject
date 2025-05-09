@@ -17,8 +17,15 @@ spec:
         app: mysql
     spec:
       containers:
-      - image: docker.io/er4ikk/mysql
-        name: mysql
+      - name: mysql
+        image: docker.io/er4ikk/mysql:v2
+        resources:
+              requests:
+                memory: "1Gi"
+                cpu: "500m"
+              limits:
+                memory: "2Gi"
+                cpu: "800m"
         ports:
         - containerPort: 3306
           name: mysql
