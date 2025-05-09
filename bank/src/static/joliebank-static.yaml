@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joliebank-static-deployment
+  labels:
+    app: joliebank-static
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: joliebank-static
+  template:
+    metadata:
+      labels:
+        app: joliebank-static
+    spec:
+      containers:
+        - name: joliebank-static-container
+          image: docker.io/romanellas/joliebank-static
+          ports:
+            - containerPort: 9004
+          imagePullPolicy: IfNotPresent

@@ -1,5 +1,5 @@
 services:
-  mysql-db:
+  static-ws:
     container_name: joliebank_static-container
     image: joliebank-static:latest
     expose:
