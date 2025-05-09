@@ -21,7 +21,8 @@ public class GrpcMenuManagerService : server.menu.manager.GrpcMenu.GrpcMenuBase
 {
     private readonly ILogger<GrpcMenuManagerService> _logger;
     private MenuReader _menuReader;
-    private  MenuDataWriter _menuDataWriter;
+    private MenuDataWriter _menuDataWriter;
+    private readonly int deadLineHour = 10;
     public GrpcMenuManagerService(
         ILogger<GrpcMenuManagerService> logger,
         MenuReader menuReader,
@@ -43,16 +44,16 @@ public class GrpcMenuManagerService : server.menu.manager.GrpcMenu.GrpcMenuBase
     public override Task<server.menu.manager.Menu> GetMenuById(Id id, ServerCallContext context)
     {
         return Task.FromResult(
-            
+
            new server.menu.manager.Menu(ConvertServerModelToGrpc(_menuReader.GetMenuById(id.Id_)))
         );
     }
 
-     public override Task<server.menu.manager.MenuList> GetMenusByLocalId(Id id, ServerCallContext context)
+    public override Task<server.menu.manager.MenuList> GetMenusByLocalId(Id id, ServerCallContext context)
     {
 
-        List<server.menu.Menu> menus= _menuReader.GetMenusByLocalId(id.Id_);
-        MenuList menuList =  new server.menu.manager.MenuList();
+        List<server.menu.Menu> menus = _menuReader.GetMenusByLocalId(id.Id_);
+        MenuList menuList = new server.menu.manager.MenuList();
 
         menuList.Menus.AddRange(ConvertServerListToGrpc(menus));
 
@@ -61,91 +62,147 @@ public class GrpcMenuManagerService : server.menu.manager.GrpcMenu.GrpcMenuBase
           );
     }
 
-     public override Task<server.menu.manager.MenuList> GetMenus(Id id, ServerCallContext context)
+    public override Task<server.menu.manager.MenuList> GetMenus(Id id, ServerCallContext context)
     {
-        List<server.menu.Menu> menus=  _menuReader.GetMenus();
-        MenuList menuList =  new server.menu.manager.MenuList();
+        List<server.menu.Menu> menus = _menuReader.GetMenus();
+        MenuList menuList = new server.menu.manager.MenuList();
 
         menuList.Menus.AddRange(ConvertServerListToGrpc(menus));
 
         return Task.FromResult(
             menuList
-          
+
         );
     }
 
-       public override async Task<GeneralResponse> CreateMenu(server.menu.manager.Menu menu, ServerCallContext context)
+    public override async Task<GeneralResponse> CreateMenu(server.menu.manager.Menu menu, ServerCallContext context)
     {
-         GeneralResponse generalResponse = new GeneralResponse();
-        try{
-           await _menuDataWriter.SendAsync(
-            new CreateNewMenuCommand(
-                ConvertGrpcToServerModel(menu)
-                )
-            );
-            generalResponse.Message="OK";
+        GeneralResponse generalResponse = new GeneralResponse();
+        try
+        {
+            await _menuDataWriter.SendAsync(
+             new CreateNewMenuCommand(
+                 ConvertGrpcToServerModel(menu)
+                 )
+             );
+            generalResponse.Message = "OK";
 
-        }catch(Exception ex){
+        }
+        catch (Exception ex)
+        {
             generalResponse.Message = ex.Message;
         }
         return await Task.FromResult(
             generalResponse
         );
 
-   }
+    }
 
-       public override async Task<GeneralResponse> UpdateMenu(server.menu.manager.Menu menu, ServerCallContext context)
+    public override async Task<GeneralResponse> UpdateMenu(server.menu.manager.Menu menu, ServerCallContext context)
     {
-         GeneralResponse generalResponse = new GeneralResponse();
-        try{
-           await _menuDataWriter.SendAsync(
+        GeneralResponse generalResponse = new GeneralResponse();
+        try
+        {
+            await _menuDataWriter.SendAsync(
+             new UpdateNewMenuCommand(
+                 ConvertGrpcToServerModel(menu)
+                 )
+             );
+            generalResponse.Message = "OK";
+
+        }
+        catch (Exception ex)
+        {
+            generalResponse.Message = ex.Message;
+        }
+        return await Task.FromResult(
+            generalResponse
+        );
+
+    }
+
+    public override async Task<GeneralResponse> UpdateMenus(MenuList menuList, ServerCallContext context)
+    {
+        GeneralResponse generalResponse = new GeneralResponse();
+        _logger.LogInformation($"Updating Menus for Local with Id: {menuList.Menus.First().LocalId}");
+        //https://learn.microsoft.com/en-us/dotnet/standard/datetime/how-to-use-dateonly-timeonly
+        TimeOnly timeOnly = TimeOnly.FromDateTime(DateTime.Now);
+        _logger.LogInformation($"Current time {timeOnly.Hour}:{timeOnly.Minute}");
+
+        if (timeOnly.Hour > deadLineHour)
+        {
+            _logger.LogInformation($"Cannot update the menus its too late...");
+            // GeneralResponse response = new GeneralResponse();
+            throw new Exception($"Cannot update the menus its too late...");
+        }
+        else
+        {
+            try
+            {
+
+                foreach (server.menu.manager.Menu menu in menuList.Menus)
+                {
+                    await _menuDataWriter.SendAsync(
             new UpdateNewMenuCommand(
                 ConvertGrpcToServerModel(menu)
                 )
             );
-            generalResponse.Message="OK";
+                }
 
-        }catch(Exception ex){
-            generalResponse.Message = ex.Message;
-        }
-        return await Task.FromResult(
-            generalResponse
-        );
+                generalResponse.Message = "OK";
 
-   }
-
-       public override async Task<GeneralResponse> DeleteMenu(server.menu.manager.Menu menu, ServerCallContext context)
-    {
-         GeneralResponse generalResponse = new GeneralResponse();
-        try{
-           await _menuDataWriter.SendAsync(
-            new DeleteNewMenuCommand(
-                menu.Id
-                )
+            }
+            catch (Exception ex)
+            {
+                generalResponse.Message = ex.Message;
+            }
+            return await Task.FromResult(
+                generalResponse
             );
-            generalResponse.Message="OK";
 
-        }catch(Exception ex){
+
+        }
+
+    }
+
+    public override async Task<GeneralResponse> DeleteMenu(server.menu.manager.Menu menu, ServerCallContext context)
+    {
+        GeneralResponse generalResponse = new GeneralResponse();
+        try
+        {
+            await _menuDataWriter.SendAsync(
+             new DeleteNewMenuCommand(
+                 menu.Id
+                 )
+             );
+            generalResponse.Message = "OK";
+
+        }
+        catch (Exception ex)
+        {
             generalResponse.Message = ex.Message;
         }
         return await Task.FromResult(
             generalResponse
         );
 
-   }
+    }
 
 
-    public List<server.menu.manager.Menu> ConvertServerListToGrpc(List<server.menu.Menu> menus){
+    public List<server.menu.manager.Menu> ConvertServerListToGrpc(List<server.menu.Menu> menus)
+    {
         return menus.Select(ConvertServerModelToGrpc).ToList();
     }
 
-    public server.menu.Menu ConvertGrpcToServerModel(server.menu.manager.Menu menu){
-        return new server.menu.Menu(menu.Id,menu.Description,menu.Type,menu.Price,menu.LocalId );
+    public server.menu.Menu ConvertGrpcToServerModel(server.menu.manager.Menu menu)
+    {
+        return new server.menu.Menu(menu.Id, menu.Description, menu.Type, menu.Price, menu.LocalId);
     }
 
 
-    public server.menu.manager.Menu ConvertServerModelToGrpc(server.menu.Menu menu){
-        var menut =  new server.menu.manager.Menu();
+    public server.menu.manager.Menu ConvertServerModelToGrpc(server.menu.Menu menu)
+    {
+        var menut = new server.menu.manager.Menu();
         menut.Id = menu.Id;
         menut.Description = menu.Descritpion;
         menut.Type = menu.Type;

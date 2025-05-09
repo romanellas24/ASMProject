@@ -66,6 +66,11 @@ namespace acmeat.server.menu.client
             return await _client.UpdateMenuAsync(menu);
         }
 
+          public async Task<GeneralResponse> UpdateMenus(MenuList menus)
+        {
+            return await _client.UpdateMenusAsync(menus);     
+        }
+
         public async Task<GeneralResponse> DeleteMenu(Menu menu)
         {
             return await _client.DeleteMenuAsync(menu);

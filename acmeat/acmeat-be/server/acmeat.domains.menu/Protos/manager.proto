@@ -10,6 +10,7 @@ service GrpcMenu {
   rpc GetMenus(Id) returns (MenuList);
   rpc CreateMenu(Menu) returns(GeneralResponse);
   rpc UpdateMenu(Menu) returns (GeneralResponse);
+  rpc UpdateMenus(MenuList) returns (GeneralResponse);
   rpc DeleteMenu(Menu) returns (GeneralResponse);
   rpc DeleteMenuById(Menu) returns (GeneralResponse);
 }

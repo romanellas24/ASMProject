@@ -60,7 +60,7 @@ namespace acmeat.api.menu
         [HttpPost]
         public async Task<GeneralResponse> CreateMenu(MenuInfo menuInfo)
         {
-            Console.WriteLine($"Menu with made with menuId: {menuInfo.Id}");
+            _logger.LogInformation($"Menu with made with menuId: {menuInfo.Id}");
             
             return await _menuClient.CreateMenu(menuInfo.Convert());
 
@@ -69,9 +69,30 @@ namespace acmeat.api.menu
          [HttpPatch]
         public async Task<GeneralResponse> UpdateMenu(MenuInfo menuInfo)
         {
-            Console.WriteLine($"Menu with Id: {menuInfo.Id} updating...");
+            _logger.LogInformation($"Menu with Id: {menuInfo.Id} updating...");
             
             return await _menuClient.UpdateMenu(menuInfo.Convert());
+
+        }
+
+        [HttpPatch]
+        public async Task<GeneralResponse> UpdateMenus(List<MenuInfo> menuList)
+        {
+            _logger.LogInformation($"Updating Menus from Local Id: {menuList.First().LocalId} updating {menuList.Count} elements.");
+            GeneralResponse response = new GeneralResponse();
+            MenuList menuListClient = new MenuList();
+
+
+                foreach(MenuInfo menu in menuList){
+                    menuListClient.Menus.Add(menu.Convert());
+                }
+
+                
+                
+                return await _menuClient.UpdateMenus(menuListClient);;
+
+            
+            // return await _menuClient.UpdateMenu(menuInfo.Convert());
 
         }
 
@@ -79,7 +100,7 @@ namespace acmeat.api.menu
          [HttpDelete("{Id}")]
         public async Task<GeneralResponse> DeleteMenuById(int Id)
         {
-            Console.WriteLine($"Menu with Id: {Id} deleting...");
+            _logger.LogInformation($"Menu with Id: {Id} deleting...");
             
             return await _menuClient.DeleteMenu( new Menu{Id=Id});
 
