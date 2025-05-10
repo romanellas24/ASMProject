@@ -1,7 +1,8 @@
 old*
 mysql_develop*
 k8_deploy/mysql-secrets*
-
+courier/courier_gateway*
+courier/courier_gateway/*
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
