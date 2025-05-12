@@ -34,8 +34,8 @@ service Launcher {
 			config.wwwDir = dir
 		}
 
-		config.location = LOCATIONS_STATIC
-		config.defaultPage = "index.html"
+		config.location = "socket://localhost:9004/"
+		config.defaultPage = "pay.html"
 
 		getRealServiceDirectory@file()( home )
 		getFileSeparator@file()( sep )
