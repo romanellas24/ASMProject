@@ -1,8 +1,12 @@
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using acmeat.db.order;
 using acmeat.server.order.client;
+using Azure;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 //PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.local.client
 {
@@ -46,6 +50,14 @@ namespace acmeat.server.local.client
             return await _client.GetLocalsAsync(id1);
         }
 
+        public async Task<LocalList> GetLocalListByCity(string city)
+        {
+            City city1 = new City();
+            city1.City_ = city;
+            return await _client.GetLocalsByCityAsync(city1);
+        }
+
+
         public async Task<GeneralResponse> CreateLocal(Local local)
         {
 
@@ -62,6 +74,16 @@ namespace acmeat.server.local.client
         public async Task<GeneralResponse> DeleteLocal(Local local)
         {
             return await _client.DeleteLocalAsync(local);
+        }
+
+        //check if the order can be placed at specific  local
+        public GeneralResponse CheckOrderAvailability(Order order,int localId){
+           Console.WriteLine($"Order received: {JsonConvert.SerializeObject(order)} sending to local with: {localId}");
+
+           // TO DO: SEND THE REQUEST TO LOCALS
+           GeneralResponse resposne = new GeneralResponse();
+            resposne.Message="OK";
+          return resposne;
         }
     }
 }

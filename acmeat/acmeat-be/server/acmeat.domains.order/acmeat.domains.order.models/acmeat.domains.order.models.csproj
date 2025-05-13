@@ -11,6 +11,7 @@
   
        <PackageReference Include="Acmeat.Db.ClientTest" Version="1.0.6" />
        
+      <PackageReference Include="JustMock" Version="2024.4.1203.350" />
      
      
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />

@@ -6,12 +6,13 @@ public class MenuInfo
 
     [JsonConstructor]
     public MenuInfo(
-               string Descritpion, string Type, int Price)
+               string Descritpion, string Type, int Price,int LocalId)
     {
         this.Id = new Random().Next();
         this.Descritpion = Descritpion;
         this.Type = Type;
         this.Price = Price;
+        this.LocalId = LocalId;
     }
 
 
@@ -22,6 +23,7 @@ public class MenuInfo
         this.Descritpion = menu.Description;
         this.Type = menu.Type;
         this.Price = menu.Price;
+        this.LocalId = menu.LocalId;
 
     }
 
@@ -32,6 +34,8 @@ public class MenuInfo
 
 
     public int Price { get; set; }
+
+    public int LocalId {get;set;}
     public acmeat.server.menu.client.Menu Convert()
     {
         acmeat.server.menu.client.Menu menu = new acmeat.server.menu.client.Menu();
@@ -39,6 +43,7 @@ public class MenuInfo
         menu.Description = this.Descritpion;
         menu.Type = this.Type;
         menu.Price = this.Price;
+        menu.LocalId = this.LocalId;
         return menu;
     }
 }

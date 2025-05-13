@@ -1,7 +1,12 @@
+using acmeat.db.deliveryCompany;
 using acmeat.db.mysql;
 using acmeat.domains.order.Services;
+using acmeat.server.deliverycompany.client;
+using acmeat.server.local.client;
+using acmeat.server.order.client;
 using acmeat.server.order.dataproxy;
 using acmeat.server.order.datawriter;
+using acmeat.server.user.client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +26,12 @@ builder.Services.AddOptions<DbConnectionOptions>().BindConfiguration(nameof(DbCo
 builder.Services.AddScoped<OrderReader>();
 builder.Services.AddScoped<OrderDataWriter>();
 builder.Services.AddScoped<MysqlClient>();
+builder.Services.AddScoped<LocalClient>();
+builder.Services.AddOptions<LocalClientOptions>().BindConfiguration(nameof(LocalClientOptions));
+builder.Services.AddScoped<DeliveryCompanyClient>();
+builder.Services.AddOptions<DeliveryCompanyClientOptions>().BindConfiguration(nameof(DeliveryCompanyClientOptions));
+builder.Services.AddScoped<UserClient>();
+builder.Services.AddOptions<UserClientOptions>().BindConfiguration(nameof(UserClientOptions));
 
 builder.Services.AddEndpointsApiExplorer();
 

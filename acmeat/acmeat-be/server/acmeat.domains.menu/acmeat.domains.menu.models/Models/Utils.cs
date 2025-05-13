@@ -18,7 +18,7 @@ public static class Utils{
     }
 
     public static db.menu.Menu ConvertServerElementIntoDbELement(Menu menu){
-        db.menu.Menu menuDB = new db.menu.Menu(menu.Id,menu.Descritpion,menu.Type,menu.Price);
+        db.menu.Menu menuDB = new db.menu.Menu(menu.Id,menu.Descritpion,menu.Type,menu.Price,menu.LocalId);
 
         menuDB.Id = menu.Id;
 

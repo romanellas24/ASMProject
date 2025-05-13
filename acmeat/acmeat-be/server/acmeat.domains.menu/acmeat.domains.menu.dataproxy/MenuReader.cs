@@ -40,4 +40,11 @@ public class MenuReader :MenuDao{
         return Utils.ConvertDbElementToServerElement(menu); 
        
     }
+
+      public List<acmeat.server.menu.Menu>GetMenusByLocalId(int LocalId){
+        _logger.LogInformation($"Getting Menus from Local with id : {LocalId}");
+       List<acmeat.db.menu.Menu> menus= _mysqlClient.GetMenusByLocalId(LocalId);
+        return Utils.ConvertDbListToServerList(menus); 
+       
+    }
 }

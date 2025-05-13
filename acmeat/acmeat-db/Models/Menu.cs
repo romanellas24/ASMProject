@@ -8,12 +8,13 @@ public class Menu{
     {
     }
 
-    public Menu(int Id,string Descritpion, string Type, int Price)
+    public Menu(int Id,string Descritpion, string Type, int Price , int LocalId )
     {
         this.Id = Id;
         this.Descritpion=Descritpion;
         this.Type = Type;
         this.Price = Price;
+        this.LocalId = LocalId;
     }
 
     public int Id{get;set;}
@@ -24,4 +25,7 @@ public class Menu{
 
      [Column("PREZZO")]
     public int Price {get;set;}
+
+    [Column("ID_LOCALE")]
+    public int LocalId {get;set;}
 }

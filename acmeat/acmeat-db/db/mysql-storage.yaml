@@ -1,3 +1,4 @@
+#ATTENTION: WHEN DEPLOYING A NEW IMAGE OF THE DB YOU MUST CLEAR THE "/mnt/data" DIRECTORY OTHERWISE YOU WONT SEE THE UPDATES
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -9,7 +10,7 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   hostPath:
     path: "/mnt/data"
 ---
@@ -20,7 +21,7 @@ metadata:
 spec:
   storageClassName: manual
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 1Gi

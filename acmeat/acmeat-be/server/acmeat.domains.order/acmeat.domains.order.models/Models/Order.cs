@@ -80,6 +80,7 @@ public class Order
         order.Price = this.Price;
         order.MenuId = this.MenuId;
         order.Quantity = this.Quantity;
+        order.LocalId = this.LocalId;
         return order;
     }
 }

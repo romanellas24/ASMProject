@@ -1,0 +1,1 @@
+microk8s kubectl port-forward service/localmanager-service 5203:8080
