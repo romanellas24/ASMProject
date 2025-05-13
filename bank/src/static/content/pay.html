@@ -652,7 +652,6 @@
         let isValid = true;
         if (token === null) {
             alert("TOKEN INESISTENTE!");
-            window.location.replace("https://www.google.com");
         }
 
 
@@ -661,14 +660,13 @@
         }
 
         async function getData() {
-            const url = "http://localhost:9006/payments/" + token;
+            const url = "http://localhost:8000/payments/" + token;
             try {
                 const response = await fetch(url);
                 const json = await response.json();
                 if (json.code === 200) {
                     if (json.status === "Paid") {
                         alert("Hai già pagato!");
-                        window.location.replace("https://www.google.com");
                     }
                     amount = json.amount;
                     beneficiary = json.beneficiary;
@@ -678,10 +676,8 @@
                     beneficiaryHtml.innerHTML = beneficiary;
                 } else if (json.status === "Paid") {
                     alert("Hai già pagato!");
-                    window.location.replace("https://www.google.com");
                 } else {
                     alert("Errore generico!");
-                    window.location.replace("https://www.google.com");
                 }
             } catch (error) {
                 console.error(error.message);
@@ -715,7 +711,7 @@
             customHeaders.append("Content-Type", "application/json");
 
             pan = pan.replaceAll(' ', "");
-            const url = "http://localhost:9006/payments/" + token;
+            const url = "http://localhost:8000/payments/" + token;
             try {
                 const response = await fetch(url, {
                     method: "PUT",

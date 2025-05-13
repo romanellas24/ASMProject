@@ -19,4 +19,4 @@ spec:
           image: docker.io/romanellas/joliebank-static
           ports:
             - containerPort: 9004
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always

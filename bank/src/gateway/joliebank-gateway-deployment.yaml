@@ -15,7 +15,7 @@ spec:
         app: joliebank-gateway
     spec:
       containers:
-        - name: joliebank-payments-container
+        - name: joliebank-gateway-container
           image: docker.io/romanellas/joliebank-gateway
           env:
             - name: TERM

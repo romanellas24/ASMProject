@@ -15,7 +15,7 @@ spec:
         app: joliebank-accounts
     spec:
       containers:
-        - name: joliebank-payments-container
+        - name: joliebank-accounts-container
           image: docker.io/romanellas/joliebank-accounts
           ports:
             - containerPort: 9003
