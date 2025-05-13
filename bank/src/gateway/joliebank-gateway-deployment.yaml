@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joliebank-gateway-deployment
+  labels:
+    app: joliebank-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: joliebank-gateway
+  template:
+    metadata:
+      labels:
+        app: joliebank-gateway
+    spec:
+      containers:
+        - name: joliebank-payments-container
+          image: docker.io/romanellas/joliebank-gateway
+          env:
+            - name: TERM
+              value: "xterm-256color"
+          ports:
+            - containerPort: 9001
+            - containerPort: 9005
+          imagePullPolicy: Always

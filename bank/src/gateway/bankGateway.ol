@@ -17,11 +17,11 @@ inputPort BANK_GATEWAY {
 }
 
 inputPort BANK_GATEWAY_2 {
-    Location: LOCATIONS_API_GATEWAY_SOAP
+    Location: "socket://localhost:9001"
     //Location: "local"
     //Protocol: sodep
     Protocol: soap {
-        .wsdl = "file:/home/romanellas/WebstormProjects/ASMProject/bank/src/gateway/wsdl.xml";
+        .wsdl = "./wsdl.xml";
 	    .wsdl.port = "BankGatewayInterface"
     }
     Interfaces: BankGatewayInterface
