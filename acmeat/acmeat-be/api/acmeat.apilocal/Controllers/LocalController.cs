@@ -30,7 +30,7 @@ namespace acmeat.api.local
         public async Task<LocalInfo> GetLocalById(int Id)
         {
             _logger.LogInformation($"Getting local with id: {Id}");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+      
 
             var local = await _localClient.GetLocalById(Id);
             return new LocalInfo(local);
@@ -41,9 +41,18 @@ namespace acmeat.api.local
         public async Task<List<LocalInfo>> GetLocals()
         {
             _logger.LogInformation($"Getting locals ");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
 
             var locals = await _localClient.GetLocalList();
+            return locals.Locals.Select(x => new LocalInfo(x)).ToList();
+
+        }
+
+        [HttpGet("{City}")]
+        public async Task<List<LocalInfo>> GetLocalsByCity(string City)
+        {
+            _logger.LogInformation($"Getting locals from {City}");
+
+            var locals = await _localClient.GetLocalListByCity(City);
             return locals.Locals.Select(x => new LocalInfo(x)).ToList();
 
         }

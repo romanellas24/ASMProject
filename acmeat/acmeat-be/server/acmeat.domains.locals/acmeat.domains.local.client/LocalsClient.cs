@@ -50,6 +50,14 @@ namespace acmeat.server.local.client
             return await _client.GetLocalsAsync(id1);
         }
 
+        public async Task<LocalList> GetLocalListByCity(string city)
+        {
+            City city1 = new City();
+            city1.City_ = city;
+            return await _client.GetLocalsByCityAsync(city1);
+        }
+
+
         public async Task<GeneralResponse> CreateLocal(Local local)
         {
 

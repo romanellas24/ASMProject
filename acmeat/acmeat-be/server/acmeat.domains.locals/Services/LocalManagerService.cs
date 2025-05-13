@@ -60,6 +60,26 @@ public class GrpcLocalManagerService : server.local.manager.GrpcLocal.GrpcLocalB
         );
     }
 
+     public override Task<server.local.manager.LocalList> GetLocalsByCity(City city, ServerCallContext context)
+    {
+        List<server.local.Local> locals=  _localReader.GetLocals();
+
+        //FILTER LOCALS WITH SPECIFIC CITY
+        locals = locals
+                 .AsEnumerable()
+                 .Where(local => local.Address.ToLower().Contains(city.City_.ToLower()))
+                 .ToList();
+
+        LocalList localList =  new server.local.manager.LocalList();
+
+        localList.Locals.AddRange(ConvertServerListToGrpc(locals));
+
+        return Task.FromResult(
+            localList
+          
+        );
+    }
+
        public override async Task<GeneralResponse> CreateLocal(server.local.manager.Local local, ServerCallContext context)
     {
          GeneralResponse generalResponse = new GeneralResponse();
