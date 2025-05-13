@@ -1,5 +1,6 @@
 FROM jolielang/jolie
 EXPOSE 9002
 COPY ../ /
-WORKDIR /static
-CMD jolie ./leonardo-master/launcher.ol ./content/
+COPY ../jdbc-mysql.jar /usr/lib/jolie/lib/jdbc-mysql.jar
+WORKDIR /payments
+CMD ["jolie", "bankPayments.ol"]

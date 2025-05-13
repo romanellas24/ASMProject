@@ -19,4 +19,4 @@ spec:
           image: docker.io/romanellas/joliebank-payments
           ports:
             - containerPort: 9002
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
