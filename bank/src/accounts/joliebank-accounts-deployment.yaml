@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joliebank-accounts-deployment
+  labels:
+    app: joliebank-accounts
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: joliebank-accounts
+  template:
+    metadata:
+      labels:
+        app: joliebank-accounts
+    spec:
+      containers:
+        - name: joliebank-payments-container
+          image: docker.io/romanellas/joliebank-accounts
+          ports:
+            - containerPort: 9003
+          imagePullPolicy: Always

@@ -9,7 +9,7 @@ include "../locations.ol"
 execution{ concurrent }
 
 inputPort BankAccountsPort {
-    Location: LOCATIONS_API_ACCOUNTS
+    Location: "socket://localhost:9003/"
     Protocol: xmlrpc { 
         .compression = false
     }
