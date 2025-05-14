@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-menu-copy
+  namespace: restaurant
+spec:
+  schedule: "0 10 * * *" # ogni giorno alle 10:00
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: copy-menu
+            image: mysql:8
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: DB_HOST
+              value: "your-mysql-host"
+            - name: DB_USER
+              value: "youruser"
+            - name: DB_PASS
+              value: "yourpassword"
+            - name: DB_NAME
+              value: "yourdatabase"
+            command:
+            - /bin/sh
+            - -c
+            - |
+              mysql -h $DB_HOST -u$DB_USER -p$DB_PASS $DB_NAME -e "
+              INSERT INTO daily_menu (day, dishId)
+              SELECT CURDATE(), dishId
+              FROM daily_menu
+              WHERE day = CURDATE() - INTERVAL 1 DAY
+              AND NOT EXISTS (
+                SELECT 1 FROM daily_menu WHERE day = CURDATE()
+              );"
+          restartPolicy: OnFailure
