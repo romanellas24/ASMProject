@@ -31,7 +31,10 @@
     * [ ] deployare m locali
 
 * BANK:
-
+    * [ ] Aggiunta di una tabella per vedere i C/C - Con i saldi
+    * [ ] Aggiunta di un form per creare le carte di credito
+    * [ ] Aggiungere una chiamata per fare in modo che i token sia resi non rimborsabili
+    * [ ] Aggiungere una tabella per vedere le transazioni
 * ACMEAT:
 
 
