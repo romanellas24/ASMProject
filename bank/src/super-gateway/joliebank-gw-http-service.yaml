@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: joliebank-gw-http-service
+spec:
+  selector:
+    app: joliebank-gw-http-deployment
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000

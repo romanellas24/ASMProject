@@ -1,0 +1,30 @@
+{
+  "getCheckPay": {
+    "method":"get",
+    "template":"/payments/{token}"
+  },
+  "postPay" : {
+    "method":"post",
+    "template":"/payments/"
+  },
+  "putPay" : {
+    "method":"put",
+    "template":"/payments/{token}"
+  },
+  "deletePay": {
+    "method":"delete",
+    "template":"/payments/{token}"
+  },
+  "postAccount": {
+    "method":"post",
+    "template":"/account/"
+  },
+  "putWithdraw": {
+    "method":"put",
+    "template":"/account/withdraw"
+  },
+  "putDeposit": {
+    "method":"put",
+    "template":"/account/deposit"
+  }
+}

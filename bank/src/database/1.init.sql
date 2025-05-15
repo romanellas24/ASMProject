@@ -1,4 +1,5 @@
-SET AUTOCOMMIT  = 0;
+CREATE USER `romanellas`@`%` IDENTIFIED BY '59741404';
+GRANT ALL PRIVILEGES ON *.* TO romanellas@`%` WITH GRANT OPTION;
 
 create table tbl_account
 (
@@ -6,6 +7,16 @@ create table tbl_account
         primary key,
     owner varchar(768) null
 );
+
+--
+-- Dumping data for table `tbl_account`
+--
+
+LOCK TABLES `tbl_account` WRITE;
+/*!40000 ALTER TABLE `tbl_account` DISABLE KEYS */;
+INSERT INTO `tbl_account` VALUES (1,'Daniele Romanella'),(2,'Elisa Rossi');
+/*!40000 ALTER TABLE `tbl_account` ENABLE KEYS */;
+UNLOCK TABLES;
 
 create table tbl_debit_cards
 (
@@ -21,6 +32,16 @@ create table tbl_debit_cards
         check (`cvv` between 0 and 999)
 );
 
+--
+-- Dumping data for table `tbl_debit_cards`
+--
+
+LOCK TABLES `tbl_debit_cards` WRITE;
+/*!40000 ALTER TABLE `tbl_debit_cards` DISABLE KEYS */;
+INSERT INTO `tbl_debit_cards` VALUES ('5353530123456789',123,'2025-05-31',1);
+/*!40000 ALTER TABLE `tbl_debit_cards` ENABLE KEYS */;
+UNLOCK TABLES;
+
 create table tbl_deposit
 (
     deposit_no    bigint auto_increment
@@ -32,6 +53,16 @@ create table tbl_deposit
         foreign key (account) references tbl_account (id)
 )
     comment 'General table for deposits';
+
+--
+-- Dumping data for table `tbl_deposit`
+--
+
+LOCK TABLES `tbl_deposit` WRITE;
+/*!40000 ALTER TABLE `tbl_deposit` DISABLE KEYS */;
+INSERT INTO `tbl_deposit` VALUES (1,100000.0000000000,1,'2025-04-16 19:28:42');
+/*!40000 ALTER TABLE `tbl_deposit` ENABLE KEYS */;
+UNLOCK TABLES;
 
 create table tbl_token_transactions
 (
@@ -56,12 +87,6 @@ create table tbl_tokens
         foreign key (dest_account) references tbl_account (id)
 );
 
-create definer = romanellas@`%` view view_balances as
-select `jolie_bank`.`view_transaction_list`.`account`              AS `account`,
-       sum(`jolie_bank`.`view_transaction_list`.`variation_value`) AS `balance`
-from `jolie_bank`.`view_transaction_list`
-group by `jolie_bank`.`view_transaction_list`.`account`;
-
 create definer = romanellas@`%` view view_transaction_list as
 select `jolie_bank`.`tbl_deposit`.`account`       AS `account`,
        `jolie_bank`.`tbl_deposit`.`deposit_value` AS `variation_value`,
@@ -83,21 +108,9 @@ from (`jolie_bank`.`tbl_token_transactions` join `jolie_bank`.`tbl_tokens`
       on ((`jolie_bank`.`tbl_token_transactions`.`token` = `jolie_bank`.`tbl_tokens`.`token`)))
 order by `deposit_on` desc, `variation_value` desc;
 
-create
-    definer = romanellas@`%` function CREATE_TOKEN(token_id decimal(20, 10), ts datetime) returns char(96) deterministic
-BEGIN
- DECLARE TOKEN_FNC VARCHAR(96) DEFAULT "";
- DECLARE NUM_ROWS INT DEFAULT 0;
-  SELECT CONCAT(SHA2((ts * token_id),256), MD5(ts * token_id)) INTO TOKEN_FNC;
-  SELECT COUNT(*) FROM tbl_tokens WHERE token = TOKEN_FNC INTO NUM_ROWS;
-  IF NUM_ROWS = 0 THEN
-      INSERT INTO tbl_tokens(token) VALUE (TOKEN_FNC);
-    RETURN TOKEN_FNC;
-  ELSE
-      RETURN CREATE_TOKEN(token_id - 0.01, ts);
-    END IF;
-END;
-
-
-
-COMMIT;
+create definer = romanellas@`%` view view_balances as
+select `jolie_bank`.`tbl_account`.`id`                                          AS `account`,
+       coalesce(sum(`jolie_bank`.`view_transaction_list`.`variation_value`), 0) AS `balance`
+from (`jolie_bank`.`tbl_account` left join `jolie_bank`.`view_transaction_list`
+      on ((`jolie_bank`.`tbl_account`.`id` = `jolie_bank`.`view_transaction_list`.`account`)))
+group by `jolie_bank`.`tbl_account`.`id`;

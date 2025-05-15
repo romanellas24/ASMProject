@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joliebank-gw-http-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: joliebank-gw-http-deployment
+  template:
+    metadata:
+      labels:
+        app: joliebank-gw-http-deployment
+    spec:
+      containers:
+        - name: joliebank-gw-http-deployment
+          image: docker.io/romanellas/joliebank-http-gw
+          ports:
+            - containerPort: 8000

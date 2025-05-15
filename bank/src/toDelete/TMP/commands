@@ -1,0 +1,1 @@
+jolie2wsdl --namespace "http://www.w3.org/2001/XMLSchema" --portName BANK_GATEWAY --portAddr "localhost:9001" --outputFile tmp.wsdl bankGateway.ol

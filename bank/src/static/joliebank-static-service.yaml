@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: joliebank-static-service
+spec:
+  type: ClusterIP #OPPURE LoadBalancer
+  selector:
+    app: joliebank-static
+  ports:
+    - protocol: TCP
+      port: 9004
+      targetPort: 9004

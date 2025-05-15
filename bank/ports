@@ -1,0 +1,9 @@
+Gateway API => 9001 [POD 1]
+Gateway API => 9005 [REST] [POD 1]
+Payments => 9002 [POD 1]
+Accounts => 9003 [POD 1]
+
+HTTP Aggregator => 9006 (o 80)  [POD 2] <--- CORS
+FE => 9004 [OK - NO MOCKUP] [POD 2]
+
+Mysql => 3306 [OK - Teoricamente] [POD 3]

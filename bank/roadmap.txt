@@ -1,17 +1,18 @@
 Occorrono diverse interfacce fra cui:
 - Un'interfaccia con file statici per realizzare il pagamento, all'interno di questa pagina deve essere inviata (via GET) la chiave primaria che identifica l'ordine da ACMEAT (che non sappiamo)
 
-
-- Una PUT che dati i dati di pagamento ritorna un token
+Payments
+- Una POST che genera un token
+- Una PUT che dati i dati di pagamento imposta come pagato un token e crea la transazione
 - Una GET che dato il token rilasciato precedentemente ritorna le informazioni del pagamento
 - Una DELETE che elimina il token e ridà i soldi ai correntisti
 
-
+c/c
 - Una PUT per creare un conto corrente, il conto corrente ha un numero univoco, progressivo.
 
 Ci saranno dei container in Jolie:
-* Una RestApp (Che contiene tutte le chiamate dei pagamenti).
-* Una RestApp (Che contiene tutte le chiamate dei conti (1)).
-* Un server statico (Contine il FE per pagare).
-* API Gateway GRPC
-
+* Una RestApp (Che contiene tutte le chiamate dei pagamenti). [POD 1]
+* Una RestApp (Che contiene tutte le chiamate dei conti (1)). [POD 1]
+* Un server statico (Contine il FE per pagare). [POD 2]
+* API Gateway GRPC [POD 3]
+* Mysql Server [POD 4]
