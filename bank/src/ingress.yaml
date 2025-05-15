@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: joliebank-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  namespace: default
+spec:
+  tls:
+    - hosts:
+        - joliebank.romanellas.cloud
+      secretName: joliebank-tls
+  rules:
+    - host: joliebank.romanellas.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: joliebank-gw-http-service
+                port:
+                  number: 8000
