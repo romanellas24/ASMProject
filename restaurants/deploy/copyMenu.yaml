@@ -27,8 +27,8 @@ spec:
             - -c
             - |
               mysql -h $DB_HOST -u$DB_USER -p$DB_PASS $DB_NAME -e "
-              INSERT INTO daily_menu (day, dishId)
-              SELECT CURDATE(), dishId
+              INSERT INTO daily_menu (day, dish_id)
+              SELECT CURDATE(), dish_id
               FROM daily_menu
               WHERE day = CURDATE() - INTERVAL 1 DAY
               AND NOT EXISTS (

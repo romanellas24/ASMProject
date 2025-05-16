@@ -1,10 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Ordini di Oggi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 2rem;
+      background-color: #f8f9fa;
+    }
+    .dish-item {
+      margin-left: 1rem;
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
 <body>
-$END$
+
+<div class="container">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Ordini del Giorno</h2>
+    <div>
+      <a href="/" class="btn btn-outline-primary me-2">Torna alla Home</a>
+      <a href="/logout" class="btn btn-outline-danger">Logout</a>
+    </div>
+  </div>
+
+  <!-- Lista Ordini -->
+  <div id="ordersList" class="list-group mb-4">
+    <!-- Ordini caricati dinamicamente -->
+  </div>
+
+  <!-- Paginazione -->
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><button class="page-link" id="prevPage">Precedente</button></li>
+      <li class="page-item disabled"><span class="page-link" id="currentPageDisplay">Pagina 1</span></li>
+      <li class="page-item"><button class="page-link" id="nextPage">Successiva</button></li>
+    </ul>
+  </nav>
+</div>
+<script>
+  const API_URL = "http://" + "[[${apiUrl}]]";
+  const BASE_URL = "[[${beUrl}]]";
+  const socket = new WebSocket("ws://" + BASE_URL + "/ws");
+
+  let currentPage = 0;
+  let currentOrders = [];
+
+  function renderOrders() {
+    // Elimina duplicati per sicurezza
+    const seen = new Set();
+    currentOrders = currentOrders.filter(order => {
+      if (seen.has(order.id)) return false;
+      seen.add(order.id);
+      return true;
+    });
+
+    // Ordina per orario di consegna
+    currentOrders.sort((a, b) => new Date(a.deliveryTime) - new Date(b.deliveryTime));
+
+    const list = document.getElementById('ordersList');
+    list.innerHTML = '';
+
+    const start = currentPage * 10;
+    const end = start + 10;
+    const pageOrders = currentOrders.slice(start, end);
+
+    if (pageOrders.length === 0 && currentPage > 0) {
+      currentPage--;
+      renderOrders();
+      return;
+    }
+
+    pageOrders.forEach(order => {
+      const item = document.createElement('div');
+      item.className = 'list-group-item';
+
+      const time = new Date(order.deliveryTime).toLocaleTimeString('it-IT', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const dishesHtml = order.dishes.map(d => `
+        <div class="dish-item">
+          <strong>${d.multiplicative}x</strong> ${d.dish.name} -
+          <em>${d.dish.description}</em>
+          <span class="text-muted">(${(d.dish.price * d.multiplicative).toFixed(2)}€)</span>
+        </div>
+      `).join('');
+
+      item.innerHTML = `
+        <h5>Ordine #${order.id}</h5>
+        <p><strong>Consegna:</strong> ${time}</p>
+        <div><strong>Piatti:</strong>${dishesHtml}</div>
+        <p class="mt-2"><strong>Totale:</strong> €${order.totalPrice.toFixed(2)}</p>
+      `;
+
+      list.appendChild(item);
+    });
+
+    document.getElementById('currentPageDisplay').textContent = `Pagina ${currentPage + 1}`;
+  }
+
+  async function loadOrders() {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const res = await fetch(`${API_URL}/order?page=0&date=${today}`);
+      if (!res.ok) throw new Error("Errore nel caricamento degli ordini");
+
+      currentOrders = await res.json();
+      renderOrders();
+    } catch (error) {
+      console.error(error);
+      document.getElementById('ordersList').innerHTML =
+              '<div class="alert alert-danger">Errore durante il caricamento degli ordini.</div>';
+    }
+  }
+
+  document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
+      renderOrders();
+    }
+  });
+
+  document.getElementById('nextPage').addEventListener('click', () => {
+    currentPage++;
+    renderOrders();
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadOrders();
+  });
+
+  socket.onmessage = async function (event) {
+    try {
+      const data = JSON.parse(event.data);
+
+      if (data.deleted && data.id) {
+        currentOrders = currentOrders.filter(order => order.id !== data.id);
+        renderOrders();
+      } else if (!data.deleted && data.id) {
+        // Preleva l'ordine completo da /order/{id}
+        const res = await fetch(`${API_URL}/order/${data.id}`);
+        if (!res.ok) {
+          console.warn("Ordine non trovato o errore:", data.id);
+          return;
+        }
+
+        const newOrder = await res.json();
+
+        console.log(newOrder);
+
+        const deliveryTime = new Date(newOrder.deliveryTime).getTime();
+        const deliveryTimes = currentOrders.map(o => new Date(o.deliveryTime).getTime());
+
+        const minTime = Math.min(...deliveryTimes);
+        const maxTime = Math.max(...deliveryTimes);
+
+        const allowInsert =
+                currentOrders.length < 10 ||
+                (deliveryTime >= minTime && deliveryTime <= maxTime);
+
+        console.log(allowInsert);
+
+        if (allowInsert) {
+          const existingIndex = currentOrders.findIndex(o => o.id === newOrder.id);
+          if (existingIndex !== -1) {
+            currentOrders[existingIndex] = newOrder;
+          } else {
+            currentOrders.push(newOrder);
+          }
+
+          renderOrders();
+        }
+      }
+    } catch (err) {
+      console.error("Errore WebSocket:", err);
+    }
+  };
+</script>
+
 </body>
 </html>

@@ -1,6 +1,5 @@
 package asm.couriers.restaurant;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,9 @@ public class FEController {
     @Value("${be-url}")
     private String beUrl;
 
+    @Value("${api-url}")
+    private String apiUrl;
+
     @GetMapping("")
     public ModelAndView homePage(){
         ModelAndView modelAndView = new ModelAndView("index");
@@ -20,9 +22,24 @@ public class FEController {
         return modelAndView;
     }
 
-    @GetMapping("/orders")
-    public ModelAndView ordersPage(){
+    @GetMapping("/waitingorders")
+    public ModelAndView wairingOrdersPage(){
+        ModelAndView modelAndView = new ModelAndView("waitingOrders");
+        modelAndView.addObject("beUrl", beUrl);
+        return modelAndView;
+    }
+
+    @GetMapping("/menu")
+    public ModelAndView menuPage(){
+        ModelAndView modelAndView = new ModelAndView("menu");
+        modelAndView.addObject("apiUrl", apiUrl);
+        return modelAndView;
+    }
+
+    @GetMapping("orders")
+    public ModelAndView orders(){
         ModelAndView modelAndView = new ModelAndView("orders");
+        modelAndView.addObject("apiUrl", apiUrl);
         modelAndView.addObject("beUrl", beUrl);
         return modelAndView;
     }

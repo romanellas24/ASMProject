@@ -11,35 +11,154 @@
             padding-top: 2rem;
             background-color: #f8f9fa;
         }
+        .alert-warning {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
     <!-- Header / Navbar -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Seleziona il Menù del Giorno</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Seleziona il Menù - <span id="selectedDateLabel"></span></h2>
         <div>
-            <a href="/dashboard" class="btn btn-outline-primary me-2">Torna alla Dashboard</a>
+            <a href="/" class="btn btn-outline-primary me-2">Torna alla Home</a>
             <a href="/logout" class="btn btn-outline-danger">Logout</a>
         </div>
     </div>
 
+    <div class="mb-3 d-flex gap-2">
+        <button id="btnToday" class="btn btn-primary btn-sm">📅 Oggi</button>
+        <button id="btnTomorrow" class="btn btn-outline-primary btn-sm">📅 Domani</button>
+    </div>
+
+    <div id="lateNote" class="alert alert-warning d-none"></div>
+
     <!-- Checklist dei piatti -->
-    <form id="menuForm" method="post" action="/menu/conferma">
-        <div class="list-group mb-4">
-            <div th:each="dish : ${dishes}" class="list-group-item">
-                <label class="form-check-label">
-                    <input type="checkbox" name="selectedDishes" th:value="${dish.id}" class="form-check-input me-2">
-                    <strong th:text="${dish.name}">Nome Piatto</strong> -
-                    <span th:text="${dish.description}">Descrizione</span>
-                </label>
-            </div>
+    <form id="menuForm">
+        <div id="dishesContainer" class="list-group mb-4">
+            <!-- Piatti caricati dinamicamente -->
         </div>
 
         <button type="submit" class="btn btn-success">Conferma Menù del Giorno</button>
     </form>
 </div>
+
+<script>
+    const API_URL = "http://" + "[[${apiUrl}]]";
+
+    const dishesContainer = document.getElementById('dishesContainer');
+    const lateNote = document.getElementById('lateNote');
+    const selectedDateLabel = document.getElementById('selectedDateLabel');
+    const btnToday = document.getElementById('btnToday');
+    const btnTomorrow = document.getElementById('btnTomorrow');
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    let currentDate = new Date(today);
+
+    function formatDate(date) {
+        return date.toISOString().split('T')[0]; // yyyy-mm-dd
+    }
+
+    function updateDateLabel() {
+        const label = formatDate(currentDate);
+        selectedDateLabel.textContent = label;
+
+        // Update button styles
+        if (formatDate(currentDate) === formatDate(today)) {
+            btnToday.classList.replace('btn-outline-primary', 'btn-primary');
+            btnTomorrow.classList.replace('btn-primary', 'btn-outline-primary');
+        } else {
+            btnTomorrow.classList.replace('btn-outline-primary', 'btn-primary');
+            btnToday.classList.replace('btn-primary', 'btn-outline-primary');
+        }
+    }
+
+    async function loadMenuData() {
+        dishesContainer.innerHTML = '';
+        lateNote.classList.add('d-none');
+
+        updateDateLabel();
+
+        if (formatDate(currentDate) === formatDate(today) && now.getHours() >= 10) {
+            lateNote.textContent = "⚠️ Attenzione: è dopo le 10:00, quindi è consigliato modificare il menù di domani.";
+            lateNote.classList.remove('d-none');
+        }
+
+        try {
+            const dishesRes = await fetch(`${API_URL}/dish`);
+            if (!dishesRes.ok) throw new Error("Errore nel caricamento dei piatti");
+            const allDishes = await dishesRes.json();
+
+            const menuRes = await fetch(`${API_URL}/menu?date=${formatDate(currentDate)}`);
+            if (!menuRes.ok) throw new Error("Errore nel caricamento del menu");
+            const menuData = await menuRes.json();
+
+            const activeDishIds = menuData.dishes.map(d => d.id);
+
+            allDishes.forEach(dish => {
+                const isChecked = activeDishIds.includes(dish.id);
+                const item = document.createElement('div');
+                item.className = 'list-group-item';
+                item.innerHTML = `
+                    <label class="form-check-label">
+                        <input type="checkbox" name="selectedDishes" value="${dish.id}" class="form-check-input me-2" ${isChecked ? 'checked' : ''}>
+                        <strong>${dish.name}</strong> - <span>${dish.description}</span>
+                    </label>
+                `;
+                dishesContainer.appendChild(item);
+            });
+        } catch (error) {
+            console.error(error);
+            dishesContainer.innerHTML = '<div class="alert alert-danger">Errore durante il caricamento dei dati.</div>';
+        }
+    }
+
+    document.getElementById('menuForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const selectedIds = Array.from(document.querySelectorAll('input[name="selectedDishes"]:checked'))
+            .map(input => parseInt(input.value));
+
+        try {
+            const response = await fetch(`${API_URL}/menu?date=${formatDate(currentDate)}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(selectedIds)
+            });
+
+            if (!response.ok) throw new Error('Errore durante il salvataggio del menù');
+            const result = await response.json();
+            alert(`Menù del giorno ${result.dateMenuChanged} aggiornato con successo!`);
+        } catch (error) {
+            console.error(error);
+            alert('Errore durante il salvataggio del menù.');
+        }
+    });
+
+    btnToday.addEventListener('click', () => {
+        currentDate = new Date(today);
+        loadMenuData();
+    });
+
+    btnTomorrow.addEventListener('click', () => {
+        currentDate = new Date(tomorrow);
+        loadMenuData();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Se dopo le 10, parte direttamente su domani
+        currentDate = (now.getHours() >= 10) ? new Date(tomorrow) : new Date(today);
+        loadMenuData();
+    });
+</script>
 
 </body>
 </html>

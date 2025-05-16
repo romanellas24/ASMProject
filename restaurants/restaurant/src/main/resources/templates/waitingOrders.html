@@ -29,8 +29,10 @@
 
         .badge-order {
             font-size: 0.85rem;
-            background-color: #0d6efd;
+            background-color: #212529; /* dark */
+            color: #f8f9fa; /* light text */
         }
+
     </style>
 </head>
 <body>
@@ -78,9 +80,17 @@
 
     socket.onmessage = (event) => {
         try {
-            const order = JSON.parse(event.data);
-            console.log("Ordine ricevuto:", order);
-            renderOrderCard(order);
+            const data = JSON.parse(event.data);
+            console.log("Messaggio ricevuto:", data);
+
+            if (data.dishIds && data.correlationID) {
+                // È un nuovo ordine
+                renderOrderCard(data);
+            } else if (data.correlationId && typeof data.accepted === "boolean") {
+                // È una decisione → rimuovi la card se presente
+                removeOrderCardByCorrelationId(data.correlationId);
+            }
+
         } catch (err) {
             console.error("Errore parsing messaggio:", event.data);
         }
@@ -94,14 +104,14 @@
         clone.querySelector(".correlation-id-badge").textContent = order.correlationID;
         clone.querySelector(".dish-ids").textContent = order.dishIds.join(", ");
 
-        // Imposta i listener usando closure (così il correlationId è catturato correttamente)
+        // Imposta i listener
         const acceptBtn = clone.querySelector(".btn-accept");
         const rejectBtn = clone.querySelector(".btn-reject");
 
         acceptBtn.addEventListener("click", () => sendDecision(order.correlationID, true));
         rejectBtn.addEventListener("click", () => sendDecision(order.correlationID, false));
 
-        // Aggiungi la card al DOM
+        // Aggiungi la card
         document.getElementById("orders-container").prepend(clone);
     }
 
@@ -119,16 +129,20 @@
         socket.send(JSON.stringify(decision));
         console.log("Inviata decisione:", decision);
 
-        // Rimuove la card dal DOM
-        const allCards = document.querySelectorAll(".correlation-id-badge");
-        allCards.forEach(badge => {
+        removeOrderCardByCorrelationId(correlationId);
+    }
+
+    function removeOrderCardByCorrelationId(correlationId) {
+        const badges = document.querySelectorAll(".correlation-id-badge");
+        badges.forEach(badge => {
             if (badge.textContent === correlationId) {
-                badge.closest(".order-card").remove();
+                const card = badge.closest(".order-card");
+                if (card) card.remove();
             }
         });
     }
-
 </script>
+
 
 </body>
 </html>
