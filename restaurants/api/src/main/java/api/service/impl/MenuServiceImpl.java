@@ -9,9 +9,9 @@ import api.exception.AcmeNotificationException;
 import api.exception.InvalidDishId;
 import api.service.MenuService;
 import api.utils.HttpClient;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +35,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    @Transactional(rollbackOn = InvalidDishId.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateMenu(LocalDate date, List<Integer> dishIds) throws InvalidDishId {
 
         //clear if menu was already updated
@@ -60,6 +60,21 @@ public class MenuServiceImpl implements MenuService {
 
         //this can throw AcmeNotificationException
         httpClient.notifyAcmeMenuChanges(menuDTO);
+    }
+
+    private void checkIdInMenu(Integer id, LocalDate date) throws InvalidDishId {
+        DailyMenuId dailyMenuId = new DailyMenuId(date, id);
+        if (!dailyMenuDAO.existsById(dailyMenuId)){
+            throw new InvalidDishId("Invalid id: " + id + "This id is not present in " + date.toString() + " date.");
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void checkIdsInMenu(Integer[] ids, LocalDate date) throws InvalidDishId {
+        for( Integer id : ids) {
+            checkIdInMenu(id, date);
+        }
     }
 
 

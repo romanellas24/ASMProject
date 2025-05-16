@@ -11,4 +11,5 @@ public interface MenuService {
     MenuDTO getMenu(LocalDate date);
     void updateMenu(LocalDate date, List<Integer> dishIds) throws InvalidDishId;
     void notifyMenuChanges(LocalDate date) throws AcmeNotificationException;
+    void checkIdsInMenu(Integer[] id, LocalDate date) throws InvalidDishId;
 }

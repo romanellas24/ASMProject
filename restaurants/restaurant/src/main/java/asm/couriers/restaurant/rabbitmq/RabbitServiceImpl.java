@@ -1,8 +1,9 @@
-package asm.couriers.restaurant;
+package asm.couriers.restaurant.rabbitmq;
 
+import asm.couriers.restaurant.WSHandler;
 import asm.couriers.restaurant.dto.DecisionOrderDTO;
+import asm.couriers.restaurant.dto.OrderBasicInfoDTO;
 import asm.couriers.restaurant.dto.WaitingOrderDTO;
-import asm.couriers.restaurant.rabbitmq.RabbitConfig;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,29 @@ public class RabbitServiceImpl implements RabbitService {
     @RabbitListener(queues = RabbitConfig.WAITING_ORDERS_QUEUE)
     public void handleWaitingOrder(WaitingOrderDTO waitingOrderDTO) {
         try {
-            wsHandler.sendOrder(waitingOrderDTO);
+            wsHandler.putOrder(waitingOrderDTO);
         } catch (Exception e) {
             this.publishDecision(new DecisionOrderDTO(waitingOrderDTO.getCorrelationID(), false));
         }
     }
+
+    @Override
+    @RabbitListener(queues = RabbitConfig.NEW_ORDERS_QUEUE)
+    public void handleNewOrder(Integer id) throws Exception {
+        OrderBasicInfoDTO orderBasicInfoDTO = new OrderBasicInfoDTO();
+        orderBasicInfoDTO.setId(id);
+        orderBasicInfoDTO.setDeleted(false);
+        wsHandler.sendChangesInOrder(orderBasicInfoDTO);
+    }
+
+    @Override
+    @RabbitListener(queues = RabbitConfig.DELETED_ORDERS_QUEUE)
+    public void handleDeletedOrder(Integer id) throws Exception {
+        OrderBasicInfoDTO orderBasicInfoDTO = new OrderBasicInfoDTO();
+        orderBasicInfoDTO.setId(id);
+        orderBasicInfoDTO.setDeleted(true);
+        wsHandler.sendChangesInOrder(orderBasicInfoDTO);
+    }
+
+
 }

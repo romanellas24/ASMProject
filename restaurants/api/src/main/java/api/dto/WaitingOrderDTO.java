@@ -1,6 +1,6 @@
 package api.dto;
 
-import api.utils.StringToLocalDateTime;
+import api.utils.StringToDate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,7 +19,7 @@ public class WaitingOrderDTO implements Serializable {
     public static WaitingOrderDTO from(CreateOrderDTO createOrderDTO, String correlationID) {
         WaitingOrderDTO waitingOrderDTO = new WaitingOrderDTO();
         waitingOrderDTO.setCorrelationID(correlationID);
-        waitingOrderDTO.setOrderTime(StringToLocalDateTime.convertStringToLocalDateTime(createOrderDTO.getDeliveryTime()));
+        waitingOrderDTO.setOrderTime(StringToDate.convertStringToLocalDateTime(createOrderDTO.getDeliveryTime()));
         waitingOrderDTO.setDishIds(createOrderDTO.getDishIds());
         return waitingOrderDTO;
     }

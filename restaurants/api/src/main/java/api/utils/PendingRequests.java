@@ -2,6 +2,7 @@ package api.utils;
 
 import api.dto.ResponseOrderDTO;
 import api.dto.WaitingOrderDTO;
+import api.service.RabbitService;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PendingRequests {
 
     private final Map<String, Pair<CompletableFuture<ResponseOrderDTO>, WaitingOrderDTO>> requests = new ConcurrentHashMap<>();
+    private final RabbitService rabbitService;
+
+    public PendingRequests(RabbitService rabbitService) {
+        this.rabbitService = rabbitService;
+    }
 
     public void put(String correlationId, CompletableFuture<ResponseOrderDTO> future, WaitingOrderDTO waitingOrderDTO) {
         requests.put(correlationId, Pair.of(future, waitingOrderDTO));
@@ -28,6 +34,9 @@ public class PendingRequests {
 
     public void complete(String correlationId, ResponseOrderDTO result) {
         CompletableFuture<ResponseOrderDTO> future = requests.remove(correlationId).getFirst();
+        if (result.isAccepted()){
+            rabbitService.publishNewOrder(result.getOrder().getId());
+        }
         future.complete(result);
     }
 

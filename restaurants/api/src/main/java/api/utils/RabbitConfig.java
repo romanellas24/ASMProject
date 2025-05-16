@@ -13,27 +13,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
-//    @Value("${rabbitmq.exchange}")
-//    public static String ORDER_EXCHANGE;
-//
-//    @Value("${rabbitmq.queue.waiting_orders}")
-//    public String WAITING_ORDERS_QUEUE;
-//
-//    @Value("${rabbitmq.queue.decisions}")
-//    public static String DECISIONS_QUEUE;
-//
-//    @Value("${rabbitmq.routing.waiting_orders}")
-//    public static String WAITING_ORDERS_ROUTING_KEY;
-//
-//    @Value("${rabbitmq.routing.decisions}")
-//    public static String DECISIONS_ROUTING_KEY;
-
-
     public final static String ORDER_EXCHANGE="orders.exchange";
     public final static String WAITING_ORDERS_QUEUE="orders.waiting.queue";
     public final static String DECISIONS_QUEUE="orders.decisions.queue";
+    public final static String DELETED_ORDERS_QUEUE="orders.deleted.queue";
+    public final static String NEW_ORDERS_QUEUE="orders.new.queue";
     public final static String WAITING_ORDERS_ROUTING_KEY="order.new_waiting";
     public final static String DECISIONS_ROUTING_KEY ="order.new_decision";
+    public final static String DELETED_ORDERS_ROUTING_KEY="order.deleted";
+    public final static String NEW_ORDERS_ROUTING_KEY="order.new";
 
 
 
@@ -47,6 +35,12 @@ public class RabbitConfig {
     public Queue decisionsQueue() {return new Queue(DECISIONS_QUEUE);}
 
     @Bean
+    public Queue deletedOrdersQueue() {return new Queue(DELETED_ORDERS_QUEUE);}
+
+    @Bean
+    public Queue newOrdersQueue() {return new Queue(NEW_ORDERS_QUEUE);}
+
+    @Bean
     public Binding waitingOrderBinding(Queue waitingOrdersQueue, TopicExchange orderExchange){
         return BindingBuilder.bind(waitingOrdersQueue).to(orderExchange).with(WAITING_ORDERS_ROUTING_KEY);
     }
@@ -54,6 +48,16 @@ public class RabbitConfig {
     @Bean
     public Binding decisionBinding(Queue decisionsQueue, TopicExchange exchange) {
         return BindingBuilder.bind(decisionsQueue).to(exchange).with(DECISIONS_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding deletedOrderBinding(Queue deletedOrdersQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(deletedOrdersQueue).to(exchange).with(DELETED_ORDERS_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding newOrdersBinding(Queue newOrdersQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(newOrdersQueue).to(exchange).with(NEW_ORDERS_ROUTING_KEY);
     }
 
     @Bean
