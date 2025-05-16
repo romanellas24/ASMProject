@@ -69,6 +69,52 @@ type DepositResponse: void {
     .status: string
 }
 
+type AccountRequest: void {
+    .page: int
+}
+
+type AccountInfo: void {
+    .account_id: int
+    .owner: string
+    .balance: double
+}
+
+type AccountResponse: void {
+    .account_list[0,*]: AccountInfo
+}
+
+type TransactionsRequest: void {
+    .acc_id: int
+}
+
+type TransactionInfo: void {
+    .owner: string
+    .variation_value: double
+    .on_date: string
+}
+
+type TransactionsResponse: void {
+    .transaction_list[0,*]: TransactionInfo
+}
+
+type CreateCardRequest: void {
+    .acc_id: int
+}
+
+type CreateCardResponse: void {
+    .status: int
+    .msg: string
+}
+
+type NotRefoundRequest: void {
+    .token: string
+}
+
+type NotRefoundResponse: void {
+    .status: int
+    .msg: string
+}
+
 
 interface BankGatewayInterface {
     RequestResponse:
@@ -78,7 +124,14 @@ interface BankGatewayInterface {
         deletePay(RefundRequest)(RefundResponse),
         postAccount(PostAccountRequest)(PostAccountResponse),
         putWithdraw(WithdrawRequest)(WithdrawResponse),
-        putDeposit(DepositRequest)(DepositResponse)
+        putDeposit(DepositRequest)(DepositResponse),
+        getAccount(AccountRequest)(AccountResponse)
+        /*
+        ,
+        getTransactions(TransactionsRequest)(TransactionsResponse),
+        postCreateCard(CreateCardRequest)(CreateCardResponse),
+        putNotRefaundable(NotRefoundRequest)(NotRefoundResponse)
+        */
 }
 
 

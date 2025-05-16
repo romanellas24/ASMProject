@@ -1,3 +1,17 @@
+type AccountInfo:void {
+  .owner[1,1]:string
+  .account_id[1,1]:int
+  .balance[1,1]:double
+}
+
+type AccountRequest:void {
+  .page[1,1]:int
+}
+
+type AccountResponse:void {
+  .account_list[0,*]:AccountInfo
+}
+
 type DepositRequest:void {
   .amount[1,1]:int
   .account[1,1]:int
@@ -71,6 +85,7 @@ type WithdrawResponse:void {
 interface BANK_GATEWAYInterface {
 RequestResponse:
   deletePay( RefundRequest )( RefundResponse ),
+  getAccount( AccountRequest )( AccountResponse ),
   getCheckPay( GetCheckPayRequest )( GetCheckPayResponse ),
   postAccount( PostAccountRequest )( PostAccountResponse ),
   postPay( PostPayRequest )( PostPayResponse ),

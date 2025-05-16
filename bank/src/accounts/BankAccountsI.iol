@@ -22,9 +22,18 @@ type DepositResponseBe: void {
     .param: DepositResponse
 }
 
+type AccountRequestBe: void {
+    .param: AccountRequest
+}
+
+type AccountResponseBe: void {
+    .param: AccountResponse
+}
+
 interface BankAccountsI {
     RequestResponse:
         postAccount(PostAccountRequestBe)(PostAccountResponseBe),
         putWithdraw(WithdrawRequestBe)(WithdrawResponseBe),
-        putDeposit(DepositRequestBe)(DepositResponseBe)
+        putDeposit(DepositRequestBe)(DepositResponseBe),
+        getAccount(AccountRequestBe)(AccountResponseBe)
 }

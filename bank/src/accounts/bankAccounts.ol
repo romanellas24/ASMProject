@@ -126,6 +126,37 @@ define depositMoney
 }
 
 
+//pageSize, offset
+define getAccounts 
+{
+    scope ( getAccountsScope ) {
+        sql_cmd = "SELECT tbl_account.*, view_balances.balance FROM tbl_account INNER JOIN view_balances ON (tbl_account.id = view_balances.account) LIMIT :offset, :pageSize";
+        install ( SQLException =>
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("pageSize:" + pageSize)();
+            println@Console("offset:" + offset)();
+            println@Console(getAccountsScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.pageSize = pageSize;
+        queryRequest.offset = offset;
+        query@Database( queryRequest )( queryReturn );
+        output = {};
+        println@Console(queryReturn.row)()
+        /*
+        if(#queryReturn.row > 0){
+            if(queryReturn.row[0].identifier != 0){
+                account_id = queryReturn.row[0].identifier
+            }
+        }
+        */
+    }
+}
+
+
 main {
     [ postAccount( request )( response ) {
         account_id = -1;
@@ -170,6 +201,14 @@ main {
                 response.param.status = "Executed"
             }
         }
+    }]
+
+    [ getAccount( request )( response ) {
+        pageSize = 10;
+        pageNo = (request.param.page) - 1;
+        offset = pageNo * pageSize;
+        getAccounts;
+        response.param.account_list = {}
     }]
 
     

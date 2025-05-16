@@ -90,4 +90,10 @@ main {
         response << internalRes.param
     }]
 
+    [getAccount(request)(response) {
+        internalReq.param << request;
+        getAccount@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
 }
