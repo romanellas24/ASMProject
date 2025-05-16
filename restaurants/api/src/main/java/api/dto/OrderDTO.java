@@ -25,8 +25,7 @@ public class OrderDTO {
         dto.setDishes(DishOrderDTO.from(order.getDishOrders()));
         dto.setTotalPrice(
                 Stream.of(dto.getDishes())
-                        .map(DishOrderDTO::getDish)
-                        .mapToDouble(DishDTO::getPrice)
+                        .mapToDouble(d -> d.getDish().getPrice() * d.getMultiplicative())
                         .sum()
         );
         return dto;

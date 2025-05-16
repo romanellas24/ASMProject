@@ -43,7 +43,7 @@ public class RabbitServiceImpl implements RabbitService {
             throw new ServerException("Internal server error: Waiting order not found");
         }
 
-        Integer orderId = orderService.createOrder(waitingOrder.getDishIds(), waitingOrder.getOrderTime());
+        Integer orderId = orderService.createOrder(waitingOrder.getDishes(), waitingOrder.getOrderTime());
         OrderDTO order = orderService.getOrder(orderId);
         pendingRequests.complete(correlationId, new ResponseOrderDTO(true,order));
     }

@@ -2,7 +2,9 @@ package api.service.impl;
 
 import api.dao.DishOrderDAO;
 import api.dao.OrderDAO;
+import api.dto.DishInOrderDTO;
 import api.dto.OrderDTO;
+import api.entity.DishOrder;
 import api.entity.Order;
 import api.exception.NotFoundException;
 import api.service.OrderService;
@@ -44,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer createOrder(Integer[] dishIds, LocalDateTime deliveryTime) throws Exception {
+    public Integer createOrder(DishInOrderDTO[] dishIds, LocalDateTime deliveryTime) throws Exception {
         //order ids checked before send to rabbit
         //create order
         Order order = new Order(deliveryTime);
@@ -53,8 +55,8 @@ public class OrderServiceImpl implements OrderService {
         Integer orderId = order.getId();
 
         // add dish for order
-        for (Integer dishId : dishIds) {
-            dishOrderDAO.insertDishOrder(orderId, dishId);
+        for (DishInOrderDTO dish : dishIds) {
+            dishOrderDAO.insertDishOrder(orderId, dish.getId(), dish.getQuantity());
         }
         return orderId;
     }

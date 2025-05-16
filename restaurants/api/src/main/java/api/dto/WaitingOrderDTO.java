@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 public class WaitingOrderDTO implements Serializable {
     private String correlationID;
     private LocalDateTime orderTime;
-    private Integer[] dishIds;
+    private DishInOrderDTO[] dishes;
 
     public static WaitingOrderDTO from(CreateOrderDTO createOrderDTO, String correlationID) {
         WaitingOrderDTO waitingOrderDTO = new WaitingOrderDTO();
         waitingOrderDTO.setCorrelationID(correlationID);
         waitingOrderDTO.setOrderTime(StringToDate.convertStringToLocalDateTime(createOrderDTO.getDeliveryTime()));
-        waitingOrderDTO.setDishIds(createOrderDTO.getDishIds());
+        waitingOrderDTO.setDishes(createOrderDTO.getDishes());
         return waitingOrderDTO;
     }
 }

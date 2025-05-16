@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface DishOrderDAO extends JpaRepository<DishOrder, DishOrderId> {
     @Modifying
-    @Query(value = "INSERT INTO dish_order (order_id, dish_id) VALUES (:orderId, :dishId)", nativeQuery = true)
-    void insertDishOrder(@Param("orderId") Integer orderId, @Param("dishId") Integer dishId);
+    @Query(value = "INSERT INTO dish_order (order_id, dish_id, mult) VALUES (:orderId, :dishId, :multiplicative)", nativeQuery = true)
+    void insertDishOrder(@Param("orderId") Integer orderId, @Param("dishId") Integer dishId, @Param("multiplicative") Integer multiplicative);
 }
