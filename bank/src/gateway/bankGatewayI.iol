@@ -80,7 +80,7 @@ type AccountInfo: void {
 }
 
 type AccountResponse: void {
-    .account_list[0,*]: AccountInfo
+    .array[0, *]: AccountInfo
 }
 
 type TransactionsRequest: void {

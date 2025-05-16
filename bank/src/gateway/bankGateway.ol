@@ -5,6 +5,7 @@ include "../accounts/BankAccountsI.iol"
 include "console.iol"
 include "string_utils.iol"
 include "database.iol"
+include "json_utils.iol"
 
 include "../locations.ol"
 
@@ -39,6 +40,7 @@ outputPort BankAccountsPort {
     Location: LOCATIONS_API_ACCOUNTS
     Protocol: xmlrpc { 
         .compression = false
+        .debug = false
     }
     Interfaces: BankAccountsI
 }

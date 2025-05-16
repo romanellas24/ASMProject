@@ -9,7 +9,7 @@ type AccountRequest:void {
 }
 
 type AccountResponse:void {
-  .account_list[0,*]:AccountInfo
+  .array[0,*]:AccountInfo
 }
 
 type DepositRequest:void {

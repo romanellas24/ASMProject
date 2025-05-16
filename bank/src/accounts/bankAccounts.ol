@@ -3,6 +3,7 @@ include "BankAccountsI.iol"
 
 include "console.iol"
 include "string_utils.iol"
+include "json_utils.iol"
 include "database.iol"
 include "../locations.ol"
 
@@ -12,6 +13,7 @@ inputPort BankAccountsPort {
     Location: LOCATIONS_API_ACCOUNTS
     Protocol: xmlrpc { 
         .compression = false
+        .debug = false
     }
     Interfaces: BankAccountsI
 }
@@ -130,7 +132,7 @@ define depositMoney
 define getAccounts 
 {
     scope ( getAccountsScope ) {
-        sql_cmd = "SELECT tbl_account.*, view_balances.balance FROM tbl_account INNER JOIN view_balances ON (tbl_account.id = view_balances.account) LIMIT :offset, :pageSize";
+        sql_cmd = "SELECT tbl_account.id, tbl_account.owner, view_balances.balance FROM tbl_account INNER JOIN view_balances ON (tbl_account.id = view_balances.account) LIMIT :offset, :pageSize";
         install ( SQLException =>
             println@Console("---------------------------------")();
             println@Console("Failed Query: ")();
@@ -144,15 +146,12 @@ define getAccounts
         queryRequest.pageSize = pageSize;
         queryRequest.offset = offset;
         query@Database( queryRequest )( queryReturn );
-        output = {};
-        println@Console(queryReturn.row)()
-        /*
-        if(#queryReturn.row > 0){
-            if(queryReturn.row[0].identifier != 0){
-                account_id = queryReturn.row[0].identifier
-            }
+        
+        for ( i = 0, i < #queryReturn.row, i++ ) {
+            output[i].account_id = queryReturn.row[i].id;
+            output[i].owner = queryReturn.row[i].owner;
+            output[i].balance = queryReturn.row[i].balance
         }
-        */
     }
 }
 
@@ -206,9 +205,14 @@ main {
     [ getAccount( request )( response ) {
         pageSize = 10;
         pageNo = (request.param.page) - 1;
+        if(pageNo < 0) {
+            pageNo = 0
+        }
         offset = pageNo * pageSize;
         getAccounts;
-        response.param.account_list = {}
+        for ( i = 0, i < #queryReturn.row, i++ ) {
+            response.param.array[i] << output[i]
+        }
     }]
 
     
