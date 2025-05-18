@@ -210,6 +210,9 @@ main {
         }
         offset = pageNo * pageSize;
         getAccounts;
+        response.param = {};
+        response.param.array = {};
+        undef(response.param.array[0])
         for ( i = 0, i < #queryReturn.row, i++ ) {
             response.param.array[i] << output[i]
         }
