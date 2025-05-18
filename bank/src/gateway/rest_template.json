@@ -33,7 +33,7 @@
   },
   "getTransactions": {
     "method":"get",
-    "template":"/account/{acc_id}/transactions"
+    "template":"/account/{acc_id}/transactions?page={page}"
   },
   "postCreateCard" : {
     "method":"post",

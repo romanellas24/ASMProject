@@ -155,6 +155,39 @@ define getAccounts
     }
 }
 
+//pageSize, offset, acc_id
+define getTransactions 
+{
+    scope ( getAccountsScope ) {
+        sql_cmd = "SELECT token, amount, src_account, dest_account, payment_request_time, transaction_on, src_owner, dest_owner FROM view_accounts_transactions WHERE src_account = :id OR dest_account = :id LIMIT :offset, :pageSize";
+        install ( SQLException =>
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("pageSize:" + pageSize)();
+            println@Console("offset:" + offset)();
+            println@Console(getAccountsScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.id = acc_id;
+        queryRequest.pageSize = pageSize;
+        queryRequest.offset = offset;
+        query@Database( queryRequest )( queryReturn );
+        
+        for ( i = 0, i < #queryReturn.row, i++ ) {
+            output[i].token = queryReturn.row[i].token;
+            output[i].amount = queryReturn.row[i].amount;
+            output[i].src_account = queryReturn.row[i].src_account;
+            output[i].dest_account = queryReturn.row[i].dest_account;
+            output[i].payment_request_time = queryReturn.row[i].payment_request_time;
+            output[i].transaction_on = queryReturn.row[i].transaction_on;
+            output[i].src_owner = queryReturn.row[i].src_owner;
+            output[i].dest_owner = queryReturn.row[i].dest_owner
+        }
+    }
+}
+
 
 main {
     [ postAccount( request )( response ) {
@@ -210,6 +243,23 @@ main {
         }
         offset = pageNo * pageSize;
         getAccounts;
+        response.param = {};
+        response.param.array = {};
+        undef(response.param.array[0])
+        for ( i = 0, i < #queryReturn.row, i++ ) {
+            response.param.array[i] << output[i]
+        }
+    }]
+
+    [ getTransactions( request )( response ) {
+        pageSize = 10;
+        pageNo = (request.param.page) - 1;
+        acc_id = request.param.acc_id;
+        if(pageNo < 0) {
+            pageNo = 0
+        }
+        offset = pageNo * pageSize;
+        getTransactions;
         response.param = {};
         response.param.array = {};
         undef(response.param.array[0])

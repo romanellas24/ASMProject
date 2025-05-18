@@ -85,16 +85,22 @@ type AccountResponse: void {
 
 type TransactionsRequest: void {
     .acc_id: int
+    .page: int
 }
 
 type TransactionInfo: void {
-    .owner: string
-    .variation_value: double
-    .on_date: string
+    .token: string
+    .amount: double
+    .src_account: int
+    .dest_account: int
+    .payment_request_time: string
+    .transaction_on: string
+    .src_owner: string
+    .dest_owner: string
 }
 
 type TransactionsResponse: void {
-    .transaction_list[0,*]: TransactionInfo
+    .array[0,*]: TransactionInfo
 }
 
 type CreateCardRequest: void {
@@ -125,12 +131,12 @@ interface BankGatewayInterface {
         postAccount(PostAccountRequest)(PostAccountResponse),
         putWithdraw(WithdrawRequest)(WithdrawResponse),
         putDeposit(DepositRequest)(DepositResponse),
-        getAccount(AccountRequest)(AccountResponse)
+        getAccount(AccountRequest)(AccountResponse),
+        getTransactions(TransactionsRequest)(TransactionsResponse),
+        putNotRefaundable(NotRefoundRequest)(NotRefoundResponse)
         /*
         ,
-        getTransactions(TransactionsRequest)(TransactionsResponse),
-        postCreateCard(CreateCardRequest)(CreateCardResponse),
-        putNotRefaundable(NotRefoundRequest)(NotRefoundResponse)
+        postCreateCard(CreateCardRequest)(CreateCardResponse)
         */
 }
 

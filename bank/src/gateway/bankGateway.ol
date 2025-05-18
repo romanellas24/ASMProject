@@ -98,4 +98,16 @@ main {
         response << internalRes.param
     }]
 
+    [getTransactions(request)(response) {
+        internalReq.param << request;
+        getTransactions@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [putNotRefaundable(request)(response) {
+        internalReq.param << request;
+        putNotRefaundable@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
 }

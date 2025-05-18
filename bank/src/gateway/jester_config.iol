@@ -73,6 +73,26 @@ type RefundResponse:void {
   .status[1,1]:string
 }
 
+type TransactionInfo:void {
+  .amount[1,1]:double
+  .dest_account[1,1]:int
+  .payment_request_time[1,1]:string
+  .src_owner[1,1]:string
+  .src_account[1,1]:int
+  .transaction_on[1,1]:string
+  .dest_owner[1,1]:string
+  .token[1,1]:string
+}
+
+type TransactionsRequest:void {
+  .page[1,1]:int
+  .acc_id[1,1]:int
+}
+
+type TransactionsResponse:void {
+  .array[0,*]:TransactionInfo
+}
+
 type WithdrawRequest:void {
   .amount[1,1]:int
   .account[1,1]:int
@@ -87,6 +107,7 @@ RequestResponse:
   deletePay( RefundRequest )( RefundResponse ),
   getAccount( AccountRequest )( AccountResponse ),
   getCheckPay( GetCheckPayRequest )( GetCheckPayResponse ),
+  getTransactions( TransactionsRequest )( TransactionsResponse ),
   postAccount( PostAccountRequest )( PostAccountResponse ),
   postPay( PostPayRequest )( PostPayResponse ),
   putDeposit( DepositRequest )( DepositResponse ),

@@ -48,13 +48,21 @@
     </style>
     <script>
 
+        let account = -1;
+
         window.onload = function () {
+            let params = new URLSearchParams(document.location.search);
+            let acc = params.get("account");
+            if (acc == null)
+                alert("ACCOUNT NON TROVATO");
+            else
+                account = acc;
             getData();
         };
 
         async function getData() {
             const page = document.getElementById("pageInput").value;
-            const url = "account?page=" + page;
+            const url = `account/${account}/transactions?page=${page}`;
             try {
                 const response = await fetch(url);
                 const json = await response.json();
@@ -65,15 +73,34 @@
             }
         }
 
+        function truncateString(str, maxLength) {
+            if (str.length > maxLength) {
+                return str.slice(0, maxLength - 1) + '...';
+            }
+            return str;
+        }
+
         function handleResult(json) {
-            if(json.array == null)
+            if (json.array == null)
                 return;
             tableContent = document.getElementById("tableContent");
             let html = "";
             json.array.forEach(element => {
-                html = html + `<tr><td>${element.account_id}</td><td>${element.owner}</td><td>${element.balance}</td><td><a target="_blank" href="viewTransactions.html?account=${element.account_id}">Vedi transazioni</a><br/><a href="viewCrateCard.html?account=${element.account_id}" target="_blank">Crea carta di debito</a></td></tr>`;
+                html = html + `<tr>
+                <td>${truncateString(element.token, 20)}</td>
+                <td>${element.amount}€</td>
+                <td>${element.src_owner} #${element.src_account}</td>
+                <td>${element.dest_owner} #${element.dest_account}</td>
+                <td>${element.payment_request_time}</td>
+                <td>${element.transaction_on}</td>
+                <td><a onclick="makeNotRefundable('${element.token}')" href="#">Rendi non rimborsabile</a></td>
+                </tr>`;
             });
             tableContent.innerHTML = html;
+        }
+
+        function makeNotRefundable(token){
+
         }
 
     </script>
@@ -87,9 +114,12 @@
 
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Proprietario</th>
-        <th>Saldo</th>
+        <th>Token</th>
+        <th>Valore</th>
+        <th>Provenienza</th>
+        <th>Destinazione</th>
+        <th>Data token</th>
+        <th>Data pagamento</th>
         <th>Azioni</th>
     </tr>
     </thead>

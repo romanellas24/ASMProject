@@ -297,5 +297,10 @@ main {
             response.param.code = 200
         }
     }]
+
+    [putNotRefaundable(request)(response) {
+        token = request.param.token; //TODO CONTINUE HERE
+    }]
+
 }
 
