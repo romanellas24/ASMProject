@@ -25,8 +25,12 @@
     <h2>Ordini del Giorno</h2>
     <div>
       <a href="/" class="btn btn-outline-primary me-2">Torna alla Home</a>
-      <a href="/logout" class="btn btn-outline-danger">Logout</a>
+      <button class="btn btn-outline-danger" onclick="logout()">Logout</button>
     </div>
+  </div>
+
+  <div id="authWarning" class="alert alert-warning d-none">
+    ⚠️ Non sei loggato: gli ordini non verranno aggiornati automaticamente in tempo reale.
   </div>
 
   <!-- Lista Ordini -->
@@ -43,16 +47,70 @@
     </ul>
   </nav>
 </div>
+
 <script>
-  const API_URL = "http://" + "[[${apiUrl}]]";
+  const API_URL = "http://" + "[[${apiUrl}]]" + "/api";
   const BASE_URL = "[[${beUrl}]]";
-  const socket = new WebSocket("ws://" + BASE_URL + "/ws");
+  let jwt = localStorage.getItem("jwt");
+  let socket;
+
+  const authWarning = document.getElementById('authWarning');
+
+  if (!jwt) {
+    // Mostra bottone login invece del logout
+    // Qui il logout è un button, quindi non serve cambiare testo/ href
+    authWarning.classList.remove("d-none");
+  } else {
+    // Solo se loggato apri WebSocket
+    socket = new WebSocket("ws://" + BASE_URL + "/ws?token=" + jwt);
+
+    socket.onmessage = async function (event) {
+      try {
+        const data = JSON.parse(event.data);
+
+        if (data.deleted && data.id) {
+          currentOrders = currentOrders.filter(order => order.id !== data.id);
+          renderOrders();
+        } else if (!data.deleted && data.id) {
+          const res = await fetch(`${API_URL}/order/${data.id}`);
+          if (!res.ok) {
+            console.warn("Ordine non trovato o errore:", data.id);
+            return;
+          }
+
+          const newOrder = await res.json();
+
+          const deliveryTime = new Date(newOrder.deliveryTime).getTime();
+          const deliveryTimes = currentOrders.map(o => new Date(o.deliveryTime).getTime());
+
+          const minTime = Math.min(...deliveryTimes);
+          const maxTime = Math.max(...deliveryTimes);
+
+          const allowInsert =
+                  currentOrders.length < 10 ||
+                  (deliveryTime >= minTime && deliveryTime <= maxTime);
+
+          if (allowInsert) {
+            const existingIndex = currentOrders.findIndex(o => o.id === newOrder.id);
+            if (existingIndex !== -1) {
+              currentOrders[existingIndex] = newOrder;
+            } else {
+              currentOrders.push(newOrder);
+            }
+
+            renderOrders();
+          }
+        }
+      } catch (err) {
+        console.error("Errore WebSocket:", err);
+      }
+    };
+  }
 
   let currentPage = 0;
   let currentOrders = [];
 
   function renderOrders() {
-    // Elimina duplicati per sicurezza
     const seen = new Set();
     currentOrders = currentOrders.filter(order => {
       if (seen.has(order.id)) return false;
@@ -60,7 +118,6 @@
       return true;
     });
 
-    // Ordina per orario di consegna
     currentOrders.sort((a, b) => new Date(a.deliveryTime) - new Date(b.deliveryTime));
 
     const list = document.getElementById('ordersList');
@@ -137,52 +194,10 @@
     loadOrders();
   });
 
-  socket.onmessage = async function (event) {
-    try {
-      const data = JSON.parse(event.data);
-
-      if (data.deleted && data.id) {
-        currentOrders = currentOrders.filter(order => order.id !== data.id);
-        renderOrders();
-      } else if (!data.deleted && data.id) {
-        // Preleva l'ordine completo da /order/{id}
-        const res = await fetch(`${API_URL}/order/${data.id}`);
-        if (!res.ok) {
-          console.warn("Ordine non trovato o errore:", data.id);
-          return;
-        }
-
-        const newOrder = await res.json();
-
-        console.log(newOrder);
-
-        const deliveryTime = new Date(newOrder.deliveryTime).getTime();
-        const deliveryTimes = currentOrders.map(o => new Date(o.deliveryTime).getTime());
-
-        const minTime = Math.min(...deliveryTimes);
-        const maxTime = Math.max(...deliveryTimes);
-
-        const allowInsert =
-                currentOrders.length < 10 ||
-                (deliveryTime >= minTime && deliveryTime <= maxTime);
-
-        console.log(allowInsert);
-
-        if (allowInsert) {
-          const existingIndex = currentOrders.findIndex(o => o.id === newOrder.id);
-          if (existingIndex !== -1) {
-            currentOrders[existingIndex] = newOrder;
-          } else {
-            currentOrders.push(newOrder);
-          }
-
-          renderOrders();
-        }
-      }
-    } catch (err) {
-      console.error("Errore WebSocket:", err);
-    }
-  };
+  function logout() {
+    localStorage.removeItem("jwt");
+    window.location.href = "/auth/login";
+  }
 </script>
 
 </body>

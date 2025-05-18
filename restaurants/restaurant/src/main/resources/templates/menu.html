@@ -15,7 +15,6 @@
             font-weight: bold;
             font-size: 1.1rem;
         }
-
     </style>
 </head>
 <body>
@@ -26,7 +25,7 @@
         <h2>Seleziona il Menù - <span id="selectedDateLabel"></span></h2>
         <div>
             <a href="/" class="btn btn-outline-primary me-2">Torna alla Home</a>
-            <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            <button class="btn btn-outline-danger" onclick="logout()">Logout</button>
         </div>
     </div>
 
@@ -42,13 +41,12 @@
         <div id="dishesContainer" class="list-group mb-4">
             <!-- Piatti caricati dinamicamente -->
         </div>
-
         <button type="submit" class="btn btn-success">Conferma Menù del Giorno</button>
     </form>
 </div>
 
 <script>
-    const API_URL = "http://" + "[[${apiUrl}]]";
+    const API_URL = "http://" + "[[${apiUrl}]]" + "/api";
 
     const dishesContainer = document.getElementById('dishesContainer');
     const lateNote = document.getElementById('lateNote');
@@ -64,14 +62,16 @@
     let currentDate = new Date(today);
 
     function formatDate(date) {
-        return date.toISOString().split('T')[0]; // yyyy-mm-dd
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     function updateDateLabel() {
         const label = formatDate(currentDate);
         selectedDateLabel.textContent = label;
 
-        // Update button styles
         if (formatDate(currentDate) === formatDate(today)) {
             btnToday.classList.replace('btn-outline-primary', 'btn-primary');
             btnTomorrow.classList.replace('btn-primary', 'btn-outline-primary');
@@ -128,9 +128,13 @@
             .map(input => parseInt(input.value));
 
         try {
-            const response = await fetch(`${API_URL}/menu?date=${formatDate(currentDate)}`, {
+            const jwt = localStorage.getItem("jwt");
+            const response = await fetch(`${API_URL}/menu`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': `Bearer ${jwt}`,
+                },
                 body: JSON.stringify(selectedIds)
             });
 
@@ -154,10 +158,14 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-        // Se dopo le 10, parte direttamente su domani
         currentDate = (now.getHours() >= 10) ? new Date(tomorrow) : new Date(today);
         loadMenuData();
     });
+
+    function logout() {
+        localStorage.removeItem("jwt");
+        window.location.href = "/auth/login";
+    }
 </script>
 
 </body>

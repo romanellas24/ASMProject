@@ -18,25 +18,33 @@
         .card:hover {
             transform: scale(1.02);
         }
+        .card.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
 
-<!-- Barra superiore con logout -->
+<!-- Barra superiore -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
     <div class="container-fluid">
         <span class="navbar-brand mb-0 h1">Dashboard Ristorante</span>
         <div class="d-flex">
-            <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            <button id="authButton" class="btn btn-outline-danger" onclick="logout()">Logout</button>
         </div>
     </div>
 </nav>
 
 <div class="container text-center" style="margin-top: 6rem;">
+    <div id="loginMessage" class="alert alert-warning d-none" role="alert">
+        Effettua il login per accedere alle funzionalità.
+    </div>
+
     <div class="row justify-content-center">
         <!-- Card Menù -->
         <div class="col-md-4 mb-4">
-            <div class="card shadow" onclick=redirectTo("menu")>
+            <div id="menuCard" class="card shadow" onclick="redirectTo('menu')">
                 <div class="card-body">
                     <h5 class="card-title">📋 Seleziona Menù del Giorno</h5>
                     <p class="card-text">Scegli i piatti da servire oggi tramite checkbox.</p>
@@ -45,30 +53,59 @@
         </div>
         <!-- Card Ordini -->
         <div class="col-md-4 mb-4">
-            <div class="card shadow" onclick=redirectTo("waitingorders")>
+            <div id="waitingOrdersCard" class="card shadow" onclick="redirectTo('waitingorders')">
                 <div class="card-body">
                     <h5 class="card-title">🧾 Gestisci Ordini</h5>
                     <p class="card-text">Accetta o rifiuta gli ordini in tempo reale.</p>
                 </div>
             </div>
         </div>
-
-        <!-- Card Ordini -->
+        <!-- Card Visualizza Ordini -->
         <div class="col-md-4 mb-4">
-            <div class="card shadow" onclick=redirectTo("orders")>
+            <div id="ordersCard" class="card shadow" onclick="redirectTo('orders')">
                 <div class="card-body">
-                    <h5 class="card-title">📋 Visualizza gli ordini </h5>
+                    <h5 class="card-title">📋 Visualizza gli ordini</h5>
                     <p class="card-text">Visualizza gli ordini di oggi.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
     const BASE_URL = "[[${beUrl}]]";
-    function redirectTo (endPath) {
-        location.href = 'http://'+ BASE_URL + '/' + endPath;
+    const jwtToken = localStorage.getItem("jwt");
+
+    function redirectTo(endPath) {
+        location.href = 'http://' + BASE_URL + '/' + endPath;
     }
+
+    function logout() {
+        localStorage.removeItem("jwt");
+        window.location.href = "/auth/login";
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const authButton = document.getElementById('authButton');
+        const loginMessage = document.getElementById('loginMessage');
+        const menuCard = document.getElementById('menuCard');
+        const waitingOrdersCard = document.getElementById('waitingOrdersCard');
+
+        if (!jwtToken) {
+            // Cambia bottone in "Login"
+            authButton.textContent = "Login";
+            authButton.onclick = () => window.location.href = "/auth/login";
+            authButton.classList.remove("btn-outline-danger");
+            authButton.classList.add("btn-outline-primary");
+
+            // Mostra messaggio login necessario
+            loginMessage.classList.remove("d-none");
+
+            // Disabilita le card sensibili
+            menuCard.classList.add("disabled");
+            waitingOrdersCard.classList.add("disabled");
+        }
+    });
 </script>
 
 </body>

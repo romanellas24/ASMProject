@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title>Gestione Ordini</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -18,21 +16,37 @@
             margin-bottom: 1.5rem;
         }
 
-        .card-title span {
-            font-size: 0.9rem;
-            color: #6c757d;
+        .card-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .correlation-id-badge {
+            font-size: 0.85rem;
+            background-color: #000;
+            color: #fff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .dish-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+
+        .dish-list li {
+            font-size: 0.95rem;
+            padding: 0.2rem 0;
+            color: #495057;
         }
 
         .btn-decision {
             min-width: 120px;
         }
-
-        .badge-order {
-            font-size: 0.85rem;
-            background-color: #212529; /* dark */
-            color: #f8f9fa; /* light text */
-        }
-
     </style>
 </head>
 <body>
@@ -55,10 +69,11 @@
             <div class="card-body">
                 <h5 class="card-title">
                     Nuovo Ordine
-                    <span class="badge bg-primary ms-2 correlation-id-badge"></span>
+                    <span class="correlation-id-badge w-100 mt-2 text-center"></span>
                 </h5>
                 <p class="card-text mb-3">
-                    <strong>Piatti richiesti:</strong> <span class="dish-ids text-muted"></span>
+                    <strong>Piatti richiesti:</strong>
+                <ul class="dish-list"></ul>
                 </p>
                 <div class="d-flex justify-content-end">
                     <button class="btn btn-success btn-decision me-2 btn-accept">Accetta</button>
@@ -72,7 +87,8 @@
 <!-- WebSocket JS -->
 <script>
     const BASE_URL = "[[${beUrl}]]";
-    const socket = new WebSocket("ws://" + BASE_URL + "/ws");
+    const jwt = localStorage.getItem("jwt")
+    const socket = new WebSocket("ws://" + BASE_URL + "/ws?token=" + jwt);
 
     socket.onopen = () => {
         console.log("WebSocket connesso a ws://" + BASE_URL + "/ws");
@@ -83,11 +99,9 @@
             const data = JSON.parse(event.data);
             console.log("Messaggio ricevuto:", data);
 
-            if (data.dishIds && data.correlationID) {
-                // È un nuovo ordine
+            if (Array.isArray(data.dishes) && data.correlationID) {
                 renderOrderCard(data);
             } else if (data.correlationId && typeof data.accepted === "boolean") {
-                // È una decisione → rimuovi la card se presente
                 removeOrderCardByCorrelationId(data.correlationId);
             }
 
@@ -100,18 +114,25 @@
         const template = document.getElementById("order-template");
         const clone = template.content.cloneNode(true);
 
-        // Inserisci i dati
-        clone.querySelector(".correlation-id-badge").textContent = order.correlationID;
-        clone.querySelector(".dish-ids").textContent = order.dishIds.join(", ");
+        // Mostra il Correlation ID
+        clone.querySelector(".correlation-id-badge").textContent = `ID Correlazione: ${order.correlationID}`;
 
-        // Imposta i listener
+        // Mostra l'elenco dei piatti con quantità
+        const dishList = clone.querySelector(".dish-list");
+        order.dishes.forEach(dish => {
+            const li = document.createElement("li");
+            li.textContent = `ID: ${dish.id} (x${dish.quantity})`;
+            dishList.appendChild(li);
+        });
+
+        // Listener bottoni
         const acceptBtn = clone.querySelector(".btn-accept");
         const rejectBtn = clone.querySelector(".btn-reject");
 
         acceptBtn.addEventListener("click", () => sendDecision(order.correlationID, true));
         rejectBtn.addEventListener("click", () => sendDecision(order.correlationID, false));
 
-        // Aggiungi la card
+        // Aggiungi la card all'inizio
         document.getElementById("orders-container").prepend(clone);
     }
 
@@ -135,14 +156,13 @@
     function removeOrderCardByCorrelationId(correlationId) {
         const badges = document.querySelectorAll(".correlation-id-badge");
         badges.forEach(badge => {
-            if (badge.textContent === correlationId) {
+            if (badge.textContent.includes(correlationId)) {
                 const card = badge.closest(".order-card");
                 if (card) card.remove();
             }
         });
     }
 </script>
-
 
 </body>
 </html>
