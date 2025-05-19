@@ -83,7 +83,7 @@
         function handleResult(json) {
             if (json.array == null)
                 return;
-            tableContent = document.getElementById("tableContent");
+            let tableContent = document.getElementById("tableContent");
             let html = "";
             json.array.forEach(element => {
                 let azioniHtml = `<td><a onclick="makeNotRefundable('${element.token}')" href="#">Rendi non rimborsabile</a></td>`;
