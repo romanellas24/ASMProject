@@ -1,0 +1,42 @@
+@import url(../../../styles.scss);
+
+.fastfood-icon-1 {
+	width: 24px;
+	height: 22px;
+	background: #fdfdfd;
+}
+
+.title {
+	width: 86px;
+	height: 33px;
+	color: #FCB103;
+	font-family: adm;
+	font-weight: 400;
+	font-size: 20px;
+	font-style: italic;
+	text-align: left;
+}
+
+.person-icon {
+	width: 23px;
+	height: 21px;
+	background: #000000;
+}
+
+.sidemenu-icon {
+	background: #ffffff;
+}
+
+.login-text {
+
+	color: #232323;
+	font-family: adm;
+	font-weight: bold;
+	font-size: 10px;
+	text-align: left;
+	margin: auto !important;
+}
+
+.header{
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
