@@ -138,7 +138,7 @@ define registerPayment
     }
 }
 
-//Requires: token, result, beneficiary, amount
+//Requires: token, result, beneficiary, amount, toDelete
 /*
 result = 0 => "Not payed"
 result = 1 => "Payed"
@@ -146,12 +146,16 @@ result = -1 => "Not exists"
 */
 define checkToken
 {
+    adding = "";
+    if(toDelete){
+        adding = "AND deletable = 1 "
+    }
     scope ( checkTokenScope ) {
         sql_cmd = "SELECT tbl_tokens.token, COUNT(tbl_token_transactions.token) AS cnt, tbl_account.owner AS beneficiary, tbl_tokens.amount " +
                    "FROM tbl_tokens " +
                     "LEFT JOIN tbl_token_transactions ON (tbl_tokens.token = tbl_token_transactions.token) " +
                     "INNER JOIN tbl_account ON (tbl_tokens.dest_account = tbl_account.id) " +
-                    "WHERE tbl_tokens.token = :token " + 
+                    "WHERE tbl_tokens.token = :token " + adding + 
                     "GROUP BY tbl_tokens.token";                    
         install ( SQLException =>
             println@Console("---------------------------------")();
@@ -181,13 +185,34 @@ define checkToken
 define deleteTransaction
 {
     scope ( deleteTransactionScope ) {
-        sql_cmd = "DELETE FROM tbl_token_transactions WHERE token = :token";
+        sql_cmd = "DELETE FROM tbl_token_transactions WHERE token = :token AND deletable = 1";
         install ( SQLException =>
             println@Console("---------------------------------")();
             println@Console("Failed Query: ")();
             println@Console(sql_cmd)();
             println@Console("token:" + token)();
             println@Console(deleteTransactionScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.token = token;
+        update@Database( queryRequest )( queryReturn )
+    }
+}
+
+//token
+define makeNotRefundable 
+{
+    scope ( makeNotRefundableScope ) {
+        error = 0;
+        sql_cmd = "UPDATE tbl_token_transactions SET deletable = 0 WHERE token = :token";
+        install ( SQLException =>
+            error = 1;
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("token:" + token)();
+            println@Console(makeNotRefundableScope.SQLException.Error)();
             println@Console("---------------------------------")()
         );
         queryRequest = sql_cmd;
@@ -262,6 +287,7 @@ main {
         token = request.param.token;
         response.param.beneficiary = "";
         amount = 0.00;
+        toDelete = false;
         checkToken;
         if(result == -1) {
             response.param.status = "Not found";
@@ -283,6 +309,7 @@ main {
 
     [deletePay(request)(response) {
         token = request.param.token;
+        toDelete = true;
         checkToken;
         if(result == -1) {
             response.param.status = "Not found";
@@ -299,7 +326,14 @@ main {
     }]
 
     [putNotRefaundable(request)(response) {
-        token = request.param.token; //TODO CONTINUE HERE
+        token = request.param.token;
+        makeNotRefundable;
+        response.param.status = 200;
+        response.param.msg = "Ok.";
+        if(error){
+            response.param.status = 500;
+            response.param.msg = "Cannot update!"
+        }
     }]
 
 }

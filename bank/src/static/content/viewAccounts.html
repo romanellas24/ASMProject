@@ -66,12 +66,16 @@
         }
 
         function handleResult(json) {
-            if(json.array == null)
+            if (json.array == null)
                 return;
             tableContent = document.getElementById("tableContent");
             let html = "";
             json.array.forEach(element => {
-                html = html + `<tr><td>${element.account_id}</td><td>${element.owner}</td><td>${element.balance}</td><td><a target="_blank" href="viewTransactions.html?account=${element.account_id}">Vedi transazioni</a><br/><a href="viewCrateCard.html?account=${element.account_id}" target="_blank">Crea carta di debito</a></td></tr>`;
+                html = html + `<tr>
+                               <td>${element.account_id}</td>
+                               <td>${element.owner}</td>
+                               <td>${element.balance}</td>
+                               <td><a target="_blank" href="viewTransactions.html?account=${element.account_id}">Vedi transazioni</a><br/><a href="viewCrateCard.html?account=${element.account_id}" target="_blank">Crea carta di debito</a></td></tr>`;
             });
             tableContent.innerHTML = html;
         }

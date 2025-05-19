@@ -9,7 +9,8 @@ SELECT token,
        payment_request_time,
        transaction_on,
        src.owner  AS src_owner,
-       dest.owner AS dest_owner
+       dest.owner AS dest_owner,
+       deletable
 FROM tbl_tokens
          NATURAL JOIN tbl_token_transactions
          NATURAL JOIN

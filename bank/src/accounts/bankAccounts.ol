@@ -159,7 +159,7 @@ define getAccounts
 define getTransactions 
 {
     scope ( getAccountsScope ) {
-        sql_cmd = "SELECT token, amount, src_account, dest_account, payment_request_time, transaction_on, src_owner, dest_owner FROM view_accounts_transactions WHERE src_account = :id OR dest_account = :id LIMIT :offset, :pageSize";
+        sql_cmd = "SELECT token, amount, src_account, dest_account, payment_request_time, transaction_on, src_owner, dest_owner, deletable FROM view_accounts_transactions WHERE src_account = :id OR dest_account = :id LIMIT :offset, :pageSize";
         install ( SQLException =>
             println@Console("---------------------------------")();
             println@Console("Failed Query: ")();
@@ -183,11 +183,65 @@ define getTransactions
             output[i].payment_request_time = queryReturn.row[i].payment_request_time;
             output[i].transaction_on = queryReturn.row[i].transaction_on;
             output[i].src_owner = queryReturn.row[i].src_owner;
-            output[i].dest_owner = queryReturn.row[i].dest_owner
+            output[i].dest_owner = queryReturn.row[i].dest_owner;
+            output[i].deletable = queryReturn.row[i].deletable
         }
     }
 }
 
+//pan, check_result
+define checkPan 
+{
+    scope ( checkPanScope ) {
+        sql_cmd = "SELECT COUNT(*) AS cnt FROM tbl_debit_cards WHERE PAN = :pan";
+        install ( SQLException =>
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("pan:" + pan)();
+            println@Console(checkPanScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.pan = pan;
+        query@Database( queryRequest )( queryReturn );
+        if(#queryReturn.row > 0){
+            if(queryReturn.row[0].cnt != 0){
+                check_result = queryReturn.row[0].cnt
+            }
+        }
+    }
+}
+
+
+//account, pan, cvv, expire_month, expire_year
+define insertCard 
+{
+    scope ( insertCardScope ) {
+        error = 0;
+        sql_cmd = "INSERT INTO tbl_debit_cards (PAN, cvv, expiry_on, refer_account) VALUE (:pan, :cvv, LAST_DAY(CONCAT(:expire_year,'-',:expire_month,'-',01)), :account)";
+        install ( SQLException =>
+            error = 1;
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("pan:" + pan)();
+            println@Console("cvv:" + cvv)();
+            println@Console("expire_month:" + expire_month)();
+            println@Console("expire_year:" + expire_year)();
+            println@Console("account:" + account)();
+            println@Console(insertCardScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.pan = pan;
+        queryRequest.cvv = cvv;
+        queryRequest.expire_year = expire_year;
+        queryRequest.expire_month = expire_month;
+        queryRequest.account = account;
+        update@Database( queryRequest )( queryReturn )
+    }
+}
 
 main {
     [ postAccount( request )( response ) {
@@ -265,6 +319,41 @@ main {
         undef(response.param.array[0])
         for ( i = 0, i < #queryReturn.row, i++ ) {
             response.param.array[i] << output[i]
+        }
+    }]
+
+    [ postCreateCard( request )( response ) {
+        account = request.param.acc_id
+        pan = request.param.pan;
+        cvv = request.param.cvv;
+        expire_month = request.param.expire_month;
+        expire_year = request.param.expire_year;
+        expire_year = "20" + expire_year;
+        check_result = 0;
+        checkAccount;
+        if(check_result == 0) {
+            response.param.status = 400;
+            response.param.msg = "Account does not exists"
+        } else {
+            //Account exists, check pan
+            check_result = 0;
+            checkPan;
+            if(check_result == 0){
+                //Insert
+                insertCard;
+                if(error == 0){
+                    response.param.status = 200;
+                    response.param.msg = "Ok."
+                } else {
+                    response.param.status = 500;
+                    response.param.msg = "Internal server error"    
+                }
+                
+            } else {
+                //Already exists!
+                response.param.status = 400;
+                response.param.msg = "PAN already exists"
+            }
         }
     }]
 

@@ -12,6 +12,19 @@ type AccountResponse:void {
   .array[0,*]:AccountInfo
 }
 
+type CreateCardRequest:void {
+  .cvv[1,1]:int
+  .expire_month[1,1]:int
+  .expire_year[1,1]:int
+  .pan[1,1]:string
+  .acc_id[1,1]:int
+}
+
+type CreateCardResponse:void {
+  .msg[1,1]:string
+  .status[1,1]:int
+}
+
 type DepositRequest:void {
   .amount[1,1]:int
   .account[1,1]:int
@@ -30,6 +43,15 @@ type GetCheckPayResponse:void {
   .code[1,1]:int
   .beneficiary[1,1]:string
   .status[1,1]:string
+}
+
+type NotRefoundRequest:void {
+  .token[1,1]:string
+}
+
+type NotRefoundResponse:void {
+  .msg[1,1]:string
+  .status[1,1]:int
 }
 
 type PostAccountRequest:void {
@@ -79,6 +101,7 @@ type TransactionInfo:void {
   .payment_request_time[1,1]:string
   .src_owner[1,1]:string
   .src_account[1,1]:int
+  .deletable[1,1]:int
   .transaction_on[1,1]:string
   .dest_owner[1,1]:string
   .token[1,1]:string
@@ -109,8 +132,10 @@ RequestResponse:
   getCheckPay( GetCheckPayRequest )( GetCheckPayResponse ),
   getTransactions( TransactionsRequest )( TransactionsResponse ),
   postAccount( PostAccountRequest )( PostAccountResponse ),
+  postCreateCard( CreateCardRequest )( CreateCardResponse ),
   postPay( PostPayRequest )( PostPayResponse ),
   putDeposit( DepositRequest )( DepositResponse ),
+  putNotRefaundable( NotRefoundRequest )( NotRefoundResponse ),
   putPay( PutPayRequest )( PutPayResponse ),
   putWithdraw( WithdrawRequest )( WithdrawResponse )
 }

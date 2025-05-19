@@ -106,7 +106,13 @@ main {
 
     [putNotRefaundable(request)(response) {
         internalReq.param << request;
-        putNotRefaundable@BankAccountsPort(internalReq)(internalRes);
+        putNotRefaundable@BankPaymentsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [postCreateCard(request)(response) {
+        internalReq.param << request;
+        postCreateCard@BankAccountsPort(internalReq)(internalRes);
         response << internalRes.param
     }]
 

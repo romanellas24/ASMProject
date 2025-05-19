@@ -87,7 +87,7 @@ main
     //Refund
     request.token = token
     deletePay@BANK_GATEWAY( request )( response );
-    println@Console( "Response: " + response.status )();
+    println@Console( "DELETE Response: " + response.status )();
     undef(request);
     undef(response);
     //Create account

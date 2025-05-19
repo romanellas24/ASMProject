@@ -69,7 +69,7 @@
                 console.log(json);
                 handleResult(json);
             } catch (error) {
-                console.error(error.message);
+                console.log(error);
             }
         }
 
@@ -86,6 +86,9 @@
             tableContent = document.getElementById("tableContent");
             let html = "";
             json.array.forEach(element => {
+                let azioniHtml = `<td><a onclick="makeNotRefundable('${element.token}')" href="#">Rendi non rimborsabile</a></td>`;
+                if(element.deletable === 0)
+                    azioniHtml = '<td>-</td>';
                 html = html + `<tr>
                 <td>${truncateString(element.token, 20)}</td>
                 <td>${element.amount}€</td>
@@ -93,14 +96,34 @@
                 <td>${element.dest_owner} #${element.dest_account}</td>
                 <td>${element.payment_request_time}</td>
                 <td>${element.transaction_on}</td>
-                <td><a onclick="makeNotRefundable('${element.token}')" href="#">Rendi non rimborsabile</a></td>
+                ${azioniHtml}
                 </tr>`;
             });
             tableContent.innerHTML = html;
         }
 
-        function makeNotRefundable(token){
+        async function makeNotRefundable(token) {
+            const customHeaders = new Headers();
+            customHeaders.append("Content-Type", "application/json");
 
+            const url = "payments/" + token + "/notRefound";
+            try {
+                const response = await fetch(url, {
+                    method: "PUT",
+                    headers: customHeaders,
+                    body: JSON.stringify({
+                        token: token
+                    })
+                });
+                const json = await response.json();
+                if(json.status === 200){
+                    getData();
+                } else {
+                    alert("Errore");
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
         }
 
     </script>

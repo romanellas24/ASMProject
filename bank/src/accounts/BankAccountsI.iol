@@ -38,11 +38,20 @@ type TransactionsResponseBe: void {
     .param: TransactionsResponse
 }
 
+type CreateCardRequestBe: void {
+    .param: CreateCardRequest
+}
+
+type CreateCardResponseBe: void {
+    .param: CreateCardResponse
+}
+
 interface BankAccountsI {
     RequestResponse:
         postAccount(PostAccountRequestBe)(PostAccountResponseBe),
         putWithdraw(WithdrawRequestBe)(WithdrawResponseBe),
         putDeposit(DepositRequestBe)(DepositResponseBe),
         getAccount(AccountRequestBe)(AccountResponseBe),
-        getTransactions(TransactionsRequestBe)(TransactionsResponseBe)
+        getTransactions(TransactionsRequestBe)(TransactionsResponseBe),
+        postCreateCard(CreateCardRequestBe)(CreateCardResponseBe)
 }

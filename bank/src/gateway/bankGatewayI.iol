@@ -97,6 +97,7 @@ type TransactionInfo: void {
     .transaction_on: string
     .src_owner: string
     .dest_owner: string
+    .deletable: int
 }
 
 type TransactionsResponse: void {
@@ -105,6 +106,10 @@ type TransactionsResponse: void {
 
 type CreateCardRequest: void {
     .acc_id: int
+    .pan: string
+    .cvv: int
+    .expire_month: int
+    .expire_year: int
 }
 
 type CreateCardResponse: void {
@@ -133,11 +138,8 @@ interface BankGatewayInterface {
         putDeposit(DepositRequest)(DepositResponse),
         getAccount(AccountRequest)(AccountResponse),
         getTransactions(TransactionsRequest)(TransactionsResponse),
-        putNotRefaundable(NotRefoundRequest)(NotRefoundResponse)
-        /*
-        ,
+        putNotRefaundable(NotRefoundRequest)(NotRefoundResponse),
         postCreateCard(CreateCardRequest)(CreateCardResponse)
-        */
 }
 
 

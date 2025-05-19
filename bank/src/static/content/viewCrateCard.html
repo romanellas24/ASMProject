@@ -590,16 +590,6 @@
                 }
             })
 
-//On Input Change Events
-            name.addEventListener('input', function () {
-                if (name.value.length == 0) {
-                    document.getElementById('svgname').innerHTML = 'John Doe';
-                    document.getElementById('svgnameback').innerHTML = 'John Doe';
-                } else {
-                    document.getElementById('svgname').innerHTML = this.value;
-                    document.getElementById('svgnameback').innerHTML = this.value;
-                }
-            });
 
             cardnumber_mask.on('accept', function () {
                 if (cardnumber_mask.value.length == 0) {
@@ -625,11 +615,6 @@
                 }
             });
 
-//On Focus Events
-            name.addEventListener('focus', function () {
-                document.querySelector('.creditcard').classList.remove('flipped');
-            });
-
             cardnumber.addEventListener('focus', function () {
                 document.querySelector('.creditcard').classList.remove('flipped');
             });
@@ -645,15 +630,8 @@
     </script>
     <script>
         let params = new URLSearchParams(document.location.search);
-        let token = params.get("token");
-        let amount = 0.0;
-        let beneficiary = "-";
-        console.log(token);
+        let account = params.get("account");
         let isValid = true;
-        if (token === null) {
-            alert("TOKEN INESISTENTE!");
-            window.location.replace("https://www.google.com");
-        }
 
 
         if (isValid) {
@@ -661,27 +639,7 @@
         }
 
         async function getData() {
-            const url = "payments/" + token;
-            try {
-                const response = await fetch(url);
-                const json = await response.json();
-                if (json.code === 200) {
-                    amount = json.amount;
-                    beneficiary = json.beneficiary;
-                    let amountHtml = document.getElementById("pay_amount");
-                    let beneficiaryHtml = document.getElementById("pay_beneficiary");
-                    amountHtml.innerHTML = amount;
-                    beneficiaryHtml.innerHTML = beneficiary;
-                } else if (json.status === "Paid") {
-                    alert("Hai già pagato!");
-                    window.location.replace("https://www.google.com");
-                } else {
-                    alert("Errore generico!");
-                    window.location.replace("https://www.google.com");
-                }
-            } catch (error) {
-                console.error(error.message);
-            }
+
         }
 
         /*
@@ -689,20 +647,12 @@
         .cvv: int
         .expire_month: int
         .expire_year: int
-        .card_holder_first_name: string
-        .card_holder_last_name: string
-        .token: string
          */
 
-        async function pay() {
-            let fullName = document.getElementById("name").value;
+        async function create() {
             let pan = document.getElementById("cardnumber").value;
             let expirationDate = document.getElementById("expirationdate").value;
             let cvv = document.getElementById("securitycode").value;
-
-            let spaceIndex = fullName.indexOf(" ");
-            let firstName = fullName.substring(0, spaceIndex);
-            let lastName = fullName.substring(spaceIndex + 1);
             let expire = expirationDate.split("/");
             let month = expire[0];
             let year = expire[1];
@@ -711,19 +661,16 @@
             customHeaders.append("Content-Type", "application/json");
 
             pan = pan.replaceAll(' ', "");
-            const url = "payments/" + token;
+            const url = `account/${account}/createCard`;
             try {
                 const response = await fetch(url, {
-                    method: "PUT",
+                    method: "POST",
                     headers: customHeaders,
                     body: JSON.stringify({
                         pan: pan,
                         cvv: parseInt(cvv),
                         expire_month: parseInt(month),
-                        expire_year: parseInt(year),
-                        card_holder_first_name: firstName,
-                        card_holder_last_name: lastName,
-                        token: token
+                        expire_year: parseInt(year)
                     }),
                 });
                 const json = await response.json();
@@ -739,13 +686,7 @@
 </head>
 <body>
 <div class="payment-title">
-    <h1>Pagamento</h1>
-    <h2>
-        Stai pagando
-        <b><span id="pay_amount">0.00</span> €</b>
-        a
-        <b><span id="pay_beneficiary">-</span></b>
-    </h2>
+    <h1>Crea carta</h1>
 </div>
 <div class="container preload" style="width: 50%; margin: 0;">
     <div class="creditcard">
@@ -854,10 +795,6 @@
 </div>
 <div class="form-container">
     <div class="field-container">
-        <label for="name">Name</label>
-        <input id="name" maxlength="20" type="text">
-    </div>
-    <div class="field-container">
         <label for="cardnumber">Card Number</label> <!-- <span id="generatecard">generate random</span> -->
         <input id="cardnumber" type="text" pattern="[0-9]*" inputmode="numeric">
         <svg id="ccicon" class="ccicon" width="750" height="471" viewBox="0 0 750 471" version="1.1"
@@ -874,7 +811,7 @@
         <label for="securitycode">Security Code</label>
         <input id="securitycode" type="text" pattern="[0-9]*" inputmode="numeric">
     </div>
-    <button type="button" class="btn btn-primary" onclick="pay()">PAGA</button>
+    <button type="button" class="btn btn-primary" onclick="create()">CREA</button>
 </div>
 </body>
 </html>
