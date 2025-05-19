@@ -26,5 +26,21 @@
   "putDeposit": {
     "method":"put",
     "template":"/account/deposit"
+  },
+  "getAccount": {
+    "method":"get",
+    "template":"/account?page={page}"
+  },
+  "getTransactions": {
+    "method":"get",
+    "template":"/account/{acc_id}/transactions?page={page}"
+  },
+  "postCreateCard" : {
+    "method":"post",
+    "template":"/account/{acc_id}/createCard"
+  },
+  "putNotRefaundable": {
+    "method":"put",
+    "template":"/payments/{token}/notRefound"
   }
 }

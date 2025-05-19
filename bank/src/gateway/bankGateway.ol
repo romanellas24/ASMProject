@@ -5,6 +5,7 @@ include "../accounts/BankAccountsI.iol"
 include "console.iol"
 include "string_utils.iol"
 include "database.iol"
+include "json_utils.iol"
 
 include "../locations.ol"
 
@@ -39,6 +40,7 @@ outputPort BankAccountsPort {
     Location: LOCATIONS_API_ACCOUNTS
     Protocol: xmlrpc { 
         .compression = false
+        .debug = false
     }
     Interfaces: BankAccountsI
 }
@@ -87,6 +89,30 @@ main {
     [putDeposit(request)(response) {
         internalReq.param << request;
         putDeposit@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [getAccount(request)(response) {
+        internalReq.param << request;
+        getAccount@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [getTransactions(request)(response) {
+        internalReq.param << request;
+        getTransactions@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [putNotRefaundable(request)(response) {
+        internalReq.param << request;
+        putNotRefaundable@BankPaymentsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [postCreateCard(request)(response) {
+        internalReq.param << request;
+        postCreateCard@BankAccountsPort(internalReq)(internalRes);
         response << internalRes.param
     }]
 
