@@ -1,9 +1,9 @@
-package asm.couriers.gateway.auth;
+package gateway.auth;
 
 
-import asm.couriers.gateway.auth.dto.AuthenticationRequestDTO;
-import asm.couriers.gateway.auth.dto.AuthenticationResponseDTO;
-import asm.couriers.gateway.auth.service.JwtService;
+import gateway.auth.dto.AuthenticationRequestDTO;
+import gateway.auth.dto.AuthenticationResponseDTO;
+import gateway.auth.service.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

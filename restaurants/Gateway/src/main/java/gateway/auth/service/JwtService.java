@@ -1,12 +1,10 @@
-package asm.couriers.gateway.auth.service;
+package gateway.auth.service;
 
-import asm.couriers.gateway.auth.utils.JwtUtil;
-import asm.couriers.gateway.auth.dto.AuthenticationRequestDTO;
+import gateway.auth.utils.JwtUtil;
+import gateway.auth.dto.AuthenticationRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

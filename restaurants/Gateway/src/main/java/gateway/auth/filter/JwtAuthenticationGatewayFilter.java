@@ -1,6 +1,6 @@
-package asm.couriers.gateway.auth.filter;
+package gateway.auth.filter;
 
-import asm.couriers.gateway.auth.utils.JwtUtil;
+import gateway.auth.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

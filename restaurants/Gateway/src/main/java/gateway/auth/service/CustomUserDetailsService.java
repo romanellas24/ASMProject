@@ -1,7 +1,5 @@
-package asm.couriers.gateway.auth.service;
+package gateway.auth.service;
 
-import asm.couriers.gateway.auth.utils.UniqueUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,9 @@
-package asm.couriers.gateway.auth.config;
+package gateway.auth.config;
 
-import asm.couriers.gateway.auth.filter.JwtAuthenticationGatewayFilter;
-import asm.couriers.gateway.auth.filter.JwtWebSocketAuthFilter;
-import asm.couriers.gateway.auth.utils.EnvLoader;
+import gateway.auth.filter.JwtAuthenticationGatewayFilter;
+import gateway.auth.filter.JwtWebSocketAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -13,15 +13,12 @@ import org.springframework.http.HttpMethod;
 @Configuration
 public class GatewayConfig {
 
-    private final String apiService;
-    private final String feService;
-    private final String wsService;
-
-    public GatewayConfig(EnvLoader envLoader) {
-        this.apiService = envLoader.getApiService();
-        this.feService = envLoader.getFeService();
-        this.wsService = envLoader.getWsService();
-    }
+    @Value("${api.service}")
+    private String apiService;
+    @Value("${fe.service}")
+    private String feService;
+    @Value("${ws.service}")
+    private String wsService;
 
     @Autowired
     private JwtAuthenticationGatewayFilter jwtFilter;

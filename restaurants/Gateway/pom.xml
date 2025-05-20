@@ -10,7 +10,7 @@
     </parent>
     <groupId>ASM.couriers</groupId>
     <artifactId>Gateway</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <name>Gateway</name>
     <description>Gateway</description>
     <url/>
@@ -81,11 +81,6 @@
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>java-dotenv</artifactId>
-            <version>5.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

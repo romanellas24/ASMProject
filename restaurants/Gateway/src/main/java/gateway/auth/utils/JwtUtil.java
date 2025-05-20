@@ -1,4 +1,4 @@
-package asm.couriers.gateway.auth.utils;
+package gateway.auth.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,24 +15,17 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
     private SecretKey key;
 
-    private final EnvLoader envLoader;
-
-    // inietti EnvLoader via costruttore (o @Autowired su campo)
-    public JwtUtil(EnvLoader envLoader) {
-        this.envLoader = envLoader;
-    }
-
     // Initializes the key after the class is instantiated and the jwtSecret is injected,
     // preventing the repeated creation of the key and enhancing performance
     @PostConstruct
     public void init() {
-        this.jwtSecret = envLoader.getJWTSecret();
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 

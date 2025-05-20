@@ -1,4 +1,4 @@
-package asm.couriers.gateway.auth.dto;
+package gateway.auth.dto;
 
 import lombok.Data;
 
