@@ -3,11 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+   baseUrl: "http://acmeat.com"
 };
 
 export const BASEURL={
-  urlString: "http://acmeat.com/"
+  baseUrl: "http://acmeat.com"
 }
 
 /*

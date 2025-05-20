@@ -4,5 +4,5 @@ export const environment = {
 
 
 export const BASEURL={
-  urlString: "http://acmeat.com/"
+  urlString: "http://acmeat.com"
 }

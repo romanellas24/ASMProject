@@ -17,6 +17,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SliderComponent } from './widgets/slider/slider.component';
 import { HttpClientModule } from '@angular/common/http';
 import { LocalsPageComponent } from './components/locals-page/locals-page.component';
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +38,8 @@ import { LocalsPageComponent } from './components/locals-page/locals-page.compon
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

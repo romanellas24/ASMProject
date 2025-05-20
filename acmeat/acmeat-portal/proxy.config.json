@@ -1,0 +1,8 @@
+{
+    "*": {
+      "target": "http://acmeat.com",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    }
+  }

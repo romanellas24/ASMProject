@@ -1,5 +1,5 @@
 
-<div class="row mt-3 align-items-center">
+<div *ngIf="(menu$ | async) as menu" class="row mt-3 align-items-center">
     <div class="col">
         <div class="row">
             <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="0 -960 960 960" width="100px" fill="#000000"><path d="M285-80v-368q-52-11-88.5-52.5T160-600v-280h60v280h65v-280h60v280h65v-280h60v280q0 58-36.5 99.5T345-448v368h-60Zm415 0v-320H585v-305q0-79 48-127t127-48v800h-60Z"/></svg>
@@ -9,17 +9,13 @@
         </div>
 
         <div class="description">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean porta suscipit neque, et malesuada magna. Cras et sodales quam, in fringilla mi. Maecenas urna nisi, luctus eget massa nec, sodales tempor urna. Morbi a odio sapien. Praesent tellus magna, iaculis eget tempus sit amet, sollicitudin sed enim. In hac habitasse platea dictumst. Donec dignissim eget elit laoreet posuere. Donec finibus, nisi sit amet faucibus commodo, massa leo iaculis diam, consectetur vestibulum enim dolor ac orci. Phasellus facilisis nec lacus ac vulputate.
-
-Aliquam eget mauris faucibus, egestas felis ac, porta arcu. Vestibulum fermentum neque non odio tempor, semper vulputate arcu elementum. Fusce sodales erat ut nunc commodo, interdum iaculis nibh faucibus. Etiam aliquet interdum mauris et venenatis. Fusce tincidunt porta molestie. Etiam cursus eu ipsum eu luctus. Pellentesque orci sem, volutpat efficitur ligula id, pretium pulvinar tortor. Vivamus auctor volutpat ligula sit amet porttitor. Cras condimentum ex ac leo congue dapibus. Proin et nisi ultricies, suscipit odio at, ullamcorper turpis.
-
-Vestibulum at aliquet sem. Duis at sollicitudin sapien. Pellentesque lectus velit, lobortis eget varius vitae, lobortis vitae justo. Proin pulvinar consectetur urna, in mollis mauris accumsan at. Phasellus eleifend, libero vitae cursus mollis, felis sem malesuada nisl, sed imperdiet eros ante in massa. Aliquam feugiat ante ut semper luctus. Integer mattis quam in interdum molestie. Etiam efficitur tincidunt justo, non placerat orci vestibulum quis. Vestibulum nulla tellus, rutrum quis finibus sed, pharetra ut enim. Quisque turpis lectus, dignissim at elit sit amet, commodo fermentum neque. Duis dignissim arcu a mi consectetur dapibus. Cras non vehicula odio. Cras luctus nibh dictum massa imperdiet tincidunt. Nulla facilisi. Nulla non lacinia eros, sit amet suscipit libero. Integer ultricies nibh vulputate tincidunt laoreet.
-
-Ut pulvinar facilisis massa. Aenean vitae vehicula turpis. Suspendisse potenti. Nullam rhoncus lectus nec consectetur volutpat. Vestibulum non feugiat neque. Praesent orci ligula, elementum dictum tempor quis, placerat ac urna. Nunc sed ex mauris. Nulla et pellentesque orci, et malesuada nibh. Vivamus finibus libero sollicitudin condimentum iaculis.
-
-Nunc ac dolor nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc eget quam metus. Etiam volutpat enim nec pharetra interdum. Vestibulum venenatis vulputate molestie. Fusce sagittis eu velit eget convallis. Pellentesque ligula ante, vehicula id blandit in, mollis at ex. Etiam fringilla dignissim maximus. Aliquam sit amet felis dignissim, aliquam libero eu, cursus sapien. Proin bibendum imperdiet venenatis. Fusce massa urna, ultrices blandit purus vel, facilisis commodo nunc. Integer id elit dapibus, convallis tellus maximus, condimentum magna. Nullam elementum nibh nec lacinia tempor. Suspendisse tempor molestie orci, quis viverra augue. Quisque porta at turpis sed mollis. Pellentesque aliquam sed est eget tempor.
+           {{menu.descritpion}}
         </div>
-
+          <h1>Prezzo</h1>
+        <div>
+            {{menu.price | currency}}
+        </div>
+       
     </div>
 
     <div class="col">
@@ -38,5 +34,6 @@ Nunc ac dolor nulla. Pellentesque habitant morbi tristique senectus et netus et 
              <button class="login-btn login-btn-black">Aggiungi al carrello</button>
 
         </div>
+       
     </div>
 </div>

@@ -1,5 +1,5 @@
 
-<div class="row text-center">
+<div class="row text-center align-items-center">
   <div class="col-2">
     <svg
       class="hamburger-icon"
@@ -15,16 +15,16 @@
     </svg>
   </div>
   <div class="col-8">
-    <div class="row "  >
-      <div class="col text-center">
-        <p class="homepage-text">Hai fame? Dicci dove trovarti!</p>
+    <div class="row"  >
+      <div class="col p-2">
+        <p class="homepage-text text-center m-0">Hai fame? Dicci dove trovarti!</p>
       </div>
     </div>
     <div class="row">
       <app-search></app-search>
     </div>
   </div>
-  <div class="col-2">
+  <div class="col-2 ">
     <svg
       class="pizza-icon"
       xmlns="http://www.w3.org/2000/svg"
@@ -41,31 +41,31 @@
 
   <div class="row">
     <div class="row">
-        <div class="col text-center">
-          <p class="homepage-text">Come ordinare?</p>
+        <div class="col p-2">
+          <p class="homepage-text text-center">Come ordinare?</p>
         </div>
     </div>
 
     <div class="row">
 
-        <div class="col">
-        <svg xmlns="http://www.w3.org/2000/svg" height="43px" viewBox="0 -960 960 960" width="43px" fill="#000000"><path d="M160-80q-17 0-28.5-11.5T120-120v-200q0-33 23.5-56.5T200-400v-160q0-33 23.5-56.5T280-640h160v-58q-18-12-29-29t-11-41q0-15 6-29.5t18-26.5l56-56 56 56q12 12 18 26.5t6 29.5q0 24-11 41t-29 29v58h160q33 0 56.5 23.5T760-560v160q33 0 56.5 23.5T840-320v200q0 17-11.5 28.5T800-80H160Zm120-320h400v-160H280v160Zm-80 240h560v-160H200v160Zm80-240h400-400Zm-80 240h560-560Zm560-240H200h560Z"/></svg>
+        <div class="col p-0 text-end">
+        <svg xmlns="http://www.w3.org/2000/svg" height="80px" viewBox="0 -960 960 960" width="80px" fill="#000000"><path d="M160-80q-17 0-28.5-11.5T120-120v-200q0-33 23.5-56.5T200-400v-160q0-33 23.5-56.5T280-640h160v-58q-18-12-29-29t-11-41q0-15 6-29.5t18-26.5l56-56 56 56q12 12 18 26.5t6 29.5q0 24-11 41t-29 29v58h160q33 0 56.5 23.5T760-560v160q33 0 56.5 23.5T840-320v200q0 17-11.5 28.5T800-80H160Zm120-320h400v-160H280v160Zm-80 240h560v-160H200v160Zm80-240h400-400Zm-80 240h560-560Zm560-240H200h560Z"/></svg>
 
         </div>
     
     
-         <div class="col">
+         <div class="col p-0">
             <div class="row">
-                <p class="homepage-text homepage-text-subtitle-1">è il piatto giusto?</p>
+                <p class="homepage-text homepage-text-subtitle-1 text-center ">è il piatto giusto?</p>
             </div>
             <div class="row">
-                <p class="homepage-text homepage-text-subtitle-1">abbiamo menu per tutti grandi e piccini</p>
+                <p class="homepage-text homepage-text-subtitle-1 text-center">abbiamo menu per tutti grandi e piccini</p>
                 
             </div>
         </div>
     </div>
-    <div class="row align-items-center">
-        <input class="slider" type="range" id="range" oninput="progressScript()">
+    <div class="row justify-content-center">
+        <input class="slider" disabled type="range" id="range" oninput="progressScript()">
     </div>
   </div>
 </div>
@@ -73,27 +73,32 @@
 
 <div class="row">
     <div class="row">
-        <p class="homepage-text homepage-text-yellow">I nostri riconoscimenti</p>
+        <p class="homepage-text homepage-text-yellow text-center">I nostri riconoscimenti</p>
     </div>
-    <div class="row">
-        <div class="col">
-        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#000000"><path d="M200-80q-83 0-141.5-58.5T0-280q0-83 58.5-141.5T200-480q83 0 141.5 58.5T400-280q0 83-58.5 141.5T200-80Zm0-80q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm240-40v-200L312-512q-12-11-18-25.5t-6-30.5q0-16 6.5-30.5T312-624l112-112q12-12 27.5-18t32.5-6q17 0 32.5 6t27.5 18l76 76q28 28 64 44t76 16v80q-57 0-108.5-22T560-604l-32-32-96 96 88 92v248h-80Zm180-540q-33 0-56.5-23.5T540-820q0-33 23.5-56.5T620-900q33 0 56.5 23.5T700-820q0 33-23.5 56.5T620-740ZM760-80q-83 0-141.5-58.5T560-280q0-83 58.5-141.5T760-480q83 0 141.5 58.5T960-280q0 83-58.5 141.5T760-80Zm0-80q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/></svg>
-
-        </div>
-        <div class="col">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m242-200 200-280-200-280h98l200 280-200 280h-98Zm238 0 200-280-200-280h98l200 280-200 280h-98Z"/></svg>
-        </div>
-        <div class="col">
-            <div class="row">
-                <p class="homepage-text homepage-text-subtitle-1">La Consegna più veloce del west!</p>
+    <div class="row justify-content-center">
+        <div class="col-8">
+          <div class="row">
+            <div class="col text-end">
+               <svg xmlns="http://www.w3.org/2000/svg" height="80px" viewBox="0 -960 960 960" width="80px" fill="#000000"><path d="M200-80q-83 0-141.5-58.5T0-280q0-83 58.5-141.5T200-480q83 0 141.5 58.5T400-280q0 83-58.5 141.5T200-80Zm0-80q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm240-40v-200L312-512q-12-11-18-25.5t-6-30.5q0-16 6.5-30.5T312-624l112-112q12-12 27.5-18t32.5-6q17 0 32.5 6t27.5 18l76 76q28 28 64 44t76 16v80q-57 0-108.5-22T560-604l-32-32-96 96 88 92v248h-80Zm180-540q-33 0-56.5-23.5T540-820q0-33 23.5-56.5T620-900q33 0 56.5 23.5T700-820q0 33-23.5 56.5T620-740ZM760-80q-83 0-141.5-58.5T560-280q0-83 58.5-141.5T760-480q83 0 141.5 58.5T960-280q0 83-58.5 141.5T760-80Zm0-80q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m242-200 200-280-200-280h98l200 280-200 280h-98Zm238 0 200-280-200-280h98l200 280-200 280h-98Z"/></svg>
+       
+          </div>
+          <div class="col">
+              <div class="row">
+                <p class="homepage-text homepage-text-subtitle-1 m-0 text-end">La Consegna più veloce del west!</p>
             </div>
             <div class="row">
-                <p class="homepage-text homepage-text-subtitle-1">consegna sotto i 5 minuti nel raggio di 10km</p>
+                <p class="homepage-text homepage-text-subtitle-1 text-end">consegna sotto i 5 minuti nel raggio di 10km</p>
                 
             </div>
+          </div>
+          </div>
+
+     
         </div>
+        
     </div>
-    <div class="row align-items-center">
-        <input class="slider" type="range">
+    <div class="row justify-content-center">
+        <input class="slider" disabled type="range">
     </div>
 </div>

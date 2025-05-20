@@ -1,9 +1,10 @@
 @import url(../../../styles.scss);
 
 .fastfood-icon-1 {
-	width: 24px;
-	height: 22px;
+	width: 30px;
+	height: 30px;
 	background: #fdfdfd;
+	margin-bottom: 10px;
 }
 
 .title {
@@ -15,6 +16,7 @@
 	font-size: 20px;
 	font-style: italic;
 	text-align: left;
+	margin: 0;
 }
 
 .person-icon {
