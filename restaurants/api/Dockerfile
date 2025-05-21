@@ -19,6 +19,6 @@ EXPOSE 8080
 LABEL authors="Francesco Testa"
 
 # Copia solo il JAR dall'immagine di build
-COPY --from=build /app/target/restaurant-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/api-SNAPSHOT.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -12,9 +12,6 @@ public class FEController {
     @Value("${be-url}")
     private String beUrl;
 
-    @Value("${api-url}")
-    private String apiUrl;
-
     @GetMapping("")
     public ModelAndView homePage(){
         ModelAndView modelAndView = new ModelAndView("index");
@@ -32,14 +29,13 @@ public class FEController {
     @GetMapping("/menu")
     public ModelAndView menuPage(){
         ModelAndView modelAndView = new ModelAndView("menu");
-        modelAndView.addObject("apiUrl", apiUrl);
+        modelAndView.addObject("beUrl", beUrl);
         return modelAndView;
     }
 
     @GetMapping("orders")
     public ModelAndView orders(){
         ModelAndView modelAndView = new ModelAndView("orders");
-        modelAndView.addObject("apiUrl", apiUrl);
         modelAndView.addObject("beUrl", beUrl);
         return modelAndView;
     }

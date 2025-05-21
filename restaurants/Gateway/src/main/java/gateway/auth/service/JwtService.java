@@ -27,8 +27,8 @@ public class JwtService {
         );
 
         return authenticationManager.authenticate(authToken)
-                .flatMap(auth -> userDetailsService.findByUsername(authenticationRequest.getUsername())) // Mono<UserDetails>
-                .map(userDetails -> jwtUtil.generateToken(userDetails.getUsername())) // Mono<String>
-                .switchIfEmpty(Mono.error(new RuntimeException("Invalid Credentials"))); // errore se nessun utente trovato
+                .flatMap(auth -> userDetailsService.findByUsername(authenticationRequest.getUsername()))
+                .map(userDetails -> jwtUtil.generateToken(userDetails.getUsername()))
+                .switchIfEmpty(Mono.error(new RuntimeException("Invalid Credentials")));
     }
 }

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-restaurant
+  namespace: restaurant
+  labels:
+    app: gateway-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-restaurant
+  template:
+    metadata:
+      namespace: restaurant
+      labels:
+        app: gateway-restaurant
+    spec:
+      containers:
+        - name: gateway-restaurant
+          image: tiesta/asm_restaurant_gateway:0.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: all
+              containerPort: 8080
+            # rabbit rashboard 
+            # - name: rabbit-dashboard
+            #   containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-secrets
+                  key: jwtSecret
+            - name: USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-secrets
+                  key: restaurateurPassword
+            - name: API_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: apiService
+            - name: WS_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: wsService
+            - name: FE_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: feService
+            - name: USERNAME_REST
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: restaurateurUsername
+
+                  

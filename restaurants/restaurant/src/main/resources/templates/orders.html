@@ -49,8 +49,9 @@
 </div>
 
 <script>
-  const API_URL = "http://" + "[[${apiUrl}]]" + "/api";
   const BASE_URL = "[[${beUrl}]]";
+  const WS_URL = "ws://" + BASE_URL + "/ws"
+  const API_URL = "http://" + BASE_URL + "/api";
   let jwt = localStorage.getItem("jwt");
   let socket;
 
@@ -62,7 +63,7 @@
     authWarning.classList.remove("d-none");
   } else {
     // Solo se loggato apri WebSocket
-    socket = new WebSocket("ws://" + BASE_URL + "/ws?token=" + jwt);
+    socket = new WebSocket(WS_URL + "?token=" + jwt);
 
     socket.onmessage = async function (event) {
       try {

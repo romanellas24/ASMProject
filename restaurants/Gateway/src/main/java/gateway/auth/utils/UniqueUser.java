@@ -15,10 +15,10 @@ public class UniqueUser {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Value("${user.name}")
+    @Value("${userRest.name}")
     private String username;
 
-    @Value("${user.psswd}")
+    @Value("${userRest.psswd}")
     private String password;
 
     private User user;

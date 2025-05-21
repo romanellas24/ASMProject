@@ -4,6 +4,8 @@ package gateway.auth;
 import gateway.auth.dto.AuthenticationRequestDTO;
 import gateway.auth.dto.AuthenticationResponseDTO;
 import gateway.auth.service.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -17,12 +19,13 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Controller
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Login/logout handling and JWT")
 public class AuthController {
 
     @Autowired
     private JwtService jwtService;
 
-
+    @Operation(summary = "login page")
     @GetMapping("/login")
     public Mono<String> loginPage(ServerWebExchange exchange, Model model) {
         String scheme = exchange.getRequest().getURI().getScheme();
@@ -36,6 +39,7 @@ public class AuthController {
         return Mono.just("login");
     }
 
+    @Operation(summary = "Authenticate user and return a JWT")
     @PostMapping("/login")
     @ResponseBody
     public Mono<ResponseEntity<AuthenticationResponseDTO>> createAuthenticationToken(
@@ -51,6 +55,7 @@ public class AuthController {
                 });
     }
 
+    @Operation(summary = "Logout")
     @PostMapping("/logout")
     public Mono<String> logout(ServerWebExchange exchange) {
         return Mono.just("redirect:/auth/login");
