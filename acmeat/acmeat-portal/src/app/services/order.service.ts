@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GeneralResponse, Order } from '../entities/entities';
+import { GeneralResponse, OrderInfo } from '../entities/entities';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class OrderService {
 
   baseUrl:string="/Order"
 
-  public createOrder(order:Order){
-    return this.httpClient.post<GeneralResponse>(this.baseUrl+"/api/Order/CreateOrder",order)
+  public createOrder(orderInfo:OrderInfo){
+    return this.httpClient.post<GeneralResponse>(this.baseUrl+"/api/Order/CreateOrder",orderInfo)
   }
 }

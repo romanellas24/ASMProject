@@ -19,17 +19,21 @@
     </div>
 
     <div class="col">
-
-        <div class="row justify-content-center">
+        <form action="" [formGroup]="form">
+            <div class="row justify-content-center">
             <label for="quantity">Quantità</label>
-            <input type="number" id="quantity" value="1">
+            <input formControlName="quantity" type="number" id="quantity" value="1">
         </div>
 
         <div class="row justify-content-center">
             <label for="deliveryTime">Orario consegna</label>
-            <input type="time" id="deliveryTime">
+            <input formControlName="deliveryTime" type="time" id="deliveryTime">
         </div>
 
+
+        </form>
+
+        
         <div class="row justify-content-center">
              <button (click)="submitOrder(menu)" class="login-btn login-btn-black">Aggiungi al carrello</button>
 

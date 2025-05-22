@@ -6,12 +6,12 @@
       <form [formGroup]="form" action="">
         <div class="form-group">
           <label for="mail">Email</label>
-          <input type="text" id="mail" placeholder="example@gmail.com" />
+          <input formControlName="email" type="text" id="mail" placeholder="example@gmail.com" />
         </div>
 
         <div class="form-group">
           <label for="pwd">Password</label>
-          <input type="text" id="pwd" placeholder="Password" />
+          <input formControlName="password" type="text" id="pwd" placeholder="Password" />
         </div>
       </form>
 
@@ -22,7 +22,7 @@
           </button>
         </div>
         <div class="col text-center">
-          <button class="login-btn">Accedi</button>
+          <button (click)="login()" class="login-btn">Accedi</button>
         </div>
       </div>
     </div>

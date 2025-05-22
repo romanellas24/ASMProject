@@ -48,7 +48,8 @@
               </svg>
             </div>
             <div class="col">
-              <p class="login-text">Accedi</p>
+              <p  *ngIf="!(isAuthenticated$ | async)" class="login-text">Accedi</p>
+              <p *ngIf="(isAuthenticated$ | async)" class="login-text">{{getMail()}}</p>
             </div>
           </div>
         </button>

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -57,10 +58,17 @@ export class LoginComponent implements OnInit {
     let pwd:string = this.form.get('password')?.value
 
     if(this.isFormValid()){
-      let user: UserInfo | undefined = await this.userSvc.login(email,pwd).toPromise()
+      let user : UserInfo | undefined | void;
+      
+        user = await this.userSvc.login(email,pwd).toPromise().catch(error => window.alert(error.statusText))
+
+      
+      
       if(user!= undefined){
-        localStorage.setItem("user",user.toString())
+        localStorage.setItem("user",JSON.stringify(user))
         window.alert("Authentication is successfull!")
+        this.userSvc.setUserAuthenticated(true);
+        this.router.navigate(["/"])
       }else{
         window.alert("this user doesn't exist")
       }

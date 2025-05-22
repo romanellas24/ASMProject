@@ -19,7 +19,7 @@ export interface Local {
   available: boolean;
 }
 
-export interface Order {
+export interface OrderInfo {
   userId: number;
   id: number;
   deliveryTime: string;
