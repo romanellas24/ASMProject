@@ -13,8 +13,13 @@
        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
-    <PackageReference Include="Acmeat.Server.User.ClientTest" Version="1.0.1" />
+    <PackageReference Include="Acmeat.Server.User.ClientTest" Version="1.0.2" />
     
   </ItemGroup>
+
+  <!-- <ItemGroup>
+  
+       <ProjectReference Include="/home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-be/server/acmeat.domains.user/acmeat.domains.user.client/acmeat.domains.user.client.csproj"  />
+  </ItemGroup> -->
 
 </Project>

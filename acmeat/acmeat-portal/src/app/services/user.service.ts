@@ -14,7 +14,7 @@ export class UserService {
   constructor(private httpClient:HttpClient) { }
 
   public login(email:string,pwd:string):Observable<UserInfo>{
-    return this.httpClient.post<UserInfo>("todo",{username:email,pwd:pwd})
+    return this.httpClient.post<UserInfo>("todo",{email:email,pwd:pwd})
   }
 
   public createUser(user:UserInfo) :Observable<GeneralResponse>{

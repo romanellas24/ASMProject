@@ -14,11 +14,13 @@ builder.Services.AddOptions<MenuClientOptions>().BindConfiguration(nameof(MenuCl
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UsePathBase("/Menu");
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-   app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/Menu/swagger/v1/swagger.json", "My API V1");
+});
 
 app.UseAuthorization();
 

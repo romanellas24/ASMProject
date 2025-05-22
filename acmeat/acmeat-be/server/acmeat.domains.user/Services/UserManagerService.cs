@@ -46,17 +46,25 @@ public class GrpcUserManagerService : server.user.manager.GrpcUser.GrpcUserBase
            new server.user.manager.User(ConvertServerModelToGrpc(_userReader.GetUserById(id.Id_)))
         );
     }
+    
+       public override Task<server.user.manager.User> GetUserByMail(Mail mail, ServerCallContext context)
+    {
+        return Task.FromResult(
+            
+           new server.user.manager.User(ConvertServerModelToGrpc(_userReader.GetUserByMail(mail.Mail_)))
+        );
+    }
 
      public override Task<server.user.manager.UserList> GetUsers(Id id, ServerCallContext context)
     {
-        List<server.user.User> users=  _userReader.GetUsers();
-        UserList userList =  new server.user.manager.UserList();
+        List<server.user.User> users = _userReader.GetUsers();
+        UserList userList = new server.user.manager.UserList();
 
         userList.Users.AddRange(ConvertServerListToGrpc(users));
 
         return Task.FromResult(
             userList
-          
+
         );
     }
 

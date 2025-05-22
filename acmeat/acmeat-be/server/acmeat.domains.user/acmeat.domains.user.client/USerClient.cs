@@ -39,6 +39,14 @@ namespace acmeat.server.user.client
             return await _client.GetUserByIdAsync(id1);
         }
 
+        public async Task<User> GetUserByMail(string mail)
+        {
+            Mail Mail1 = new Mail();
+            Mail1.Mail_ = mail;
+            return await _client.GetUserByMailAsync(Mail1);
+        }
+
+
         public async Task<UserList> GetUserList()
         {
             Id id1 = new Id();

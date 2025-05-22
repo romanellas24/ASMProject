@@ -23,6 +23,33 @@ namespace acmeat.api.user
             
         }
 
+        [HttpPost]
+        public async Task<UserInfo> Login(UserCredentials userCredentials)
+        {
+
+            try
+            {
+                User user = await _userClient.GetUserByMail(userCredentials.Mail);
+                if (user != null && user.Pwd.Equals(userCredentials.Pwd))
+                {
+                    return new UserInfo(user);
+                }
+                else
+                {
+                    throw new Exception("Mail or password are not correct");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                throw new Exception(ex.Message);
+            }
+
+            
+            
+            
+        }
+
 
         [HttpGet("{Id}")]
         public async Task<UserInfo> GetUserById(int Id)

@@ -1,5 +1,6 @@
 using acmeat.server.order.client;
 using acmeat.server.user.client;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,11 +15,26 @@ builder.Services.AddOptions<UserClientOptions>().BindConfiguration(nameof(UserCl
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// if (app.Environment.IsDevelopment())
+// {
+
+app.UsePathBase("/User");
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-   app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/User/swagger/v1/swagger.json", "My API V1");
+});
+
+// }
+// else
+// {
+//     app.UseSwagger( options =>
+//     {
+//         options.
+//     });
+//     app.UseSwaggerUI();
+//  }
 
 app.UseAuthorization();
 

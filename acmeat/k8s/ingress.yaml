@@ -5,48 +5,47 @@ metadata:
   namespace: default
   annotations:
     kubernetes.io/ingress.class: public
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
   - host: acmeat.com
     http:
       paths:
-      - path: /Bank(/|$)(.*)
+      - path: /Bank
         pathType: Prefix
         backend:
           service:
             name: apiorder-service
             port:
               number: 8080
-      - path: /Order(/|$)(.*)
+      - path: /Order
         pathType: Prefix
         backend:
           service:
             name: apiorder-service
             port:
               number: 8080
-      - path: /User(/|$)(.*)
+      - path: /User
         pathType: Prefix
         backend:
           service:
             name: apiuser-service
             port:
               number: 8080
-      - path: /Local(/|$)(.*)
+      - path: /Local
         pathType: Prefix
         backend:
           service:
             name: apilocal-service
             port:
               number: 8080
-      - path: /Menu(/|$)(.*)
+      - path: /Menu
         pathType: Prefix
         backend:
           service:
             name: apimenu-service
             port:
               number: 8080
-      - path: /DeliveryCompany(/|$)(.*)
+      - path: /DeliveryCompany
         pathType: Prefix
         backend:
           service:
