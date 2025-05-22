@@ -23,6 +23,10 @@
     <div class="row">
       <app-search></app-search>
     </div>
+
+    <div class="row justify-content-center p-2">
+      <button class="yellow-btn" *ngIf="(isAuthenticated$  | async)" (click)="searchWithMyAddress()" >Usa il mio indirizzo!</button>
+    </div>
   </div>
   <div class="col-2 ">
     <svg
@@ -39,8 +43,8 @@
     </svg>
   </div>
 
-  <div class="row">
-    <div class="row">
+  <div class="row p-0">
+    <div class="row p-0">
         <div class="col p-2">
           <p class="homepage-text text-center">Come ordinare?</p>
         </div>

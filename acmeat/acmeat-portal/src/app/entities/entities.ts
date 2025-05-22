@@ -1,7 +1,12 @@
 export interface UserInfo {
+  id:number;
   address: string;
   mail: string;
   pwd: string;
+}
+
+export interface GeneralResponse{
+  message:string
 }
 
 export interface Local {
@@ -12,6 +17,18 @@ export interface Local {
   address: string;
   openingDays: string;
   available: boolean;
+}
+
+export interface Order {
+  userId: number;
+  id: number;
+  deliveryTime: string;
+  purchaseTime: string;
+  transactionId: number;
+  price: number;
+  menuId: number;
+  quantity: number;
+  localId: number;
 }
 
 export interface Menu {

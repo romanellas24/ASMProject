@@ -13,12 +13,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <button [routerLink]="'/login'" class="default-btn side">Accedi</button>
-        </div>
-    </div>
-
+   
     <div class="row">
         <div class="col" >
             <button [routerLink]="'/signup'" class="default-btn side">Crea account</button>
@@ -35,7 +30,7 @@
 
     <div class="row">
         <div class="col" >
-            <button  style="background-color: #ffffff; border: 0px;" class="default-btn side">Gestisci ordini</button>
+            <button *ngIf="(isAuthenticated$|async)"  class="default-btn side">Gestisci ordini</button>
         </div>
     </div>
 </div>

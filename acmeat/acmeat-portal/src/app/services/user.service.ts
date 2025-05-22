@@ -1,23 +1,28 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BASEURL } from 'src/environments/environment';
-import { UserInfo } from '../entities/entities';
+import { GeneralResponse, UserInfo } from '../entities/entities';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  isAuthenticated$:BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-
-  baseUrl:string = BASEURL.urlString;
+  baseUrl:string ="/User";
   constructor(private httpClient:HttpClient) { }
 
-  public login(username:string,pwd:string){
-    this.httpClient.post("todo",{username:username,pwd:pwd})
+  public login(email:string,pwd:string):Observable<UserInfo>{
+    return this.httpClient.post<UserInfo>("todo",{username:email,pwd:pwd})
   }
 
-  public createUser(user:UserInfo){
-    this.httpClient.post(this.baseUrl + "/User/api/User/CreateUser",user)
+  public createUser(user:UserInfo) :Observable<GeneralResponse>{
+    return this.httpClient.post<GeneralResponse>(this.baseUrl + "/api/User/CreateUser",user)
 
+  }
+
+  public setUserAuthenticated(value:boolean){
+    this.isAuthenticated$.next(value)
   }
 }

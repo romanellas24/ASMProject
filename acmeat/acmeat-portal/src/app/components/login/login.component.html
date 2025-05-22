@@ -1,24 +1,30 @@
-
 <div class="row">
-    <div class="col">
-        <div class="card">
-            <h1>Accedi</h1>
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Username">
-            
+  <div class="col">
+    <div class="card">
+      <h1>Accedi</h1>
 
-            <label for="pwd">Password</label>
-            <input type="text"  id="pwd" placeholder="Password">
-
-            <div class="row">
-                <div class="col text-center">
-                    <button class="login-btn login-btn-black">Crea account</button>
-
-                </div>
-                <div class="col text-center">
-                    <button class="login-btn">Accedi</button>
-                </div>
-            </div>
+      <form [formGroup]="form" action="">
+        <div class="form-group">
+          <label for="mail">Email</label>
+          <input type="text" id="mail" placeholder="example@gmail.com" />
         </div>
+
+        <div class="form-group">
+          <label for="pwd">Password</label>
+          <input type="text" id="pwd" placeholder="Password" />
+        </div>
+      </form>
+
+      <div class="row">
+        <div class="col text-center">
+          <button (click)="goToSignUp()" class="login-btn login-btn-black">
+            Crea account
+          </button>
+        </div>
+        <div class="col text-center">
+          <button class="login-btn">Accedi</button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

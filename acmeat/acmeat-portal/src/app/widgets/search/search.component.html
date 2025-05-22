@@ -1,7 +1,7 @@
 
 
 <div class="form-outline" data-mdb-input-init>
-    <input [formControl]="address" type="search" placeholder="Indirizzo" id="form1" class="search-1" />
+    <input [formControl]="address" type="search" placeholder="Indirizzo" id="search-bar" class="search-1" />
     <div *ngIf="(cityList$ | async) as cityList"  class="list-group" style="overflow-y: scroll;">
   <a (click)="goToLocalList(element)" *ngFor="let element of cityList"  class="list-group-item list-group-item-action">
     {{element}}

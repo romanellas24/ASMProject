@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { EventsService } from 'src/app/services/events.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-sidemenu',
@@ -8,9 +10,15 @@ import { EventsService } from 'src/app/services/events.service';
 })
 export class SidemenuComponent implements OnInit {
 
-  constructor(private eventsService:EventsService) { }
+
+  isAuthenticated$ : Observable<boolean> = new Observable();
+
+  constructor(
+    private eventsService:EventsService,
+    private userSvc:UserService) { }
 
   ngOnInit(): void {
+    this.isAuthenticated$ = this.userSvc.isAuthenticated$
   }
 
   toggleMenu():void{  

@@ -58,7 +58,7 @@ export class LocalsPageComponent implements OnInit {
   }
 
   public isFish(menuType:string){
-      return menuType = MenuType.FISH
+      return menuType == MenuType.FISH
   }
 
   public isDinner(openingTime:string, closingTime:string){
@@ -70,6 +70,7 @@ var endTime = moment(closingTime, "HH:mm");
     var dinnerEnds = moment("22:00","HH:mm");
    let amIBetween = dinnerStart <= startTime && dinnerEnds >= endTime 
    console.log(amIBetween);
+   
    
    return amIBetween;//  returns false.  if date ignored I expect TRUE
   }
