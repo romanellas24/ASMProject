@@ -29,6 +29,15 @@ public class GatewayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder){
         return builder.routes()
+                .route("swagger_api_docs", r -> r
+                        .path("/api/docs/**")
+                        .and()
+                        .method(HttpMethod.GET)
+                        .filters(f -> f
+                                .rewritePath("/api/(?<segment>.*)", "/${segment}")
+                        )
+                        .uri(apiService)
+                )
                 .route("get_api_route", r -> r
                         .method(HttpMethod.GET)
                         .and()
@@ -59,6 +68,8 @@ public class GatewayConfig {
                         .method(HttpMethod.GET)
                         .and()
                         .path("/**")
+                        .and()
+                        .predicate(exchange -> !exchange.getRequest().getURI().getPath().startsWith("/docs"))
                         .uri(feService)
                 )
                 .build();

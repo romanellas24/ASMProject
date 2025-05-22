@@ -35,21 +35,10 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, ReactiveAuthenticationManager reactiveAuthenticationManager) {
         http
-                // Applica il ReactiveAuthenticationManager configurato
-                .authenticationManager(reactiveAuthenticationManager)
-                // Configurazione CSRF:
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                // Autorizzazione delle richieste
-//                .authorizeExchange(exchanges -> exchanges
-//                        .pathMatchers(HttpMethod.GET, "/auth/login").permitAll()
-//                        .pathMatchers(HttpMethod.POST, "/auth/login").permitAll()
-//                        .pathMatchers("/login").permitAll()
-//                        // Tutte le altre richieste devono essere autenticate
-//                        .anyExchange().authenticated()
-//                )
-                // Configurazione del Form di Login
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .logout(ServerHttpSecurity.LogoutSpec::disable);
+            .authenticationManager(reactiveAuthenticationManager)
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+            .logout(ServerHttpSecurity.LogoutSpec::disable);
         return http.build();
     }
 }

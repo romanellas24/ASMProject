@@ -5,9 +5,12 @@ import gateway.auth.dto.AuthenticationRequestDTO;
 import gateway.auth.dto.AuthenticationResponseDTO;
 import gateway.auth.service.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +28,15 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
-    @Operation(summary = "login page")
+    @Operation(summary = "login page",responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTML login page",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+            )
+    })
     @GetMapping("/login")
+
     public Mono<String> loginPage(ServerWebExchange exchange, Model model) {
         String scheme = exchange.getRequest().getURI().getScheme();
         String serverName = exchange.getRequest().getURI().getHost();
