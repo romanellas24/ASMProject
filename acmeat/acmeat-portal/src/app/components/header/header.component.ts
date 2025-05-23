@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UserInfo } from 'src/app/entities/entities';
+import { Observable, take } from 'rxjs';
+import { OrderInfo, UserInfo } from 'src/app/entities/entities';
 import { EventsService } from 'src/app/services/events.service';
+import { OrderService } from 'src/app/services/order.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -13,9 +14,11 @@ export class HeaderComponent implements OnInit {
 
 
   isAuthenticated$ : Observable<boolean> = new Observable();
+  ordersToPay$ : Observable<OrderInfo[]> = new Observable();
   constructor(
     private eventsService:EventsService,
-    private userSvc: UserService
+    private userSvc: UserService,
+    private orderSvc: OrderService
   
   ) { }
 
@@ -25,7 +28,13 @@ export class HeaderComponent implements OnInit {
     }else{
       this.userSvc.setUserAuthenticated(false);
     }
+
+
     this.isAuthenticated$ = this.userSvc.isAuthenticated$
+
+    let user : UserInfo | undefined = this.userSvc.getUserInfo();
+    if(user!=undefined)
+      this.ordersToPay$ = this.orderSvc.getOrdersToPay(user.id).pipe(take(1));
   }
 
   toggleMenu():void{  
@@ -42,6 +51,12 @@ export class HeaderComponent implements OnInit {
     
     return user?.mail;
 
+  }
+
+
+  openCartMenu(){
+    this.eventsService.isCartMenuEnabled$.next(true);
+    this.eventsService.isSideMenuEnabled$.next(true);
   }
 
 }

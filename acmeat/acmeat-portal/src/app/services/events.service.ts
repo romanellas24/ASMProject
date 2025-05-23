@@ -8,6 +8,6 @@ import { BehaviorSubject } from 'rxjs';
 export class EventsService {
 
   isSideMenuEnabled$ :BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
+  isCartMenuEnabled$ :BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   constructor() { }
 }

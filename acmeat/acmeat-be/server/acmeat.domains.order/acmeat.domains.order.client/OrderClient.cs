@@ -80,6 +80,20 @@ namespace acmeat.server.order.client
             return await _client.GetOrdersAsync(id1);
         }
 
+        public async Task<OrderList> GetOrdersByUserId(int id)
+        {
+            Id id1 = new Id();
+            id1.Id_ = id;
+            return await _client.GetOrdersByUserIdAsync(id1);
+        }
+
+        public async Task<OrderList> GetOrdersToPay(int id)
+        {
+            Id id1 = new Id();
+            id1.Id_ = id;
+            return await _client.GetOrdersToPayAsync(id1);
+        }
+
         public async Task<GeneralResponse> CreateOrder(Order order)
         {
 

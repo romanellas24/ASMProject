@@ -25,4 +25,16 @@ export class UserService {
   public setUserAuthenticated(value:boolean){
     this.isAuthenticated$.next(value)
   }
+
+  public getUserInfo():UserInfo | undefined{
+    if(this.isAuthenticated$.value == true){
+      let userString : string | null= localStorage.getItem("user");
+      if(userString != null)
+        return JSON.parse(userString)
+
+      return undefined;
+    }else{
+      return undefined;
+    }
+  }
 }

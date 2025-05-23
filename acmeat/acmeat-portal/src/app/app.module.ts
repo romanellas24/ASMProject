@@ -18,6 +18,7 @@ import { SliderComponent } from './widgets/slider/slider.component';
 import { HttpClientModule } from '@angular/common/http';
 import { LocalsPageComponent } from './components/locals-page/locals-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { OrderListComponent } from './components/order-list/order-list.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,7 +33,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     OrdersComponent,
     AccountCreationComponent,
     SliderComponent,
-    LocalsPageComponent
+    LocalsPageComponent,
+    OrderListComponent
   ],
   imports: [
     BrowserModule,

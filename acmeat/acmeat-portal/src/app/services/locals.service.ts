@@ -17,4 +17,8 @@ export class LocalsService {
   public getLocalsByAddress(address:string){
    return  this.httpClient.get<Local[]>(this.baseUrl + "/api/Local/GetLocalsByCity/" + address)
   }
+
+  public getLocalById(localId:number){
+    return this.httpClient.get<Local>(this.baseUrl + "/api/Local/GetLocalById/"+localId);
+  }
 }

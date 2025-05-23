@@ -64,6 +64,29 @@ namespace acmeat.api.order
 
         }
 
+        [HttpGet("{userId}")]
+        public async Task<List<OrderInfo>> GetOrdersByUserId(int userId)
+        {
+            _logger.LogInformation($"Getting orders ");
+            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+
+            var orders = await _orderClient.GetOrdersByUserId(userId);
+            return orders.Orders.Select(x => new OrderInfo(x)).ToList();
+
+        }
+
+
+        [HttpGet("{userId}")]
+        public async Task<List<OrderInfo>> GetOrdersToPay(int userId)
+        {
+            _logger.LogInformation($"Getting orders ");
+            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+
+            var orders = await _orderClient.GetOrdersToPay(userId);
+            return orders.Orders.Select(x => new OrderInfo(x)).ToList();
+
+        }
+
         [HttpPost]
         public async Task<GeneralResponse> CreateOrder(OrderInfo orderInfo)
         {
