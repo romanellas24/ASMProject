@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { BehaviorSubject, map, mergeMap, Observable, switchMap, take, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, map, mergeMap, Observable, Subscription, switchMap, take, tap, withLatestFrom } from 'rxjs';
 import { GeneralResponse, Local, Menu, MenuType, OrderInfo, UserInfo } from 'src/app/entities/entities';
 import { EventsService } from 'src/app/services/events.service';
 import { LocalsService } from 'src/app/services/locals.service';
@@ -14,15 +14,23 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './sidemenu.component.html',
   styleUrls: ['./sidemenu.component.scss']
 })
-export class SidemenuComponent implements OnInit {
+export class SidemenuComponent implements OnInit,OnDestroy {
 
   orderList$ : Observable<OrderInfo[]> = new Observable();
   isAuthenticated$ : Observable<boolean> = new Observable();
   isCartMenuEnabled$ : Observable<boolean> = new Observable();
 
-  localList$ = [];
-    menList$  = [];
-  
+  local$:Observable<Local> = new Observable();
+    menu$ : Observable<Menu> = new Observable();
+
+
+  orderList:OrderInfo[]= []
+  localList:Local[]=[]
+  menuList:Menu[]=[]
+
+  subscriptionList:Subscription[] = []
+
+   
 
   constructor(
     private eventsService:EventsService,
@@ -31,6 +39,7 @@ export class SidemenuComponent implements OnInit {
     private menuSvc : MenuService,
     private router: Router,
     private userSvc:UserService) { }
+  
 
   ngOnInit(): void {
     this.isAuthenticated$ = this.userSvc.isAuthenticated$
@@ -39,8 +48,42 @@ export class SidemenuComponent implements OnInit {
 
     // TO DO GET MENUS AND LOCALS WITH OBSERVABLES
     if(user != undefined){
+      
       this.orderList$ = this.orderSvc.getOrdersToPay(user.id)
       
+
+      // TO DO REFACTOR WITH RXJS
+      this.subscriptionList.push(
+      this.orderList$.pipe(
+        
+      ).subscribe((orders:OrderInfo[]) =>{
+
+        this.orderList = orders
+
+        this.orderList.forEach( order =>{
+        this.local$ = this.localSvc.getLocalById(order.localId)
+        this.menu$ = this.menuSvc.getMenuDetailById(order.menuId)
+
+        this.subscriptionList.push(
+        this.local$.pipe(
+          tap((local:Local) => this.localList.push(local))
+        ).subscribe()
+      );
+
+
+      this.subscriptionList.push(
+        this.menu$.pipe(
+          tap((menu:Menu) => this.menuList.push(menu))
+        ).subscribe()
+      );
+
+      })
+      } ));
+
+      
+     
+
+    
       
       
 
@@ -83,7 +126,7 @@ export class SidemenuComponent implements OnInit {
       var dinnerStart= moment("19:00", "HH:mm");
       var dinnerEnds = moment("22:00","HH:mm");
      let amIBetween = dinnerStart <= startTime && dinnerEnds >= endTime 
-     console.log(amIBetween);
+    //  console.log(amIBetween);
      
      
      return amIBetween;//  returns false.  if date ignored I expect TRUE
@@ -102,6 +145,12 @@ export class SidemenuComponent implements OnInit {
 
   public goToBank(){
     window.alert("TO DO")
+  }
+
+  ngOnDestroy(): void {
+   this.subscriptionList.forEach(
+    sub => sub.unsubscribe()
+   )
   }
 
 }

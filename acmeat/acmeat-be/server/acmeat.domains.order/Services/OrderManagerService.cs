@@ -205,17 +205,29 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     public override async Task<server.order.manager.GeneralResponse> DeleteOrder(server.order.manager.Order order, ServerCallContext context)
     {
+
+        
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         DateTime now = DateTime.Now;
         DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime, "HH:mm", CultureInfo.InvariantCulture);
         _logger.LogInformation($"Current time {now.Hour}:{now.Minute}, delivery time: {order.DeliveryTime}, time between now and delivery time is:{Math.Abs((now - deliveryTime).Hours)} hours");
 
-        if (Math.Abs((now - deliveryTime).Hours) > 1)
+        if (order.DeliveryTime == "")
+        {
+              _logger.LogInformation($"Delivery time is not defined cannot delete order with id: {order.Id}");
+            generalResponse.Message = "Delivery time is not defined cannot delete order with id: "+ order.Id +". Please contact helpdesk";
+            return generalResponse;
+            
+        }
+
+        if ((now - deliveryTime).Hours > -1)
         {
             _logger.LogInformation("Cannot delete the order, you can delete it only one hour before the delivery time");
             generalResponse.Message = "Cannot delete the order, you can delete it only one hour before the delivery time";
             return generalResponse;
         }
+
+        _logger.LogInformation($"The clause result is: {(now - deliveryTime).Hours}");
 
         try
         {
