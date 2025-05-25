@@ -1,0 +1,4 @@
+deploy
+
+*.env
+/kustomize_deploy/overlays/*

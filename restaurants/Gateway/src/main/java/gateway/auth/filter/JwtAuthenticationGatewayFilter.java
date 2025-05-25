@@ -1,6 +1,7 @@
 package gateway.auth.filter;
 
 import gateway.auth.utils.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
+@Slf4j
 @Component
 public class JwtAuthenticationGatewayFilter implements GatewayFilter {
     @Override
@@ -27,11 +29,12 @@ public class JwtAuthenticationGatewayFilter implements GatewayFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
+            log.info("JWT auth header: " + jwt);
             if (jwtUtil.validateJwtToken(jwt)) {
                 return chain.filter(exchange);
             }
         }
-        exchange.getResponse().setStatusCode(HttpStatus.SEE_OTHER);
+        exchange.getResponse().setStatusCode(HttpStatus.FOUND);
         exchange.getResponse().getHeaders().setLocation(URI.create("/auth/login"));
         return exchange.getResponse().setComplete();
     }

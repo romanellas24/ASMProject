@@ -1,5 +1,6 @@
 package restaurant.rabbitmq;
 
+import lombok.extern.slf4j.Slf4j;
 import restaurant.WSHandler;
 import restaurant.dto.DecisionOrderDTO;
 import restaurant.dto.OrderBasicInfoDTO;
@@ -9,6 +10,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class RabbitServiceImpl implements RabbitService {
 

@@ -48,6 +48,7 @@ public class WSHandler implements WebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.put(session.getId(), session);
         session.sendMessage(new TextMessage("Connected"));
+        log.info("connection established");
         for (WaitingOrderDTO waitingOrderDTO : waitingOrders.values()) {
             this.sendOrder(session, waitingOrderDTO);
         }
@@ -91,6 +92,7 @@ public class WSHandler implements WebSocketHandler {
 
     public void putOrder(WaitingOrderDTO waitingOrderDTO) throws Exception {
         waitingOrders.put(waitingOrderDTO.getCorrelationID(), waitingOrderDTO);
+        log.info("Waiting order {} added", waitingOrderDTO.getCorrelationID());
         for(WebSocketSession session : sessions.values()) {
             this.sendOrder(session, waitingOrderDTO);
         }

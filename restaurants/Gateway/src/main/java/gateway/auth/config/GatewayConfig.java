@@ -47,12 +47,22 @@ public class GatewayConfig {
                         )
                         .uri(apiService)
                 )
+                .route("secured_acmeat", r -> r
+                        .path("/api/auth/login")
+                        .and()
+                        .method(HttpMethod.POST)
+                        .filters(f -> f
+                                .filter(jwtFilter)
+                                .rewritePath("/api/(?<segment>.*)", "/${segment}") // rimuove /api
+                        )
+                        .uri(apiService)
+                )
                 .route("secured_api_route", r -> r
                         .path("/api/**")
                         .and()
                         .method(HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE)
                         .filters(f -> f
-                                .filter(jwtFilter) // il tuo filtro custom per JWT
+                                .filter(jwtFilter)
                                 .rewritePath("/api/(?<segment>.*)", "/${segment}") // rimuove /api
                         )
                         .uri(apiService)
@@ -60,7 +70,7 @@ public class GatewayConfig {
                 .route("ws", r-> r
                         .path("/ws","/ws/**")
                         .filters(f -> f
-                                .filter(jwtWSFilter) // il tuo filtro custom per JWT
+                                .filter(jwtWSFilter)
                         )
                         .uri(wsService)
                 )

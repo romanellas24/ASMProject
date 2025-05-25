@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api-restaurant
-  namespace: restaurant
   labels:
     app: api-restaurant
 spec:
@@ -14,11 +13,25 @@ spec:
     metadata:
       labels:
         app: api-restaurant
-      namespace: restaurant
     spec:
+      initContainers:
+        - name: wait-for-rabbit
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z $RABBIT_HOST $RABBIT_PORT; do echo "Waiting for RabbitMQ..."; sleep 2; done']
+          env:
+            - name: RABBIT_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: rabbitHost
+            - name: RABBIT_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: rabbitPort
       containers:
         - name: api-restaurant
-          image: tiesta/asm_restaurant_api:0.3
+          image: tiesta/asm_restaurant_api:0.4
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -27,22 +40,22 @@ spec:
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: restaurant-db-config-map
+                  name: restaurant-app-cm
                   key: mysql_server
             - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: restaurant-db-config-map
+                  name: restaurant-app-cm
                   key: mysql-database-name
             - name: DB_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  name: restaurant-db-config-map
+                  name: restaurant-app-cm
                   key: mysql-user-username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-restaurant-pass
+                  name: restaurant-secrets
                   key: mysql-user-password
             - name: RABBIT_HOST
               valueFrom:
@@ -64,3 +77,14 @@ spec:
                 secretKeyRef:
                   name: restaurant-secrets
                   key: rabbitPsswd
+            - name: PASSWORD_ACMEAT
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-secrets
+                  key: acmeatPassword
+            - name: USERNAME_ACMEAT
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: acmeatUser
+              

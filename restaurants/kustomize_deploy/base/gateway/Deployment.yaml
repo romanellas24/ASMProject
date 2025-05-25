@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gateway-restaurant
-  namespace: restaurant
   labels:
     app: gateway-restaurant
 spec:
@@ -12,13 +11,12 @@ spec:
       app: gateway-restaurant
   template:
     metadata:
-      namespace: restaurant
       labels:
         app: gateway-restaurant
     spec:
       containers:
         - name: gateway-restaurant
-          image: tiesta/asm_restaurant_gateway:0.10
+          image: tiesta/asm_restaurant_gateway:0.12
           imagePullPolicy: IfNotPresent
           ports:
             - name: all

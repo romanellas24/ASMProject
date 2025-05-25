@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @RestController
 @RequestMapping("/order")
 @Tag(name="Order")
@@ -128,6 +130,8 @@ public class OrderController {
 
         rabbitService.publishWaitingOrder(waitingOrderDTO);
 
+        log.info("waiting order: {} send in rabbit queue.",waitingOrderDTO.toString());
+
         CompletableFuture<ResponseOrderDTO> future = new CompletableFuture<>();
         pendingRequests.put(correlationId, future, waitingOrderDTO);
 
@@ -160,6 +164,7 @@ public class OrderController {
         DeleteOrderResponseDTO deleteOrderResponseDTO = new DeleteOrderResponseDTO(id,deleted);
         if(deleted){
             rabbitService.publishDeletedOrder(deleteOrderResponseDTO.getOrderId());
+            log.info("deleted order: {}.",deleteOrderResponseDTO.getOrderId());
         }
         return deleteOrderResponseDTO;
     }

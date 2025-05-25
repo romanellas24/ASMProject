@@ -21,7 +21,14 @@ public class UniqueUser {
     @Value("${userRest.psswd}")
     private String password;
 
+    @Value("${acmeatuser.name}")
+    private String acmeUsername;
+
+    @Value("${acmeatuser.password}")
+    private String acmePassword;
+
     private User user;
+    private User acmeUser;
 
     @Bean
     public User getUser(){
@@ -30,5 +37,14 @@ public class UniqueUser {
             user = new User(username, password, new ArrayList<>());
         }
         return user;
+    }
+
+    @Bean
+    public User getAcmeUser(){
+        if(acmeUser == null){
+            String password = passwordEncoder.encode(this.acmePassword);
+            acmeUser = new User(username, password, new ArrayList<>());
+        }
+        return acmeUser;
     }
 }

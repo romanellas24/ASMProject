@@ -1,6 +1,5 @@
 package gateway.auth;
 
-
 import gateway.auth.dto.AuthenticationRequestDTO;
 import gateway.auth.dto.AuthenticationResponseDTO;
 import gateway.auth.service.JwtService;
