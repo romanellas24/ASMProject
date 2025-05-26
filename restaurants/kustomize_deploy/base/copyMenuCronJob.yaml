@@ -5,7 +5,7 @@ metadata:
   labels:
     app: mysql-restaurant
 spec:
-  schedule: "0 10 * * *" # ogni giorno alle 10:00
+  schedule: "0 10 * * *" 
   jobTemplate:
     spec:
       template:
@@ -18,28 +18,28 @@ spec:
             - name: DB_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: restaurant-db-config-map
-                  key: mysql-server
-            - name: DB_USER
+                  name: restaurant-app-cm
+                  key: mysql_server
+            - name: DB_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  name: restaurant-db-config-map
+                  name: restaurant-app-cm
                   key: mysql-user-username
-            - name: DB_PASS
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-pass
+                  name: restaurant-secrets
                   key: mysql-user-password
             - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: restaurant-db-config-map
+                  name: restaurant-app-cm
                   key: mysql-database-name
             command:
             - /bin/sh
             - -c
             - |
-              mysql -h $DB_SERVER -u$DB_USER -p$DB_PASS $DB_NAME -e "
+              mysql -h $DB_SERVER -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
               INSERT INTO daily_menu (day, dish_id)
               SELECT CURDATE(), dish_id
               FROM daily_menu

@@ -77,14 +77,4 @@ spec:
                 secretKeyRef:
                   name: restaurant-secrets
                   key: rabbitPsswd
-            - name: PASSWORD_ACMEAT
-              valueFrom:
-                secretKeyRef:
-                  name: restaurant-secrets
-                  key: acmeatPassword
-            - name: USERNAME_ACMEAT
-              valueFrom:
-                configMapKeyRef:
-                  name: restaurant-app-cm
-                  key: acmeatUser
               
