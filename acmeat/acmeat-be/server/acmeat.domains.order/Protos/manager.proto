@@ -7,6 +7,8 @@ service GrpcOrder {
   rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
   rpc GetOrderById(Id)returns(Order);
   rpc GetOrders(Id) returns (OrderList);
+  rpc GetOrdersByUserId(Id) returns (OrderList);
+  rpc GetOrdersToPay(Id) returns (OrderList);
   rpc CreateOrder(Order) returns(GeneralResponse);
   rpc UpdateOrder(Order) returns (GeneralResponse);
   rpc DeleteOrder(Order) returns (GeneralResponse);

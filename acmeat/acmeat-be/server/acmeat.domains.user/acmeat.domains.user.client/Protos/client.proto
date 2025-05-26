@@ -9,6 +9,7 @@ package user;
 service GrpcUser {
   rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
   rpc GetUserById(Id)returns(User);
+  rpc GetUserByMail(Mail)returns(User);
   rpc GetUsers(Id) returns (UserList);
   rpc CreateUser(User) returns(GeneralResponse);
   rpc UpdateUser(User) returns (GeneralResponse);
@@ -27,6 +28,10 @@ message HelloReplyClient {
 
 message Id{
   int32 id = 1;
+}
+
+message Mail{
+  string Mail=1;
 }
 
 message GeneralResponse{

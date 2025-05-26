@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { EventsService } from './services/events.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'amceat-portal';
+
+  isSideMenuOpen$ : Observable<boolean> = this.eventsSevice.isSideMenuEnabled$
+
+  constructor(private eventsSevice:EventsService){
+
+  }
+
+
 }

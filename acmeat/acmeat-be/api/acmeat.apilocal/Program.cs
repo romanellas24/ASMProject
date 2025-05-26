@@ -14,11 +14,13 @@ builder.Services.AddOptions<LocalClientOptions>().BindConfiguration(nameof(Local
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UsePathBase("/Local");
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-   app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/Local/swagger/v1/swagger.json", "My API V1");
+});
 
 app.UseAuthorization();
 

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: acmeat-portal
+  namespace: default
+  labels:
+    app: acmeat-portal
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: acmeat-portal
+
+  template:
+    metadata:
+      labels:
+        app: acmeat-portal
+
+    spec:
+      containers:
+        - name: acmeat-portal
+
+          image: docker.io/er4ikk/acmeat-portal
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 4200

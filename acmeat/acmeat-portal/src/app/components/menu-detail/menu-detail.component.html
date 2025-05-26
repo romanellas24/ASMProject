@@ -1,0 +1,43 @@
+
+<div *ngIf="(menu$ | async) as menu" class="row mt-3 align-items-center">
+    <div class="col">
+        <div class="row">
+            <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="0 -960 960 960" width="100px" fill="#000000"><path d="M285-80v-368q-52-11-88.5-52.5T160-600v-280h60v280h65v-280h60v280h65v-280h60v280q0 58-36.5 99.5T345-448v368h-60Zm415 0v-320H585v-305q0-79 48-127t127-48v800h-60Z"/></svg>
+        </div>
+        <div>
+            <h1>Descrizione</h1>
+        </div>
+
+        <div class="description">
+           {{menu.descritpion}}
+        </div>
+          <h1>Prezzo</h1>
+        <div>
+            {{menu.price | currency}}
+        </div>
+       
+    </div>
+
+    <div class="col">
+        <form action="" [formGroup]="form">
+            <div class="row justify-content-center">
+            <label for="quantity">Quantità</label>
+            <input formControlName="quantity" type="number" id="quantity" value="1">
+        </div>
+
+        <div class="row justify-content-center">
+            <label for="deliveryTime">Orario consegna</label>
+            <input formControlName="deliveryTime" type="time" id="deliveryTime">
+        </div>
+
+
+        </form>
+
+        
+        <div class="row justify-content-center">
+             <button (click)="submitOrder(menu)" class="login-btn login-btn-black">Aggiungi al carrello</button>
+
+        </div>
+       
+    </div>
+</div>

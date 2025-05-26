@@ -1,0 +1,26 @@
+<div class="filter-box">
+
+     <form [formGroup]="filters">
+            <div>
+        <h5>Menu</h5>
+
+   
+    <div *ngFor="let menuType of menuTypes">
+        <input [value]="menuType" formControlName="menuType" type="radio">
+        <label >{{menuType}}</label>
+    </div>
+
+    </div>
+    <div>
+        <h5>Orario</h5>
+    <div *ngFor="let hourType of hoursTypes" >
+        <input [value]="hourType" formControlName="hoursType" type="radio" >
+        <label >{{hourType}}</label>
+    </div>
+
+   
+    </div>
+        
+    </form>
+    
+</div>
