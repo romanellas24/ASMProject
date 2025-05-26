@@ -10,6 +10,14 @@ spec:
   - host: acmeat.com
     http:
       paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: acmeat-portal-service
+            port:
+              number: 4200
+
       - path: /Bank
         pathType: Prefix
         backend:

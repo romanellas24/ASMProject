@@ -34,7 +34,6 @@ export class MenuDetailComponent implements OnInit {
 
   ngOnInit(): void {
     let menuId: number = +this.activatedRoute.snapshot.url[3]?.path;
-    debugger
     this.menu$ = this.menuSvc.getMenuDetailById(menuId);
   }
 
