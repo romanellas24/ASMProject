@@ -12,18 +12,15 @@
 * LOCAL:
     2 microservizi:
 
-    * [ ] FE del locale con cui il ristoratore:
-        * [ ] Cambiamento menu'
-        * [ ] Indisponibilita'
-        * [ ] Accettare ordini (Puó esere fatto anche in modo automatico. Ad esempio non posso prendere piú di 3 ordini alla stessa ora).
-    * [ ] REST API:
-        * [ ] Cambiare menu'
-        * [ ] Accettare ordine/rifiutare
-    * [ ] DATABASE
-
-    Idea implementazione:
-    * [ ] Per il menu' si possono salvare, per ogni locale, n piatti totali. Il ristoratore, nel FE, puo' selezione i piatti tra gli n totali e quelli diventeranno il menu' del giorno. In questo modo si puo' popolare il db direttamente.
-    * [ ] Autenticazione molto basic per fare entrare il ristoratore e non chiunque (Controllo nel gateway in modo da bloccare )
+    * [x] FE del locale con cui il ristoratore:
+        * [x] Cambiamento menu'
+        * [x] Indisponibilita'
+        * [x] Accettare ordini (Puó esere fatto anche in modo automatico. Ad esempio non posso prendere piú di 3 ordini alla stessa ora).
+    * [x] REST API:
+        * [x] Cambiare menu'
+        * [x] Accettare ordine/rifiutare
+    * [x] DATABASE
+    * [x] Rabbit message broker 
 
 ## SYSTEM/DEPLOYMENT
 * [ ] Deployment finale NON locale:
@@ -46,10 +43,10 @@
     `https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/`
 
 * LOCAL:
-    * [ ] Deployment in locale:
-        * [ ] Immagine docker
-        * [ ] Deployements/Services
-        * [ ] Gateway
+    * [x] Deployment in locale:
+        * [x] Immagine docker
+        * [x] Deployements/Services
+        * [x] Gateway
     * [ ] Aggiunta Prometheus per monitoraggio 
     * [ ] (Load balancing?)
     * [ ] Aggiungere AutoScaling orizzontale automatico
@@ -77,5 +74,5 @@
 * LOCAL:
     * [ ] UML
     * [ ] BPMN documentativo
-    * [ ] documentazione OpenAPI automatica
+    * [x] documentazione OpenAPI automatica
     
