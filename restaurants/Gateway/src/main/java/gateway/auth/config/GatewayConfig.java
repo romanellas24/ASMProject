@@ -1,7 +1,7 @@
 package gateway.auth.config;
 
-import gateway.auth.filter.JwtAuthenticationGatewayFilter;
-import gateway.auth.filter.JwtWebSocketAuthFilter;
+import gateway.auth.filter.JwtApiFilter;
+import gateway.auth.filter.JwtWebSocketFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -21,10 +21,10 @@ public class GatewayConfig {
     private String wsService;
 
     @Autowired
-    private JwtAuthenticationGatewayFilter jwtFilter;
+    private JwtApiFilter jwtFilter;
 
     @Autowired
-    private JwtWebSocketAuthFilter jwtWSFilter;
+    private JwtWebSocketFilter jwtWSFilter;
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder){
@@ -43,16 +43,6 @@ public class GatewayConfig {
                         .and()
                         .path("/api/**")
                         .filters(f -> f
-                                .rewritePath("/api/(?<segment>.*)", "/${segment}") // rimuove /api
-                        )
-                        .uri(apiService)
-                )
-                .route("secured_acmeat", r -> r
-                        .path("/api/auth/login")
-                        .and()
-                        .method(HttpMethod.POST)
-                        .filters(f -> f
-                                .filter(jwtFilter)
                                 .rewritePath("/api/(?<segment>.*)", "/${segment}") // rimuove /api
                         )
                         .uri(apiService)

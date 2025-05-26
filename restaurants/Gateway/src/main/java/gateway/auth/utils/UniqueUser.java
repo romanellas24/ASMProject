@@ -43,7 +43,7 @@ public class UniqueUser {
     public User getAcmeUser(){
         if(acmeUser == null){
             String password = passwordEncoder.encode(this.acmePassword);
-            acmeUser = new User(username, password, new ArrayList<>());
+            acmeUser = new User(acmeUsername, password, new ArrayList<>());
         }
         return acmeUser;
     }

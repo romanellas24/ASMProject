@@ -55,11 +55,11 @@ public class AuthController {
             @RequestBody AuthenticationRequestDTO authenticationRequest) {
         return jwtService.createJwtToken(authenticationRequest)
                 .map(jwt -> {
-                    log.info("JWT creato con successo per: " + authenticationRequest.getUsername());
+                    log.info("JWT creato con successo per: {} ", authenticationRequest.getUsername());
                     return ResponseEntity.ok(new AuthenticationResponseDTO(jwt));
                 })
                 .onErrorResume(e -> {
-                    log.info("Autenticazione fallita per " + authenticationRequest.getUsername() + ": " + e.getMessage());
+                    log.info("Autenticazione fallita per {}: {}", authenticationRequest.getUsername(), e.getMessage());
                     return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
                 });
     }
