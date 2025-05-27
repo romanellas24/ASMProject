@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-restaurant
+  namespace: restaurant
+  labels:
+    app: app-restaurant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-restaurant
+  template:
+    metadata:
+      labels:
+        app: app-restaurant
+      namespace: restaurant
+    spec:
+      containers:
+        - name: app-restaurant
+          image: tiesta/asm_restaurant_app:0.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: all
+              containerPort: 8080
+          env:
+            - name: RABBIT_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: rabbitHost
+            - name: RABBIT_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: rabbitPort
+            - name: RABBIT_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: rabbitUser
+            - name: RABBIT_PSSWD
+              valueFrom:
+                secretKeyRef:
+                  name: restaurant-secrets
+                  key: rabbitPsswd
+            - name: BE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: backendUrl

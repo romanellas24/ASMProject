@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-restaurant
+  labels:
+    app: gateway-restaurant
+spec:
+  type: ClusterIP
+  selector:
+    app: gateway-restaurant
+  ports:
+    - port: 8080

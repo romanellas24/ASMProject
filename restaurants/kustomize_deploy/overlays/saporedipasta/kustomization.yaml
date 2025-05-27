@@ -1,0 +1,18 @@
+namespace: saporedipasta
+
+resources:
+  - ../../base
+
+secretGenerator:
+  - name: restaurant-secrets
+    type: Opaque
+    envs:
+      - secrets.env
+
+configMapGenerator:
+  - name: restaurant-app-cm
+    envs:
+      - config.env
+
+generatorOptions:
+  disableNameSuffixHash: true

@@ -1,0 +1,10 @@
+resources:
+  - copyMenuCronJob.yaml
+  # - ingress.yaml
+  # - app-configMap.yaml
+  # - app-secrets.yaml
+  - db
+  - api
+  - restaurant_app
+  - gateway
+  - rabbit

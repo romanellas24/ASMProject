@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Ordini</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            padding-top: 2rem;
+            background-color: #f1f3f5;
+        }
+
+        .order-card {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .correlation-id-badge {
+            font-size: 0.85rem;
+            background-color: #000;
+            color: #fff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .dish-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+
+        .dish-list li {
+            font-size: 0.95rem;
+            padding: 0.2rem 0;
+            color: #495057;
+        }
+
+        .btn-decision {
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="/" class="btn btn-outline-secondary">&larr; Torna alla home</a>
+        <h2 class="mb-0 text-primary">Ordini in Attesa</h2>
+    </div>
+
+    <div id="orders-container" class="row">
+        <!-- Ordini dinamici -->
+    </div>
+</div>
+
+<!-- Template ordine -->
+<template id="order-template">
+    <div class="col-md-6 order-card">
+        <div class="card shadow rounded">
+            <div class="card-body">
+                <h5 class="card-title">
+                    Nuovo Ordine
+                    <span class="correlation-id-badge w-100 mt-2 text-center"></span>
+                </h5>
+                <p class="card-text mb-3">
+                    <strong>Piatti richiesti:</strong>
+                <ul class="dish-list"></ul>
+                </p>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-success btn-decision me-2 btn-accept">Accetta</button>
+                    <button class="btn btn-danger btn-decision btn-reject">Rifiuta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- WebSocket JS -->
+<script>
+    const BASE_URL = "[[${beUrl}]]";
+    const jwt = localStorage.getItem("jwt")
+    const socket = new WebSocket("ws://" + BASE_URL + "/ws?token=" + jwt);
+
+    socket.onopen = () => {
+        console.log("WebSocket connesso a ws://" + BASE_URL + "/ws");
+    };
+
+    socket.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            console.log("Messaggio ricevuto:", data);
+
+            if (Array.isArray(data.dishes) && data.correlationID) {
+                renderOrderCard(data);
+            } else if (data.correlationId && typeof data.accepted === "boolean") {
+                removeOrderCardByCorrelationId(data.correlationId);
+            }
+
+        } catch (err) {
+            console.error("Errore parsing messaggio:", event.data);
+        }
+    };
+
+    function renderOrderCard(order) {
+        const template = document.getElementById("order-template");
+        const clone = template.content.cloneNode(true);
+
+        // Mostra il Correlation ID
+        clone.querySelector(".correlation-id-badge").textContent = `ID Correlazione: ${order.correlationID}`;
+
+        // Mostra l'elenco dei piatti con quantità
+        const dishList = clone.querySelector(".dish-list");
+        order.dishes.forEach(dish => {
+            const li = document.createElement("li");
+            li.textContent = `ID: ${dish.id} (x${dish.quantity})`;
+            dishList.appendChild(li);
+        });
+
+        // Listener bottoni
+        const acceptBtn = clone.querySelector(".btn-accept");
+        const rejectBtn = clone.querySelector(".btn-reject");
+
+        acceptBtn.addEventListener("click", () => sendDecision(order.correlationID, true));
+        rejectBtn.addEventListener("click", () => sendDecision(order.correlationID, false));
+
+        // Aggiungi la card all'inizio
+        document.getElementById("orders-container").prepend(clone);
+    }
+
+    function sendDecision(correlationId, accepted) {
+        if (!correlationId) {
+            console.warn("Correlation ID mancante!");
+            return;
+        }
+
+        const decision = {
+            correlationId: correlationId,
+            accepted: accepted
+        };
+
+        socket.send(JSON.stringify(decision));
+        console.log("Inviata decisione:", decision);
+
+        removeOrderCardByCorrelationId(correlationId);
+    }
+
+    function removeOrderCardByCorrelationId(correlationId) {
+        const badges = document.querySelectorAll(".correlation-id-badge");
+        badges.forEach(badge => {
+            if (badge.textContent.includes(correlationId)) {
+                const card = badge.closest(".order-card");
+                if (card) card.remove();
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

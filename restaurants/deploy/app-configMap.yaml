@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restaurant-app-cm
+  namespace: restaurant
+data:
+  rabbitPort: "5672"
+  rabbitHost: rabbitmq.restaurant.svc.cluster.local
+  rabbitUser: guest
+  backendUrl: gateway.local
+  apiService: http://api-restaurant.restaurant.svc.cluster.local:8080
+  wsService: ws://app-restaurant.restaurant.svc.cluster.local:8080
+  feService: http://app-restaurant.restaurant.svc.cluster.local:8080
+  restaurateurUsername: admin
