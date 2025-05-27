@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.Objects;
+
 
 @Service
 public class MapsServiceImpl implements MapsService {
@@ -28,7 +30,7 @@ public class MapsServiceImpl implements MapsService {
     }
 
     @Override
-    public AvailabilityDTO getInfoDelivery(AddressDTO restAddr, AddressDTO clientAddr) throws MapsServiceException, Exception {
+    public AvailabilityDTO getInfoDelivery(AddressDTO restAddr, AddressDTO clientAddr) throws MapsServiceException {
 
         AvailabilityDTO availDTOTimeDistance = new AvailabilityDTO();
 
@@ -42,7 +44,7 @@ public class MapsServiceImpl implements MapsService {
                 .retrieve()
                 .toEntity(DistanceMatrixResponseDTO.class);
 
-        String time =  result.getBody().getTime();
+        String time =  Objects.requireNonNull(result.getBody()).getTime();
         String distance = result.getBody().getDistance();
 
         availDTOTimeDistance.setTime(Integer.parseInt(time.split(" ")[0]));

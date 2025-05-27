@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-courier
+  labels:
+    app: gateway-courier
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-courier
+  template:
+    metadata:
+      labels:
+        app: gateway-courier
+    spec:
+      containers:
+        - name: gateway-courier
+          image: tiesta/asm_courier_gateway:0.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: all
+              containerPort: 8080
+            # rabbit rashboard 
+            # - name: rabbit-dashboard
+            #   containerPort: 8080
+          env:
+            - name: HTTPS_IN_POD_COMMUNICATION
+              value: "false"
+            - name: ALLOCATION_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: courier-cm
+                  key: allocation-service
+            - name: TRACKING_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: courier-cm
+                  key: tracking-service

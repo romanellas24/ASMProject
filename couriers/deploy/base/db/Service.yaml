@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-courier
+  labels:
+    app: mysql-courier
+spec:
+  type: ClusterIP
+  selector:
+    app: mysql-courier
+  ports:
+    - port: 3306

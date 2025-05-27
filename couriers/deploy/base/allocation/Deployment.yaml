@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: courier-allocation
+  labels:
+    app: courier-allocation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: courier-allocation
+  template:
+    metadata:
+      labels:
+        app: courier-allocation
+    spec:
+      containers:
+        - name: courier-allocation
+          image: tiesta/asm_courier_allocation:0.1.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: courier-secrets
+                key: mysql-user-password
+          - name: DB_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: courier-cm
+                key: mysql-server
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: courier-cm
+                key: mysql-database-name
+          - name: DB_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: courier-cm
+                key: mysql-user-username
+          - name: DISTANCE_MATRIX_FAST_KEY
+            valueFrom:
+              secretKeyRef:
+                name: courier-secrets
+                key: distance-matrix-api-key
+          - name: PRICE_PER_KM
+            valueFrom:
+              configMapKeyRef:
+                name: courier-cm
+                key: price-per-km

@@ -1,0 +1,5 @@
+resources:
+  - allocation
+  - db
+  - tracking
+  - gateway

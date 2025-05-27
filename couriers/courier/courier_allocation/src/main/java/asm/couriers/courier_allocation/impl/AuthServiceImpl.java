@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
 
         Company company = companiesDAO.findCompanyByName(name);
         if(!Objects.equals(hash, company.getHash())){
-            throw new UnauthorizedException("Invalid password");
+            throw new UnauthorizedException("Invalid hash");
         }
 
         return CompanyToDtoMapper.toDto(company);
