@@ -10,16 +10,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class AllocationControllerException {
 
-
     /*
-        Handle vehicle not available to deliver.
-        i.e. all vehicle are currently not available.
-        TODO:DA CAMBIARE CODICE ERRORE
+        maps service unavailable
      */
-    @ExceptionHandler(VehicleNotAvailableException.class)
+    @ExceptionHandler(MapsServiceException.class)
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public ResponseEntity<ExceptionDTO> vehicleNotAvailable(Exception ex) {
-        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 404);
+    public ResponseEntity<ExceptionDTO> mapsServiceException(MapsServiceException ex) {
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 503);
         return new ResponseEntity<>(exception, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
@@ -55,11 +52,19 @@ public class AllocationControllerException {
         return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(InvalidDateTimeFormat.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ExceptionDTO> exception(Exception ex) {
+    public ResponseEntity<ExceptionDTO> invalidDateTimeFormat(Exception ex) {
         ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 400);
         return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ExceptionDTO> exception(Exception ex) {
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 500);
+        return new ResponseEntity<>(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

@@ -1,11 +1,11 @@
-package asm.couriers.courier_tracking;
+package asm.couriers.courier_tracking.utils;
 
+import asm.couriers.courier_tracking.WSCourierHandler;
 import asm.couriers.courier_tracking.dao.OrdersDAO;
 import asm.couriers.courier_tracking.dao.VehiclesDAO;
 import asm.couriers.courier_tracking.dto.OrderDTO;
 import asm.couriers.courier_tracking.entity.Order;
 import asm.couriers.courier_tracking.entity.Vehicle;
-import asm.couriers.courier_tracking.utils.OrderToDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

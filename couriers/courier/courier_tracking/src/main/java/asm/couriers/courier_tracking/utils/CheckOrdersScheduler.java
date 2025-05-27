@@ -1,4 +1,4 @@
-package asm.couriers.courier_tracking;
+package asm.couriers.courier_tracking.utils;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
