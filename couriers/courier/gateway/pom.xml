@@ -10,7 +10,7 @@
     </parent>
     <groupId>ASM.couriers</groupId>
     <artifactId>gateway</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <name>gateway</name>
     <description>gateway</description>
     <url/>

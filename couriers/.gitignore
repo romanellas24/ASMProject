@@ -6,6 +6,8 @@ courier/courier_gateway/*
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
+*.env
+
 ### Java ###
 # Compiled class file
 *.class

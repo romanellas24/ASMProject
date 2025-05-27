@@ -1,0 +1,19 @@
+namespace: toctocgnam
+
+resources:
+  - ../../base
+
+secretGenerator:
+  - name: courier-secrets
+    type: Opaque
+    envs:
+      - secrets.env
+      - .env
+
+configMapGenerator:
+  - name: courier-cm
+    envs:
+      - config.env
+
+generatorOptions:
+  disableNameSuffixHash: true

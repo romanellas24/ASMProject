@@ -1,0 +1,10 @@
+FROM mysql:5.7
+
+# ENV MYSQL_DATABASE="courier_db"
+# ENV MYSQL_USER="courier_be"
+# ENV MYSQL_PASSWORD="ZJwymQmuf7dEWx1ckf3J5Ncg0zmY0SXb0291XhP5D60k4QiffuTdG0DYdNDewjwD"
+# ENV MYSQL_ROOT_PASSWORD="BWYzgqiFUuahKFBJEd6HXwgie2PWcZJrtneGVwNB19dF33iKAdQfpcKX3DM68WEK"
+
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 3306

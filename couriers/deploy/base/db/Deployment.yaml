@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-courier
+  labels:
+    app: mysql-courier
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mysql-courier
+  template:
+    metadata:
+      labels:
+        app: mysql-courier
+    spec:
+      containers:
+        - name: mysql
+          image: docker.io/tiesta/asm_courier_db:0.12
+          ports:
+          - containerPort: 3306
+            name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: courier-cm
+                  key: mysql-database-name
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: courier-cm
+                  key: mysql-user-username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: courier-secrets
+                  key: mysql-user-password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: courier-secrets
+                  key: mysql-root-password
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+            initialDelaySeconds: 40
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
