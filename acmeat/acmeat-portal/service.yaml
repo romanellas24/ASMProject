@@ -9,5 +9,5 @@ spec:
     app: acmeat-portal
   ports:
     - protocol: TCP
-      port: 4200
-      targetPort: 4200
+      port: 4201
+      targetPort: 80

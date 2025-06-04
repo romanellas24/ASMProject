@@ -16,7 +16,7 @@ spec:
           service:
             name: acmeat-portal-service
             port:
-              number: 4200
+              number: 4201
 
       - path: /Bank
         pathType: Prefix
