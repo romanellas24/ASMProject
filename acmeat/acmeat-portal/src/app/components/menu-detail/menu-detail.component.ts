@@ -19,7 +19,7 @@ export class MenuDetailComponent implements OnInit {
       deliveryTime: new FormControl("",[Validators.required])
     }
   )
-
+  isLoading:boolean = false
 
 
 
@@ -38,6 +38,7 @@ export class MenuDetailComponent implements OnInit {
   }
 
   async submitOrder(menu: Menu) {
+    this.isLoading=true
     let quantity = this.form.get('quantity')?.value
     let deliveryTime = this.form.get('deliveryTime')?.value
     let userString = localStorage.getItem("user")
@@ -67,7 +68,7 @@ export class MenuDetailComponent implements OnInit {
       window.alert("order placed!!")
       this.router.navigate(["/"])
     }
-
+    this.isLoading=false
 
   }
 

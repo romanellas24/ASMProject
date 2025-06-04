@@ -1,5 +1,29 @@
 {
-    "*": {
+    "/Order/api": {
+      "target": "http://acmeat.com",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/Menu/api": {
+      "target": "http://acmeat.com",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/Local/api": {
+      "target": "http://acmeat.com",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/DeliveryCompany/api": {
+      "target": "http://acmeat.com",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/User/api": {
       "target": "http://acmeat.com",
       "changeOrigin": true,
       "secure": false,

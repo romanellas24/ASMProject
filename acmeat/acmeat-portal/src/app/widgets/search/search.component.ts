@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, filter, mergeMap, Observable, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, debounceTime, filter, mergeMap, Observable, Subscription, tap, withLatestFrom } from 'rxjs';
 import { delay, distinctUntilChanged, map } from 'rxjs';
 import { Local } from 'src/app/entities/entities';
 import { LocalsService } from 'src/app/services/locals.service';
@@ -11,8 +11,8 @@ import { LocalsService } from 'src/app/services/locals.service';
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
-
+export class SearchComponent implements OnInit,OnDestroy {
+  subscriptionList :Subscription[] = []
   address:FormControl = new FormControl('')
   addressValue$:Observable<string> = new Observable<string>()
   localsList$ :Observable<Local[]> = new Observable<Local[]>()
@@ -31,17 +31,17 @@ export class SearchComponent implements OnInit {
     private localSvc: LocalsService,
     private router: Router
   ) { }
+  ngOnDestroy(): void {
+    this.subscriptionList.forEach(sub => sub.unsubscribe())
+  }
 
 
   ngOnInit(): void {
 
     this.addressValue$ = this.address.valueChanges.pipe(
       distinctUntilChanged(),
-      debounceTime(500),
-      map((value :string) => value)      
-    )
-
-    this.addressValue$.pipe(
+      debounceTime(1000),
+      map((value :string) => value),
       map((address:string)=>{
         let cityList:string[]=[]
         if(address != ''){
@@ -59,9 +59,15 @@ export class SearchComponent implements OnInit {
         }
          
         this.cityList$.next(cityList)
+        return address;
 
-      })
-    ).subscribe()
+      })     
+    )
+
+    this.subscriptionList.push(
+      this.addressValue$.subscribe()
+    )
+
 
     
 

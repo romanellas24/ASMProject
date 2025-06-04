@@ -35,8 +35,14 @@
 
         
         <div class="row justify-content-center">
-             <button (click)="submitOrder(menu)" class="login-btn login-btn-black">Aggiungi al carrello</button>
-
+            <div class="col">
+                  <button (click)="submitOrder(menu)" class="login-btn login-btn-black">Aggiungi al carrello</button>
+          
+            </div>
+                  <div *ngIf="isLoading" class="col text-start">
+           <div class="spinner-border text-warning" role="status">
+  
+    </div>
         </div>
        
     </div>

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Form, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import * as moment from 'moment';
-import { combineLatest, distinctUntilChanged, map, mergeMap, Observable, repeatWhen, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, flatMap, map, mergeMap, Observable, repeatWhen, shareReplay, Subject, Subscription, switchMap, take } from 'rxjs';
 import { filter, tap } from 'rxjs';
 import { Local, Menu, MenuType } from 'src/app/entities/entities';
 import { EventsService } from 'src/app/services/events.service';
@@ -18,10 +18,15 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
 
 
   localList$:Observable<Local[]> = new Observable();
+  queryUpdated$ :Subject<boolean> = new Subject();
   menList$ : Observable<Menu[]> = new Observable();
+  menusList:Menu[] =[]
+  localList:Local[] =[]
   menuType:string = ""
   hourType:string = ""
   subscriptions: Subscription [] =[]
+
+  city:string="";
 
 
   constructor(
@@ -38,92 +43,119 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
 
   ngOnInit(): void {
 
-    let city:string = this.activeRoute.snapshot.url[1]?.path;
-    
-    this.localList$ = this.localSvc.getLocalsByAddress(city);
-    // debugger
-    // this.localList$.pipe(
-    //   repeatWhen(() => this.eventSvc.filters$),
+     this.city= this.activeRoute.snapshot.url[1]?.path;
+    //  debugger
+     this.subscriptions.push(
+    this.queryUpdated$
+    .subscribe(() =>{
+      // debugger
+      this.localList$ = this.localSvc.getLocalsByAddress(this.city).pipe(
+         shareReplay(1),
+         take(1),
+         distinctUntilChanged(),
+       map((locals:Local[]) => {
+        // debugger
+        if(this.hourType != undefined){
+          locals = locals.filter( (local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime))
+          // this.localList = this.localList.concat([...locals])
+          // this.localList = [...new Set(this.localList)]
+
+          return locals;
+        }else{
+          // this.localList = this.localList.concat([...locals])
+          // this.localList = [...new Set(this.localList)]
+          return locals;
+        }
+
+      }));
+
+     this.menList$ = this.localList$.pipe(
       
-    //   switchMap(local => local),
-    //   filter((local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime) )
-    // )
+     
+      flatMap(locals => locals),
+      // tap(console.log),
+      flatMap(local => 
+        
+           this.menuSvc.getMenusByLocalId(local.id)
+
+
+      ),
+      //BUG-> TO FIX FILTERS!!!
+      map((menus:Menu[] ) => {
+        debugger
+        if(this.menuType!= undefined){
+          menus = menus.filter( menu => menu.type == this.menuType)
+          this.menusList = [...menus]
+          this.menusList = [...new Set(this.menusList)]
+          return menus
+        }else{
+          this.menusList = this.menusList.concat([...menus])
+          this.menusList = [...new Set(this.menusList)]
+          return menus
+        }
+      })
+      // tap(console.log)
+    )
+    }
+
+    ))
+    
+
 
     this.subscriptions.push(
     this.eventSvc.filters$.pipe(
       map((formGroup :any) => {
         this.menuType= formGroup.menuType
         this.hourType = formGroup.hoursType
+        this.queryUpdated$.next(true);
 
         return formGroup
       })
     ).subscribe()
     );
+
+    // this.subscriptions.push(
+    //   this.localList$.subscribe()
+    // )
+
+    // this.subscriptions.push(
+    //   this.menList$.subscribe()
+    // )
+    
   
 
    
     
-        this.updateList()
    this.subscriptions.push(
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
-      distinctUntilChanged()
-      // map((event:NavigationEnd) => event.url.split('/')[-1]),
-      // tap(console.log)
+      distinctUntilChanged(),
+      tap(console.log)
     ).subscribe((event:any) =>{
       // debugger
-      let newUrl = event.url.split('/').slice(-1)[0]
-      this.localList$ = this.localSvc.getLocalsByAddress(newUrl);
+      this.city = event.url.split('/').slice(-1)[0]
+      this.queryUpdated$.next(true);
       
-      this.updateList()
     }));
   }
 
-  updateList():void{
-     this.menList$ = this.localList$.pipe(
-     
-      repeatWhen(() => this.eventSvc.filters$),
-       map((locals:Local[]) => {
-
-        if(this.hourType != undefined){
-          locals = locals.filter( (local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime))
-          return locals;
-        }else{
-          return locals;
-        }
-      }),
-      mergeMap(locals => locals),
-      // tap(console.log),
-      switchMap(local => 
-        
-           this.menuSvc.getMenusByLocalId(local.id)
-
-
-      ),
-      
-      map((menus:Menu[] ) => {
-        // debugger
-
-        if(this.menuType!= undefined){
-          menus = menus.filter( menu => menu.type == this.menuType)
-          return menus
-        }else{
-          return menus
-        }
-      })
-      // tap(console.log)
-    )
-
-
+  printLocalList(localList: Local[]){
+    console.log(localList)
   }
+
+  getLocal(localList:Local[],localId:number):Local | undefined{
+    return localList.find(local => local.id == localId)
+  }
+
+
 
   public isFish(menuType:string){
       return menuType == MenuType.FISH
   }
 
-  public isDinner(openingTime:string, closingTime:string){
-  
-var startTime = moment(openingTime, "HH:mm");
+  public isDinner(openingTime:string | undefined, closingTime:string | undefined){
+  if(openingTime != undefined && closingTime != undefined){
+    var startTime = moment(openingTime, "HH:mm");
 var endTime = moment(closingTime, "HH:mm");
 
     var dinnerStart= moment("19:00", "HH:mm");
@@ -133,6 +165,10 @@ var endTime = moment(closingTime, "HH:mm");
    
    
    return amIBetween;//  returns false.  if date ignored I expect TRUE
+  
+  }else{
+    return false
   }
+}
 
 }

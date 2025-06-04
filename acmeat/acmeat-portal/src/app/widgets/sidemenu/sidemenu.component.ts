@@ -27,6 +27,7 @@ export class SidemenuComponent implements OnInit,OnDestroy {
   orderList:OrderInfo[]= []
   localList:Local[]=[]
   menuList:Menu[]=[]
+  isLoading:boolean = false;
 
   subscriptionList:Subscription[] = []
 
@@ -55,9 +56,9 @@ export class SidemenuComponent implements OnInit,OnDestroy {
       // TO DO REFACTOR WITH RXJS
       this.subscriptionList.push(
       this.orderList$.pipe(
-        
+        tap(() => this.isLoading = true)
       ).subscribe((orders:OrderInfo[]) =>{
-
+        debugger
         this.orderList = orders
 
         this.orderList.forEach( order =>{
@@ -73,7 +74,8 @@ export class SidemenuComponent implements OnInit,OnDestroy {
 
       this.subscriptionList.push(
         this.menu$.pipe(
-          tap((menu:Menu) => this.menuList.push(menu))
+          tap((menu:Menu) => this.menuList.push(menu)),
+          tap(()=> this.isLoading =false)
         ).subscribe()
       );
 
