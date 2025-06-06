@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Form, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -8,6 +8,7 @@ import { Local, Menu, MenuType } from 'src/app/entities/entities';
 import { EventsService } from 'src/app/services/events.service';
 import { LocalsService } from 'src/app/services/locals.service';
 import { MenuService } from 'src/app/services/menu.service';
+import { FilterComponent } from '../filter/filter.component';
 
 @Component({
   selector: 'app-locals-page',
@@ -24,7 +25,8 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
   localList:Local[] =[]
   menuType:string = ""
   hourType:string = ""
-  subscriptions: Subscription [] =[]
+  subscriptions: Subscription [] =[];
+  @ViewChild(FilterComponent) filterComponent!: FilterComponent;
 
   city:string="";
 
@@ -34,6 +36,7 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
     private activeRoute: ActivatedRoute,
     private localSvc:LocalsService,
     private eventSvc :EventsService,
+    private route : ActivatedRoute,
     private menuSvc:MenuService) { }
   ngOnDestroy(): void {
    this.subscriptions.forEach(
@@ -44,6 +47,8 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
 
      this.city= this.activeRoute.snapshot.url[1]?.path;
+
+
     //  debugger
      this.subscriptions.push(
     this.queryUpdated$
@@ -57,17 +62,19 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
         // debugger
         if(this.hourType != undefined){
           locals = locals.filter( (local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime))
-          // this.localList = this.localList.concat([...locals])
-          // this.localList = [...new Set(this.localList)]
+          this.localList = locals
+          this.localList = [...new Set(this.localList)]
 
           return locals;
         }else{
-          // this.localList = this.localList.concat([...locals])
-          // this.localList = [...new Set(this.localList)]
+          this.localList = this.localList.concat([...locals])
+          this.localList = [...new Set(this.localList)]
           return locals;
         }
 
-      }));
+      }),
+      // tap(() => this.menusList =[])
+    );
 
      this.menList$ = this.localList$.pipe(
       
@@ -82,10 +89,11 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
       ),
       //BUG-> TO FIX FILTERS!!!
       map((menus:Menu[] ) => {
-        debugger
+        // debugger
+
         if(this.menuType!= undefined){
           menus = menus.filter( menu => menu.type == this.menuType)
-          this.menusList = [...menus]
+          this.menusList = this.menusList.concat([...menus])
           this.menusList = [...new Set(this.menusList)]
           return menus
         }else{
@@ -105,32 +113,30 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
     this.subscriptions.push(
     this.eventSvc.filters$.pipe(
       map((formGroup :any) => {
+        // debugger
+        // if(formGroup.menuType != "" && (this.menuType != formGroup.menuType)){
+        //   this.menusList = [];
+        // }
+
         this.menuType= formGroup.menuType
         this.hourType = formGroup.hoursType
+
+      this.localList = []
+      this.menusList = [];
+        // this.menusList = []
         this.queryUpdated$.next(true);
 
         return formGroup
       })
     ).subscribe()
     );
-
-    // this.subscriptions.push(
-    //   this.localList$.subscribe()
-    // )
-
-    // this.subscriptions.push(
-    //   this.menList$.subscribe()
-    // )
-    
-  
-
    
     
    this.subscriptions.push(
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       distinctUntilChanged(),
-      tap(console.log)
+      // tap(console.log)
     ).subscribe((event:any) =>{
       // debugger
       this.city = event.url.split('/').slice(-1)[0]
@@ -140,7 +146,7 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
   }
 
   printLocalList(localList: Local[]){
-    console.log(localList)
+    // console.log(localList)
   }
 
   getLocal(localList:Local[],localId:number):Local | undefined{
@@ -151,6 +157,14 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
 
   public isFish(menuType:string){
       return menuType == MenuType.FISH
+  }
+
+  navigateTo(menuId:number):void{
+    // debugger
+    this.filterComponent.reset()
+    this.queryUpdated$.next(true);
+    this.router.navigate(['menu/'+menuId],{ relativeTo: this.route })
+    
   }
 
   public isDinner(openingTime:string | undefined, closingTime:string | undefined){

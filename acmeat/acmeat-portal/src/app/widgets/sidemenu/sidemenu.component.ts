@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { BehaviorSubject, map, mergeMap, Observable, Subscription, switchMap, take, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, map, mergeMap, Observable, repeatWhen, Subject, Subscription, switchMap, take, tap, withLatestFrom } from 'rxjs';
 import { GeneralResponse, Local, Menu, MenuType, OrderInfo, UserInfo } from 'src/app/entities/entities';
 import { EventsService } from 'src/app/services/events.service';
 import { LocalsService } from 'src/app/services/locals.service';
@@ -19,10 +19,9 @@ export class SidemenuComponent implements OnInit,OnDestroy {
   orderList$ : Observable<OrderInfo[]> = new Observable();
   isAuthenticated$ : Observable<boolean> = new Observable();
   isCartMenuEnabled$ : Observable<boolean> = new Observable();
-
   local$:Observable<Local> = new Observable();
-    menu$ : Observable<Menu> = new Observable();
-
+  menu$ : Observable<Menu> = new Observable();
+  updatedSource$ :Subject<boolean> = new Subject(); 
 
   orderList:OrderInfo[]= []
   localList:Local[]=[]
@@ -56,9 +55,10 @@ export class SidemenuComponent implements OnInit,OnDestroy {
       // TO DO REFACTOR WITH RXJS
       this.subscriptionList.push(
       this.orderList$.pipe(
+        repeatWhen(()=>this.updatedSource$),
         tap(() => this.isLoading = true)
       ).subscribe((orders:OrderInfo[]) =>{
-        debugger
+        // debugger
         this.orderList = orders
 
         this.orderList.forEach( order =>{
@@ -135,10 +135,20 @@ export class SidemenuComponent implements OnInit,OnDestroy {
     }
 
   async deleteOrder(orderId:number){
+    this.isLoading=true
     let response :GeneralResponse | undefined= await this.orderSvc.deleteOrderById(orderId).toPromise()
     if(response?.message != "OK"){
       window.alert("There was an error while deleting order " + orderId +" Problem:" +response?.message)
+    }else{
+      window.alert("order deleted with success!")
     }
+    this.updatedSource$.next(true)
+    this.isLoading=false
+  }
+
+  Logout(){
+    this.userSvc.Logout()
+    window.location.reload()
   }
 
   public goToManageOrders(){

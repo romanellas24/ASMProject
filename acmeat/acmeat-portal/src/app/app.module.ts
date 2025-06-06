@@ -19,6 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LocalsPageComponent } from './components/locals-page/locals-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OrderListComponent } from './components/order-list/order-list.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +35,8 @@ import { OrderListComponent } from './components/order-list/order-list.component
     AccountCreationComponent,
     SliderComponent,
     LocalsPageComponent,
-    OrderListComponent
+    OrderListComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,

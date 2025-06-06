@@ -12,7 +12,11 @@
       
     </div>
 
-   
+   <div class="row">
+        <div class="col" >
+            <button *ngIf="!(isAuthenticated$|async)" [routerLink]="'/login'" class="default-btn side">Accedi</button>
+        </div>
+    </div>
     <div class="row">
         <div class="col" >
             <button *ngIf="!(isAuthenticated$|async)" [routerLink]="'/signup'" class="default-btn side">Crea account</button>
@@ -24,12 +28,19 @@
             <button  class="default-btn side">AIUTO!!!!</button>
         </div>
     </div>
+     
 
 
 
     <div class="row">
         <div class="col" >
             <button *ngIf="(isAuthenticated$|async)" (click)="goToManageOrders()"  class="default-btn side">Gestisci ordini</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col" >
+            <button *ngIf="(isAuthenticated$|async)" (click)="Logout()"  class="btn btn-danger">LOGOUT</button>
         </div>
     </div>
 </div>

@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if(localStorage.getItem("user") != null){
+    if(this.userSvc.getUserInfo() != undefined){
       this.userSvc.setUserAuthenticated(true);
     }else{
       this.userSvc.setUserAuthenticated(false);
@@ -43,13 +43,16 @@ export class HeaderComponent implements OnInit {
   }
 
   getMail(){
-    let userString = localStorage.getItem("user")
     
-    let user: UserInfo | undefined = undefined;
-    if(userString)
-      user =JSON.parse(userString)
+    let user: UserInfo | undefined = this.userSvc.getUserInfo();
     
-    return user?.mail;
+    if(user != undefined){
+      return user?.mail;
+    }else{
+      return "Accedi";
+    }
+    
+    
 
   }
 

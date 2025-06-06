@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: docker.io/er4ikk/mysql:v2
+        image: docker.io/er4ikk/mysql:latest
         resources:
               requests:
                 memory: "1Gi"

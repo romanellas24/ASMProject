@@ -8,33 +8,39 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  isAuthenticated$:BehaviorSubject<boolean> = new BehaviorSubject(false);
+  isAuthenticated$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  baseUrl:string ="/User";
-  constructor(private httpClient:HttpClient) { }
+  baseUrl: string = "/User";
+  constructor(private httpClient: HttpClient) { }
 
-  public login(email:string,pwd:string):Observable<UserInfo>{
-    return this.httpClient.post<UserInfo>(this.baseUrl + "/api/User/Login",{mail:email,pwd:pwd})
+  public login(email: string, pwd: string): Observable<UserInfo> {
+    return this.httpClient.post<UserInfo>(this.baseUrl + "/api/User/Login", { mail: email, pwd: pwd })
   }
 
-  public createUser(user:UserInfo) :Observable<GeneralResponse>{
-    return this.httpClient.post<GeneralResponse>(this.baseUrl + "/api/User/CreateUser",user)
+  public createUser(user: UserInfo): Observable<GeneralResponse> {
+    return this.httpClient.post<GeneralResponse>(this.baseUrl + "/api/User/CreateUser", user)
 
   }
 
-  public setUserAuthenticated(value:boolean){
+  public setUserAuthenticated(value: boolean) {
     this.isAuthenticated$.next(value)
   }
 
-  public getUserInfo():UserInfo | undefined{
-    if(this.isAuthenticated$.value == true){
-      let userString : string | null= localStorage.getItem("user");
-      if(userString != null)
+  public getUserInfo(): UserInfo | undefined {
+    // debugger
+    // if (this.isAuthenticated$.value == true) {
+      let userString: string | null = localStorage.getItem("user");
+      if (userString != "" && userString != null)
         return JSON.parse(userString)
 
       return undefined;
-    }else{
-      return undefined;
-    }
+    // } else {
+    //   return undefined;
+    // }
+  }
+
+  public Logout(): void {
+    localStorage.setItem("user", "")
+    this.setUserAuthenticated(false)
   }
 }

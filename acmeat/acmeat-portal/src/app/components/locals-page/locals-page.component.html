@@ -11,8 +11,7 @@
     <div *ngIf="(localList$ | async) as localList" class="col local-list">
         <div *ngIf="(menList$ | async) as menuList">
              <!-- <div *ngFor="let local of localList; index as i"> -->
-                {{printLocalList(localList)}}
-                <div *ngFor="let menu of menusList" class="card mb-2" [routerLink]="'menu/'+menu.id">
+                <div *ngFor="let menu of menusList" class="card mb-2" (click)="navigateTo(menu.id)">
             
                    
                     <div class="row">

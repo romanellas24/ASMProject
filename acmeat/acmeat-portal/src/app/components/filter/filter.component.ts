@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { EventsService } from 'src/app/services/events.service';
@@ -13,6 +13,7 @@ export class FilterComponent implements OnInit,OnDestroy {
   menuTypes:string[] = ["Carne","Pesce"]
   hoursTypes:string[] = ["Pranzo","Cena"]
   subscriptions:Subscription[] = []
+  
 
   filters: FormGroup =new FormGroup({
     
@@ -32,6 +33,10 @@ export class FilterComponent implements OnInit,OnDestroy {
       (formGroup:FormGroup) => this.eventsSvc.filters$.next(formGroup)
     )
   );
+  }
+
+  reset():void{
+    this.filters.reset()
   }
 
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Creato il: Mag 08, 2025 alle 17:46
+-- Creato il: Giu 06, 2025 alle 16:47
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.0.30
 
@@ -45,7 +45,7 @@ CREATE TABLE `LOCALE` (
 
 INSERT INTO `LOCALE` (`ID`, `NOME`, `ORA_APERTURA`, `ORA_CHIUSURA`, `INDIRIZZO`, `GIORNI_APERTURA`, `DISPONIBILE`) VALUES
 (1, 'Pizzeria Primavera', '09:00', '18:00', 'VIa Aldrovanni 16, Bologna', 'Lun,\r\nMar,\r\nMer,\r\nGio,\r\nVen,\r\nDom', 1),
-(1156626705, 'via Ciccio Ingrassia', '09:00', '10:00', 'via Ciccio Ingrassia', 'L,M,G,V', 1),
+(1156626705, 'via Ciccio Ingrassia', '09:00', '10:00', 'via Ciccio Ingrassia, San salvo', 'L,M,G,V', 1),
 (1680778671, 'Pizzeria Cosmo', '09:00', '17:00', 'Via Calzone 23', 'Lun.Mar,Mer', 1);
 
 -- --------------------------------------------------------
@@ -69,8 +69,7 @@ CREATE TABLE `MENU` (
 INSERT INTO `MENU` (`ID`, `DESCRIZIONE`, `TIPO`, `PREZZO`, `ID_LOCALE`) VALUES
 (1, 'il menu è buono', 'Giorno', 30, 1156626705),
 (23, 'Prova 1', 'Cena', 23, 23),
-(559034578, 'è buono', 'Cena', 50, 0),
-(998091917, 'ahahhaahahah', 'cena', 409, 1156626705);
+(559034578, 'è buono', 'Cena', 50, 0);
 
 -- --------------------------------------------------------
 
@@ -96,15 +95,8 @@ CREATE TABLE `ORDINE` (
 --
 
 INSERT INTO `ORDINE` (`ID_UTENTE`, `ID`, `ID_LOCALE`, `ID_SOC_C`, `ORA_CONSEGNA`, `ORA_ACQUISTO`, `ID_TRANSAZIONE`, `PREZZO`, `ID_MENU`, `QUANTITÀ`) VALUES
-(0, 5, 0, 0, '09:18', '10:00', 2, 40, 0, 0),
-(0, 6, 0, 0, '', '', 0, 500, 0, 0),
-(0, 7, 0, 0, '', '', 0, 500, 0, 0),
-(2, 9, 0, 0, '19:45', '10:00', 3, 20, 2, 1),
-(3, 215315170, 0, 0, '19:00', '18:45', 123213, 23, 3, 10),
-(0, 345355649, 4, 0, 'string', 'string', 0, 0, 0, 0),
-(0, 651092467, 2, 0, 'string', 'string', 0, 0, 0, 0),
-(6, 1602168585, 0, 0, '18:56', '17:30', 2, 20, 3, 50),
-(0, 2064889089, 1, 0, 'string', 'string', 0, 0, 0, 0);
+(1, 1743403723, 1, 0, '06/06/2025 16:00:00', '', 0, 500, 0, 1),
+(1, 1977689015, 1, 0, '06/06/2025 18:40:00', '', 0, 500, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -202,7 +194,7 @@ ALTER TABLE `MENU`
 -- AUTO_INCREMENT per la tabella `ORDINE`
 --
 ALTER TABLE `ORDINE`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2064889090;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2064889091;
 
 --
 -- AUTO_INCREMENT per la tabella `SOCIETÀ_CONSEGNA`
@@ -215,36 +207,6 @@ ALTER TABLE `SOCIETÀ_CONSEGNA`
 --
 ALTER TABLE `UTENTE`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1170620788;
-
-
---
--- Metadati
---
-USE `ACMEAT`;
-
---
--- Metadati per tabella LOCALE
---
-
---
--- Metadati per tabella MENU
---
-
---
--- Metadati per tabella ORDINE
---
-
---
--- Metadati per tabella SOCIETÀ_CONSEGNA
---
-
---
--- Metadati per tabella UTENTE
---
-
---
--- Metadati per database ACMEAT
---
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

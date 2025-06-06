@@ -116,8 +116,9 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         //DELIVERY COMPANY FLOW
         Local local = await _localClient.GetLocalById(order.LocalId);
         User user = await _userClient.GetUserById(order.UserId);
-        DateTime deliveryTime = DateTime.Now.AddHours(1);
-        order.DeliveryTime = deliveryTime.Hour + ":" + deliveryTime.Minute;
+        var time = TimeSpan.Parse(order.DeliveryTime);
+        var deliveryTime = DateTime.Today.Add(time);
+        order.DeliveryTime = deliveryTime.ToString();
         DateTime startTime;
         // DateTime endTime;
 
@@ -209,7 +210,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         DateTime now = DateTime.Now;
-        DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime, "HH:mm", CultureInfo.InvariantCulture);
+        DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
         _logger.LogInformation($"Current time {now.Hour}:{now.Minute}, delivery time: {order.DeliveryTime}, time between now and delivery time is:{Math.Abs((now - deliveryTime).Hours)} hours");
 
         if (order.DeliveryTime == "")
