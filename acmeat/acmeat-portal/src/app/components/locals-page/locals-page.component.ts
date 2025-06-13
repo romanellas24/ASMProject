@@ -60,20 +60,19 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
          distinctUntilChanged(),
        map((locals:Local[]) => {
         // debugger
-        if(this.hourType != undefined){
-          locals = locals.filter( (local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime))
-          this.localList = locals
-          this.localList = [...new Set(this.localList)]
+        // if(this.hourType != undefined){
+        //   locals = locals.filter( (local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime))
+        //   this.localList = locals
+        //   this.localList = [...new Set(this.localList)]
 
-          return locals;
-        }else{
+        //   return locals;
+        // }else{
           this.localList = this.localList.concat([...locals])
           this.localList = [...new Set(this.localList)]
           return locals;
-        }
+        // }
 
       }),
-      // tap(() => this.menusList =[])
     );
 
      this.menList$ = this.localList$.pipe(
@@ -87,22 +86,20 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
 
 
       ),
-      //BUG-> TO FIX FILTERS!!!
       map((menus:Menu[] ) => {
         // debugger
 
-        if(this.menuType!= undefined){
-          menus = menus.filter( menu => menu.type == this.menuType)
+        // if(this.menuType!= undefined){
+        //   menus = menus.filter( menu => menu.type == this.menuType)
+        //   this.menusList = this.menusList.concat([...menus])
+        //   this.menusList = [...new Set(this.menusList)]
+        //   return menus
+        // }else{
           this.menusList = this.menusList.concat([...menus])
           this.menusList = [...new Set(this.menusList)]
           return menus
-        }else{
-          this.menusList = this.menusList.concat([...menus])
-          this.menusList = [...new Set(this.menusList)]
-          return menus
-        }
+        // }
       })
-      // tap(console.log)
     )
     }
 
@@ -110,27 +107,28 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
     
 
 
-    this.subscriptions.push(
-    this.eventSvc.filters$.pipe(
-      map((formGroup :any) => {
-        // debugger
-        // if(formGroup.menuType != "" && (this.menuType != formGroup.menuType)){
-        //   this.menusList = [];
-        // }
+    // this.subscriptions.push(
+    // this.eventSvc.filters$.pipe(
+    //   map((formGroup :any) => {
+    //     // debugger
+    //     // if(formGroup.menuType != "" && (this.menuType != formGroup.menuType)){
+    //     //   this.menusList = [];
+    //     // }
 
-        this.menuType= formGroup.menuType
-        this.hourType = formGroup.hoursType
+    //     this.menuType= formGroup.menuType
+    //     this.hourType = formGroup.hoursType
 
-      this.localList = []
-      this.menusList = [];
-        // this.menusList = []
-        this.queryUpdated$.next(true);
+    //   this.localList = []
+    //   this.menusList = [];
+    //     // this.menusList = []
+    //     this.queryUpdated$.next(true);
 
-        return formGroup
-      })
-    ).subscribe()
-    );
-   
+    //     return formGroup
+    //   })
+    // ).subscribe()
+    // );
+
+    this.queryUpdated$.next(true);
     
    this.subscriptions.push(
     this.router.events.pipe(
@@ -139,14 +137,13 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
       // tap(console.log)
     ).subscribe((event:any) =>{
       // debugger
+
+      this.localList = []
+      this.menusList = [];
       this.city = event.url.split('/').slice(-1)[0]
       this.queryUpdated$.next(true);
       
     }));
-  }
-
-  printLocalList(localList: Local[]){
-    // console.log(localList)
   }
 
   getLocal(localList:Local[],localId:number):Local | undefined{
@@ -161,7 +158,7 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
 
   navigateTo(menuId:number):void{
     // debugger
-    this.filterComponent.reset()
+    // this.filterComponent.reset()
     this.queryUpdated$.next(true);
     this.router.navigate(['menu/'+menuId],{ relativeTo: this.route })
     
