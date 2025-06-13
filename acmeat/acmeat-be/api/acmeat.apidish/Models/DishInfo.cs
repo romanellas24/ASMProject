@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using acmeat.server.dish.client;
 
 namespace acmeat.api.dish;
 public class DishInfo
@@ -8,7 +9,7 @@ public class DishInfo
     public DishInfo(
             string Name, string Description, int Price, int MenuId, string Date)
     {
-       this.Id = Id;
+       this.Id = new Random().Next();
         this.Description = Description;
         this.Name = Name;
         this.Price = Price;
@@ -17,10 +18,21 @@ public class DishInfo
     }
 
 
+    public DishInfo(
+            string Name, string Description, int Price, int MenuId)
+    {
+       this.Id = Id;
+        this.Description = Description;
+        this.Name = Name;
+        this.Price = Price;
+        this.MenuId = MenuId;
+        this.Date =  DateTime.Now.ToString("yyyy-MM-dd");
+    }
+
     public DishInfo(acmeat.server.dish.client.Dish dish)
     {
 
-         this.Id = dish.Id;
+        this.Id = dish.Id;
         this.Description = dish.Description;
         this.Name = dish.Name;
         this.Price = dish.Price;

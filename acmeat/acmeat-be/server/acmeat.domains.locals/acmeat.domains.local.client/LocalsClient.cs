@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using acmeat.db.order;
 using acmeat.server.order.client;
@@ -41,6 +42,13 @@ namespace acmeat.server.local.client
             Id id1 = new Id();
             id1.Id_ = id;
             return await _client.GetLocalByIdAsync(id1);
+        }
+
+         public async Task<Local> GetLocalByUrl(string url)
+        {
+            client.Url url1 = new client.Url();
+            url1.Url_ = url;
+            return await _client.GetLocalByUrlAsync(url1);
         }
 
         public async Task<LocalList> GetLocalList()

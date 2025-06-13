@@ -16,6 +16,7 @@ public class Menu
         this.Type = Type;
         this.Price = Price;
         this.LocalId = LocalId;
+        this.Date = DateTime.Now.ToString("yyyy-MM-dd");
     }
 
     public int Id { get; set; }
@@ -31,5 +32,5 @@ public class Menu
     public int LocalId { get; set; }
     
     [Column("DATA")]
-    public int Date {get;set;}
+    public string Date {get;set;}
 }

@@ -47,16 +47,24 @@ public class GrpcLocalManagerService : server.local.manager.GrpcLocal.GrpcLocalB
         );
     }
 
+     public override Task<server.local.manager.Local> GetLocalByUrl(Url url, ServerCallContext context)
+    {
+        return Task.FromResult(
+            
+           new server.local.manager.Local(ConvertServerModelToGrpc(_localReader.GetLocalByUrl(url.Url_)))
+        );
+    }
+
      public override Task<server.local.manager.LocalList> GetLocals(Id id, ServerCallContext context)
     {
-        List<server.local.Local> locals=  _localReader.GetLocals();
-        LocalList localList =  new server.local.manager.LocalList();
+        List<server.local.Local> locals = _localReader.GetLocals();
+        LocalList localList = new server.local.manager.LocalList();
 
         localList.Locals.AddRange(ConvertServerListToGrpc(locals));
 
         return Task.FromResult(
             localList
-          
+
         );
     }
 
@@ -146,7 +154,7 @@ public class GrpcLocalManagerService : server.local.manager.GrpcLocal.GrpcLocalB
     }
 
     public server.local.Local ConvertGrpcToServerModel(server.local.manager.Local local){
-        return new server.local.Local(local.Id,local.Name,local.OpeningTime,local.ClosingTime,local.Address,local.OpeningDays,local.Available );
+        return new server.local.Local(local.Id,local.Name,local.OpeningTime,local.ClosingTime,local.Address,local.OpeningDays,local.Available,local.Url );
     }
 
 
@@ -159,6 +167,7 @@ public class GrpcLocalManagerService : server.local.manager.GrpcLocal.GrpcLocalB
         localt.ClosingTime = local.ClosingTime;
         localt.Address = local.Address;
         localt.Available = local.Available;
+        localt.Url = local.Url;
         return localt;
 
     }

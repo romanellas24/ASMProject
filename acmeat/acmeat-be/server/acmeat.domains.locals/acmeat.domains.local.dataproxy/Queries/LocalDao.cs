@@ -8,5 +8,6 @@ namespace acmeat.server.local.dataproxy;
 public interface LocalDao
   {
     public Local GetLocalById(int LocalId);
+  public Local GetLocalByUrl(string Url);
     public List<Local> GetLocals();
   }

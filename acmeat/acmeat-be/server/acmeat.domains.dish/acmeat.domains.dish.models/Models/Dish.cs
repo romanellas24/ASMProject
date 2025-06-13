@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Text.Json.Serialization;
 
 namespace acmeat.server.dish;
@@ -13,7 +14,7 @@ public class Dish
               int Id, string Name, string Description, int Price, int MenuId, string Date
                )
     {
-        this.Id = Id;
+        this.Id = new Random().Next();
         this.Description = Description;
         this.Name = Name;
         this.Price = Price;

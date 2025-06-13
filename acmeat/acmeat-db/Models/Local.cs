@@ -42,6 +42,9 @@ public class Local
     public string OpeningDays { get; set; }
     [Column("DISPONIBILE")]
     public bool Available { get; set; }
+
+    [Column("URL")]
+    public string Url { get; set; }
     
     //TO DO INSERT URL AND PASSWORD WTO INSERT IN THE HEADER
 }
