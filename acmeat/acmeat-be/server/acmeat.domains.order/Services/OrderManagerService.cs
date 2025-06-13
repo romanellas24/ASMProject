@@ -107,6 +107,8 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         db.order.Order dbOrder = serverOrder.Convert();
 
         //LOCAL AVAILABILITY FLOW
+        //insert url of the local -> 
+
         var localAvailabilityResponse = _localClient.CheckOrderAvailability(dbOrder, dbOrder.LocalId);
 
         if (localAvailabilityResponse.Message != "OK")
@@ -137,7 +139,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                 _logger.LogInformation($"Checking availability for deliveryCompany with id : {deliveryCompany.Id}");
                 startTime = DateTime.Now;
                 // TO DO COUNT UNTIL 15 THEN DELETE THE TASK IF IS NOT RESPONDING
-
+                // get veichle information or message justifying the unavailability
                 var deliveryCompanyResponse = await _deliveryCompanyClient.CheckAvailability(new AvailabilityPayload(local.Address, user.Address, deliveryTime.ToString(), deliveryCompany.Id));
 
 

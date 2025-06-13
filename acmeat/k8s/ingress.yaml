@@ -46,6 +46,14 @@ spec:
             name: apilocal-service
             port:
               number: 8080
+      
+      - path: /Dish
+        pathType: Prefix
+        backend:
+          service:
+            name: apidish-service
+            port:
+              number: 8080
       - path: /Menu
         pathType: Prefix
         backend:

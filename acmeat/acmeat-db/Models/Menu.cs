@@ -3,29 +3,33 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace acmeat.db.menu;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-public class Menu{
+public class Menu
+{
     public Menu()
     {
     }
 
-    public Menu(int Id,string Descritpion, string Type, int Price , int LocalId )
+    public Menu(int Id, string Descritpion, string Type, int Price, int LocalId)
     {
         this.Id = Id;
-        this.Descritpion=Descritpion;
+        this.Descritpion = Descritpion;
         this.Type = Type;
         this.Price = Price;
         this.LocalId = LocalId;
     }
 
-    public int Id{get;set;}
+    public int Id { get; set; }
     [Column("DESCRIZIONE")]
-    public string Descritpion {get;set;}
-     [Column("TIPO")]
-    public string Type {get;set;}
+    public string Descritpion { get; set; }
+    [Column("TIPO")]
+    public string Type { get; set; }
 
-     [Column("PREZZO")]
-    public int Price {get;set;}
+    [Column("PREZZO")]
+    public int Price { get; set; }
 
     [Column("ID_LOCALE")]
-    public int LocalId {get;set;}
+    public int LocalId { get; set; }
+    
+    [Column("DATA")]
+    public int Date {get;set;}
 }

@@ -1,0 +1,11 @@
+/bin
+/obj
+/acmeat.domains.dish.dataproxy/bin
+/acmeat.domains.dish.dataproxy/obj
+/acmeat.domains.dish.datawriter/bin
+/acmeat.domains.dish.datawriter/obj
+/acmeat.domains.dish.models/bin
+/acmeat.domains.dish.models/obj
+/acmeat.domains.dish.client/bin
+/acmeat.domains.dish.client/obj
+

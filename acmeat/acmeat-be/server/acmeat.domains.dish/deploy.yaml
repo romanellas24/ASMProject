@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: dishmanager
+  namespace: default
+  labels:
+    app: dishmanager
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: dishmanager
+
+  template:
+    metadata:
+      labels:
+        app: dishmanager
+
+    spec:
+      containers:
+        - name: dishmanager
+
+          image: docker.io/er4ikk/dishmanager
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080
