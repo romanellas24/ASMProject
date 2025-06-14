@@ -14,12 +14,17 @@ using System.Globalization;
 using acmeat.server.deliverycompany.client;
 using acmeat.server.user.client;
 using static acmeat.server.deliverycompany.client.DeliveryCompanyClient;
+using acmeat.server.dish.client;
+using Telerik.JustMock;
 
 namespace acmeat.domains.order.Services;
 
 
 //https://stackoverflow.com/questions/14962066/cs0436-type-conflicts-with-the-imported-type
 #pragma warning disable 0436
+
+
+
 
 public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderBase
 {
@@ -29,12 +34,14 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     private readonly LocalClient _localClient;
     private readonly DeliveryCompanyClient _deliveryCompanyClient;
     private readonly UserClient _userClient;
+    private readonly DishClient _dishClient;
     public GrpcOrderManagerService(
         ILogger<GrpcOrderManagerService> logger,
         OrderReader orderReader,
         LocalClient localClient,
         DeliveryCompanyClient deliveryCompanyClient,
         UserClient userClient,
+        DishClient dishClient,
         OrderDataWriter orderDataWriter)
     {
         _logger = logger;
@@ -42,6 +49,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         _orderReader = orderReader;
         _deliveryCompanyClient = deliveryCompanyClient;
         _userClient = userClient;
+        _dishClient = dishClient;
         _localClient = localClient;
     }
 
@@ -73,8 +81,8 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
         );
     }
-    
-     public override Task<server.order.manager.OrderList> GetOrdersByUserId(server.order.manager.Id id, ServerCallContext context)
+
+    public override Task<server.order.manager.OrderList> GetOrdersByUserId(server.order.manager.Id id, ServerCallContext context)
     {
         List<server.order.Order> orders = _orderReader.GetOrderByUserId(id.Id_);
         OrderList orderList = new server.order.manager.OrderList();
@@ -87,7 +95,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         );
     }
 
-     public override Task<server.order.manager.OrderList> GetOrdersToPay(server.order.manager.Id id, ServerCallContext context)
+    public override Task<server.order.manager.OrderList> GetOrdersToPay(server.order.manager.Id id, ServerCallContext context)
     {
         List<server.order.Order> orders = _orderReader.GetOrderByUserId(id.Id_).Where(order => order.TransactionId == 0).ToList();
         OrderList orderList = new server.order.manager.OrderList();
@@ -105,19 +113,23 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         server.order.Order serverOrder = ConvertGrpcToServerModel(order);
         db.order.Order dbOrder = serverOrder.Convert();
+        Local local = await _localClient.GetLocalById(order.LocalId);
+        User user = await _userClient.GetUserById(order.UserId);
 
         //LOCAL AVAILABILITY FLOW
         //insert url of the local -> 
+        DishList dishList = await _dishClient.GetDishsByMenuId(dbOrder.MenuId);
+        List<DishInfo> dishes = dishList.Dishs.AsEnumerable().Select(dish => new DishInfo(dish.Id,order.Quantity)).ToList();
 
-        var localAvailabilityResponse = _localClient.CheckOrderAvailability(dbOrder, dbOrder.LocalId);
+
+
+        var localAvailabilityResponse = await _localClient.CheckOrderAvailability(dbOrder, dishes, local.Url);
 
         if (localAvailabilityResponse.Message != "OK")
             throw new Exception("The local is unavailable.");
 
 
         //DELIVERY COMPANY FLOW
-        Local local = await _localClient.GetLocalById(order.LocalId);
-        User user = await _userClient.GetUserById(order.UserId);
         var time = TimeSpan.Parse(order.DeliveryTime);
         var deliveryTime = DateTime.Today.Add(time);
         order.DeliveryTime = deliveryTime.ToString();
@@ -209,7 +221,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     public override async Task<server.order.manager.GeneralResponse> DeleteOrder(server.order.manager.Order order, ServerCallContext context)
     {
 
-        
+
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         DateTime now = DateTime.Now;
         DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
@@ -217,10 +229,10 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
         if (order.DeliveryTime == "")
         {
-              _logger.LogInformation($"Delivery time is not defined cannot delete order with id: {order.Id}");
-            generalResponse.Message = "Delivery time is not defined cannot delete order with id: "+ order.Id +". Please contact helpdesk";
+            _logger.LogInformation($"Delivery time is not defined cannot delete order with id: {order.Id}");
+            generalResponse.Message = "Delivery time is not defined cannot delete order with id: " + order.Id + ". Please contact helpdesk";
             return generalResponse;
-            
+
         }
 
         if ((now - deliveryTime).Hours > -1)
@@ -239,7 +251,24 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                  order.Id
                  )
              );
-            generalResponse.Message = "OK";
+
+
+
+            //COMMMUNICATE ORDER CANCELLATION TO LOCAL
+            Local local = await _localClient.GetLocalById(order.LocalId);
+            var response = await _localClient.CommunicateOrderCancellation(order.Id, local.Url);
+
+            if (response.Message != "OK")
+            {
+                _logger.LogInformation("Cannot cancel the order. Reson: " + response.Message);
+                generalResponse.Message = response.Message;
+            }
+            else
+            {
+                generalResponse.Message = "OK";
+            }
+            
+
 
         }
         catch (Exception ex)

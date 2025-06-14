@@ -2,6 +2,7 @@ using acmeat.db.deliveryCompany;
 using acmeat.db.mysql;
 using acmeat.domains.order.Services;
 using acmeat.server.deliverycompany.client;
+using acmeat.server.dish.client;
 using acmeat.server.local.client;
 using acmeat.server.order.client;
 using acmeat.server.order.dataproxy;
@@ -32,6 +33,8 @@ builder.Services.AddScoped<DeliveryCompanyClient>();
 builder.Services.AddOptions<DeliveryCompanyClientOptions>().BindConfiguration(nameof(DeliveryCompanyClientOptions));
 builder.Services.AddScoped<UserClient>();
 builder.Services.AddOptions<UserClientOptions>().BindConfiguration(nameof(UserClientOptions));
+builder.Services.AddScoped<DishClient>();
+builder.Services.AddOptions<DishClientOptions>().BindConfiguration(nameof(DishClientOptions));
 
 builder.Services.AddEndpointsApiExplorer();
 

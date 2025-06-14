@@ -14,9 +14,11 @@
     <PackageReference Include="Google.Protobuf" Version="3.30.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
-    <PackageReference Include="Acmeat.Server.Local.ClientTest" Version="1.0.1" />
+    <PackageReference Include="Acmeat.Server.Local.ClientTest" Version="1.0.5" />
     <PackageReference Include="Acmeat.Server.DeliveryCompany.ClientTest" Version="1.0.1" />
     <PackageReference Include="Acmeat.Server.User.ClientTest" Version="1.0.1" />
+    <PackageReference Include="Acmeat.Server.Dish.ClientTest" Version="1.0.0" />
+
     
     
   </ItemGroup>
@@ -32,4 +34,9 @@
   <ItemGroup>
     <Protobuf Include="Protos/manager.proto" GrpcServices="Server" />
   </ItemGroup>
+
+  <!-- <ItemGroup>
+  <ProjectReference Include=" /home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-db/acmeat.db.client.csproj"/>
+  </ItemGroup> -->
+
 </Project>
