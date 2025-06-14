@@ -16,7 +16,9 @@ public class Local
                  string ClosingTime,
                  string Address,
                  string OpeningDays,
-                 bool Available)
+                 bool Available,
+                 string Url
+                 )
     {
         this.Id = Id;
         this.Name = Name;
@@ -25,6 +27,7 @@ public class Local
         this.Address = Address;
         this.OpeningDays = OpeningDays;
         this.Available = Available;
+        this.Url = Url;
     }
 
     public int Id { get; set; }
