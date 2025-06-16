@@ -17,6 +17,7 @@ public class CreateOrderDTO {
     @Schema(description = "Delivery time. This is a string that must be in format yyyy-MM-dd HH:mm", format = "yyyy-MM-dd HH:mm")
     private String deliveryTime;
 
+    @Schema(hidden = true)
     public Integer[] getDishIds(){
         return Arrays.stream(dishes).map(DishInOrderDTO::getId).toArray(Integer[]::new);
     }

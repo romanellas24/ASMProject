@@ -1,4 +1,4 @@
-package gateway.auth.filter;
+package gateway.filter;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

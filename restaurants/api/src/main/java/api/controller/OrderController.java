@@ -77,7 +77,7 @@ public class OrderController {
                             array = @ArraySchema(schema = @Schema(implementation = OrderDTO.class))
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "invalid day format")
+            @ApiResponse(responseCode = "400", description = "invalid day format", content = @Content)
     })
     public List<OrderDTO> getOrdersByDay(
             @Parameter(name = "date", description = "day used to retrieve orders. Default is current date")
@@ -105,8 +105,8 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order successfully created and being processed",
                     content = @Content(schema = @Schema(implementation = ResponseOrderDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid date format or missing data"),
-            @ApiResponse(responseCode = "404", description = "Some dish IDs not found or not in menu"),
+            @ApiResponse(responseCode = "400", description = "Invalid date format or missing data", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Some dish IDs not found or not in menu", content = @Content),
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
@@ -151,7 +151,7 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order successfully deleted",
                     content = @Content(schema = @Schema(implementation = DeleteOrderResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "404", description = "Order not found", content = @Content),
     })
     public DeleteOrderResponseDTO deleteOrder(
             @Parameter(description = "ID of the order to delete", required = true, example = "42")

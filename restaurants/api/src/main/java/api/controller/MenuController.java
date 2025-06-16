@@ -36,7 +36,7 @@ public class MenuController {
     @Operation(description = "get menu by date")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "get menu of the day"),
-            @ApiResponse(responseCode = "400", description = "invalid date format. Check example")
+            @ApiResponse(responseCode = "400", description = "invalid date format. Check example", content = @Content),
     })
     public MenuDTO getMenu(
             @Parameter(description = "date of menu. If not present, it uses current date.", example = "24-05-2025")
@@ -55,7 +55,7 @@ public class MenuController {
     @Operation(summary = "update menu", description = "update menu using list of dishes. If it's later then 10a.m., this call will modify menu of following day, otherwise today's menu will be modified")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "menu updated"),
-            @ApiResponse(responseCode = "404", description = "dish id not found")
+            @ApiResponse(responseCode = "404", description = "dish id not found", content = @Content)
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "dishes' ids list to update menu",

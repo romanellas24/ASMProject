@@ -5,7 +5,9 @@ import gateway.auth.dto.AuthenticationResponseDTO;
 import gateway.auth.service.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,6 +51,19 @@ public class AuthController {
     }
 
     @Operation(summary = "Authenticate user and return a JWT")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "authentication done",
+                    content = { @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthenticationResponseDTO.class))
+                    }),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "authentication failed",
+                    content = @Content)
+    })
     @PostMapping("/login")
     @ResponseBody
     public Mono<ResponseEntity<AuthenticationResponseDTO>> createAuthenticationToken(

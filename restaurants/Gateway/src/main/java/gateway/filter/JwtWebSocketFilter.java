@@ -1,4 +1,4 @@
-package gateway.auth.filter;
+package gateway.filter;
 
 import gateway.auth.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;

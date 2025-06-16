@@ -34,7 +34,7 @@ public class DishController {
                             schema = @Schema(implementation = DishDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "404", description = "id not found")
+            @ApiResponse(responseCode = "404", description = "id not found", content = @Content),
     })
     public DishDTO getDish(
             @Parameter(description = "id of dish", required = true, example = "1")
