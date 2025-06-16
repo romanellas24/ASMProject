@@ -466,7 +466,7 @@
       }
     }
   },
-  "host": "https:\/\/joliebank.romanellas.cloud",
+  "host": "https:\/\/joliebank.romanellas.cloud\/api",
   "definitions": {
     "PostPayRequest": {
       "type": "object",
