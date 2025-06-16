@@ -1,0 +1,46 @@
+{
+  "getCheckPay": {
+    "method":"get",
+    "template":"/payments/{token}"
+  },
+  "postPay" : {
+    "method":"post",
+    "template":"/payments/{a}"
+  },
+  "putPay" : {
+    "method":"put",
+    "template":"/payments/{token}"
+  },
+  "deletePay": {
+    "method":"delete",
+    "template":"/payments/{token}"
+  },
+  "postAccount": {
+    "method":"post",
+    "template":"/account/{a}"
+  },
+  "putWithdraw": {
+    "method":"put",
+    "template":"/account/withdraw/{a}"
+  },
+  "putDeposit": {
+    "method":"put",
+    "template":"/account/deposit/{a}"
+  },
+  "getAccount": {
+    "method":"get",
+    "template":"/account?page={page}"
+  },
+  "getTransactions": {
+    "method":"get",
+    "template":"/account/{acc_id}/transactions?page={page}"
+  },
+  "postCreateCard" : {
+    "method":"post",
+    "template":"/account/{acc_id}/createCard"
+  },
+  "putNotRefaundable": {
+    "method":"put",
+    "template":"/payments/{token}/notRefound"
+  }
+}
