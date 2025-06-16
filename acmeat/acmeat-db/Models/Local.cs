@@ -1,18 +1,23 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace acmeat.db.local;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
 public class Local{
     public Local()
     {
     }
 
-    public Local(string Name,
+    public Local( 
+                 int Id,
+                 string Name,
                  string OpeningTime,
                  string ClosingTime,
                  string Address,
                  string OpeningDays,
                  bool Available)
     {
+        this.Id = Id;
         this.Name=Name;
         this.OpeningTime = OpeningTime;
         this.ClosingTime = ClosingTime;

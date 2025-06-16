@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: localmanager
+  namespace: default
+  labels:
+    app: localmanager
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: localmanager
+
+  template:
+    metadata:
+      labels:
+        app: localmanager
+
+    spec:
+      containers:
+        - name: localmanager
+
+          image: docker.io/er4ikk/localmanager
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080

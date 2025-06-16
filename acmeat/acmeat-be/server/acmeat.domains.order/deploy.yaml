@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: ordermanager
+  namespace: default
+  labels:
+    app: ordermanager
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: ordermanager
+
+  template:
+    metadata:
+      labels:
+        app: ordermanager
+
+    spec:
+      containers:
+        - name: ordermanager
+
+          image: docker.io/er4ikk/ordermanager
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080

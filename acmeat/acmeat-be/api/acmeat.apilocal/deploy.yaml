@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: apilocal
+  namespace: default
+  labels:
+    app: apilocal
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: apilocal
+
+  template:
+    metadata:
+      labels:
+        app: apilocal
+
+    spec:
+      containers:
+        - name: apilocal
+
+          image: docker.io/er4ikk/apilocal
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.30.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+    
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="acmeat.domains.local.dataproxy/acmeat.domains.local.dataproxy.csproj" />
+     <ProjectReference Include="acmeat.domains.local.datawriter/acmeat.domains.local.datawriter.csproj" />
+    <ProjectReference Include="acmeat.domains.local.models/acmeat.domains.local.models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos/manager.proto" GrpcServices="Server" />
+  </ItemGroup>
+</Project>

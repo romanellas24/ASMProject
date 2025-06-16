@@ -1,13 +1,16 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace acmeat.db.user;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
 public class User{
     public User()
     {
     }
 
-    public User(string Address, string Mail, string Pwd)
-    {
+    public User(int Id,string Address, string Mail, string Pwd)
+    {   
+        this.Id = Id;
         this.Address=Address;
         this.Mail = Mail;
         this.Pwd = Pwd;

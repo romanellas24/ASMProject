@@ -1,3 +1,5 @@
+using acmeat.server.order.client;
+
 namespace acmeat.api.order;
 
 public class PaymentInfo{
@@ -12,6 +14,15 @@ public class PaymentInfo{
         this.Causal =Causal;
         this.Price = Price;
         this.TransactionId = TransactionId;
+    }
+
+    public PaymentInfo(
+        Payment payment
+    ){
+        this.IBAN = payment.IBAN;
+        this.Causal =payment.Causal;
+        this.Price = payment.Price;
+        this.TransactionId = payment.TransactionId;
     }
 
 

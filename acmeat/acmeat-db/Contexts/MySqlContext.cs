@@ -1,4 +1,4 @@
-using acmeat.db.DeliveryCompany;
+using acmeat.db.deliveryCompany;
 using acmeat.db.local;
 using acmeat.db.menu;
 using acmeat.db.order;
@@ -28,7 +28,8 @@ public class MySqlContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        connectionString = _configuration["DbConnectionString:connectionString"];
+        connectionString = _configuration["DbConnectionOptions:connectionString"];
+        optionsBuilder.EnableSensitiveDataLogging();
         if(connectionString != null)
             optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         else

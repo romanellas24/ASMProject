@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageId>Acmeat.Server.DeliveryCompany.ClientTest</PackageId>
+    <Version>1.0.1</Version>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+  <Protobuf Include="Protos\client.proto" GrpcServices="Client" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.32.0" />
+       <PackageReference Include="Google.Protobuf" Version="3.30.2" />
+  
+       <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
+  
+       <PackageReference Include="Grpc.Tools" Version="2.71.0">
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+         <PrivateAssets>all</PrivateAssets>
+       </PackageReference>
+     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
+     <PackageReference Include="JustMock" Version="2024.4.1203.350" />
+     
+    
+  </ItemGroup>
+
+
+</Project>

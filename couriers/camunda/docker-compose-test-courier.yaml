@@ -1,0 +1,19 @@
+services:
+  tracking:
+    container_name: tracking
+    build: /Users/Francesco/git/ASMProject/couriers/courier/courier_tracking
+    ports:
+      - "8090:8080"
+    networks:
+        - docker-compose-8_camunda-platform
+        - docker-compose-8_identity-network
+        - docker-compose-8_web-modeler
+
+
+networks:
+  docker-compose-8_camunda-platform:
+    external: true
+  docker-compose-8_identity-network:
+    external: true
+  docker-compose-8_web-modeler:
+    external: true

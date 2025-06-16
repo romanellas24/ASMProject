@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: apideliverycompany
+  namespace: default
+  labels:
+    app: apideliverycompany
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: apideliverycompany
+
+  template:
+    metadata:
+      labels:
+        app: apideliverycompany
+
+    spec:
+      containers:
+        - name: apideliverycompany
+
+          image: docker.io/er4ikk/apideliverycompany
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+
+          ports:
+            - containerPort: 8080
