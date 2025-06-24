@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 public class DeleteOrderResponseDTO {
     @Schema(description = "order id")
     private Integer orderId;
+    @Schema(description = "order id of company")
+    private Integer companyOrderId;
     @Schema(description = "true if order is deleted, false otherwise (no error)")
     private Boolean deleted;
+    @Schema(description = "company name if present in request, null otherwise (case of restaurant delete)")
+    private String companyName;
 }

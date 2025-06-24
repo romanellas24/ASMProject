@@ -1,6 +1,7 @@
 package api.controller;
 
 import api.dto.DishDTO;
+import api.dto.ExceptionDTO;
 import api.service.DishService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +35,7 @@ public class DishController {
                             schema = @Schema(implementation = DishDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "404", description = "id not found", content = @Content),
+            @ApiResponse(responseCode = "404", description = "id not found", content = @Content(schema = @Schema(implementation = ExceptionDTO.class)))
     })
     public DishDTO getDish(
             @Parameter(description = "id of dish", required = true, example = "1")

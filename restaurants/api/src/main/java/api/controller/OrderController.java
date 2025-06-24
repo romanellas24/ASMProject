@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -77,7 +78,8 @@ public class OrderController {
                             array = @ArraySchema(schema = @Schema(implementation = OrderDTO.class))
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "invalid day format", content = @Content)
+            @ApiResponse(responseCode = "400", description = "invalid day format",
+                    content = @Content(schema = @Schema(implementation = ExceptionDTO.class)))
     })
     public List<OrderDTO> getOrdersByDay(
             @Parameter(name = "date", description = "day used to retrieve orders. Default is current date")
@@ -105,8 +107,10 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order successfully created and being processed",
                     content = @Content(schema = @Schema(implementation = ResponseOrderDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid date format or missing data", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Some dish IDs not found or not in menu", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid date format or missing data",
+                    content = @Content(schema = @Schema(implementation = ExceptionDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Some dish IDs not found or not in menu",
+                    content = @Content(schema = @Schema(implementation = ExceptionDTO.class)))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
@@ -118,6 +122,9 @@ public class OrderController {
         if(!StringToDate.isStringValid(orderRequest.getDeliveryTime())) {
             throw new InvalidDateTimeFormat("invalid String DateTime format.");
         }
+
+        orderRequest.setCompanyName(orderRequest.getCompanyName().toLowerCase());
+
         //this will throw error for invalid id
         dishService.checkIds(orderRequest.getDishIds());
 
@@ -139,7 +146,29 @@ public class OrderController {
             pendingRequests.timeout(correlationId);
         });
 
-        return future;
+        return future.thenApply(responseOrderDTO -> {
+
+
+
+            if (responseOrderDTO.isAccepted()){
+                rabbitService.publishNewOrder(responseOrderDTO.getOrder().getId());
+                OrderMappingDTO orderMappingDTO = new OrderMappingDTO();
+                orderMappingDTO.setCompanyName(orderRequest.getCompanyName());
+                orderMappingDTO.setCompanyId(orderRequest.getId());
+                orderMappingDTO.setOrderId(responseOrderDTO.getOrder().getId());
+
+                try {
+                    orderService.saveMapping(responseOrderDTO, orderMappingDTO);
+                } catch (Exception e) {
+                    throw new CompletionException(e);
+                }
+            }
+            return responseOrderDTO;
+
+        }).exceptionally(ex -> {
+            log.error("Error during mapping order save.", ex);
+            throw new CompletionException(ex);
+        });
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
@@ -151,21 +180,43 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order successfully deleted",
                     content = @Content(schema = @Schema(implementation = DeleteOrderResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Order not found", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDTO.class))),
     })
     public DeleteOrderResponseDTO deleteOrder(
-            @Parameter(description = "ID of the order to delete", required = true, example = "42")
-            @PathVariable("id") Integer id) throws Exception {
+            @Parameter(description = "ID of the order to delete.", required = true, example = "42")
+            @PathVariable("id") Integer id,
+            @Parameter(description = "Optional company name. If provided, the order will be mapped to this company before deletion.",
+                    required = false, example = "acmeat")
+            @RequestParam(value = "company", required = false) String companyName) throws Exception {
+
+
+        DeleteOrderResponseDTO deleteOrderResponseDTO = (companyName == null || companyName.isEmpty()) ? deleteOrderRest(id) : deleteOrderCompany(id,companyName);
+        if(deleteOrderResponseDTO.getDeleted()){
+            rabbitService.publishDeletedOrder(deleteOrderResponseDTO.getOrderId());
+            log.info("deleted order: {}.",deleteOrderResponseDTO.getOrderId());
+        }
+        return deleteOrderResponseDTO;
+    }
+
+    private DeleteOrderResponseDTO deleteOrderCompany(Integer id, String companyName) throws Exception {
+
+        companyName = companyName.toLowerCase();
+        log.info("deletion of  order {} of company {}", id, companyName);
+        OrderMappingDTO mapping = orderService.getMapping(companyName, id);
+
+        Boolean deleted = orderService.deleteOrder(mapping);
+
+        return new DeleteOrderResponseDTO(mapping.getOrderId(), mapping.getCompanyId(), deleted,mapping.getCompanyName());
+    }
+
+    private DeleteOrderResponseDTO deleteOrderRest(Integer id) throws Exception {
         if (!orderService.existsOrder(id)) {
             throw new NotFoundException("Order not found.");
         }
 
         Boolean deleted = orderService.deleteOrder(id);
-        DeleteOrderResponseDTO deleteOrderResponseDTO = new DeleteOrderResponseDTO(id,deleted);
-        if(deleted){
-            rabbitService.publishDeletedOrder(deleteOrderResponseDTO.getOrderId());
-            log.info("deleted order: {}.",deleteOrderResponseDTO.getOrderId());
-        }
-        return deleteOrderResponseDTO;
+
+        return new DeleteOrderResponseDTO(id, null, deleted, null);
     }
 }

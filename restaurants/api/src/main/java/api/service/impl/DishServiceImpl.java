@@ -8,6 +8,7 @@ import api.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,6 +38,9 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public List<DishDTO> getAll() {
-        return dishDAO.findAll().stream().map(DishDTO::from).toList();
+        List<Dish> dishes = dishDAO.findAll();
+        if(dishes.isEmpty())
+            return new ArrayList<>();
+        return dishes.stream().map(DishDTO::from).toList();
     }
 }

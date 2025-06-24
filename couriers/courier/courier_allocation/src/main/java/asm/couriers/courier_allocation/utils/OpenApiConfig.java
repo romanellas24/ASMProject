@@ -1,4 +1,4 @@
-package api.utils;
+package asm.couriers.gateway;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
@@ -18,7 +18,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         Server server = new Server();
-        server.setUrl("https://" + serverNameUrl + ".romanellas.cloud/api");
+        server.setUrl("https://" + serverNameUrl + ".romanellas.cloud");
 
         return new OpenAPI()
                 .servers(List.of(server));

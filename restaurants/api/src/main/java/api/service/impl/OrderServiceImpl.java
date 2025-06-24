@@ -2,10 +2,13 @@ package api.service.impl;
 
 import api.dao.DishOrderDAO;
 import api.dao.OrderDAO;
+import api.dao.OrderMappingDAO;
 import api.dto.DishInOrderDTO;
 import api.dto.OrderDTO;
-import api.entity.DishOrder;
+import api.dto.OrderMappingDTO;
+import api.dto.ResponseOrderDTO;
 import api.entity.Order;
+import api.entity.OrderMapping;
 import api.exception.NotFoundException;
 import api.service.OrderService;
 import api.utils.StringToDate;
@@ -33,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private DishOrderDAO dishOrderDAO;
 
+    @Autowired
+    private OrderMappingDAO orderMappingDAO;
 
 
     @Override
@@ -79,6 +84,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Boolean deleteOrder(OrderMappingDTO mapping) {
+        try{
+            orderMappingDAO.deleteById(mapping.getOrderId());
+            orderDAO.deleteById(mapping.getOrderId());
+            return true;
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     public List<OrderDTO> getOrdersByDayPaged(LocalDate day, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
         Page<Order> pagedOrders = orderDAO.findAllByDeliveryTimeAfterAndDeliveryTimeBeforeOrderByDeliveryTimeAsc(
@@ -89,5 +106,29 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = pagedOrders.getContent();
 
         return orders.stream().map(OrderDTO::fromOrder).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void saveMapping(ResponseOrderDTO responseOrderDTO, OrderMappingDTO orderMappingDTO) throws Exception {
+        OrderMapping orderMapping = new OrderMapping();
+        Order order = orderDAO.findById(responseOrderDTO.getOrder().getId()).orElse(null);
+        if (order == null) {
+            throw new NotFoundException("order not found");
+        }
+        orderMapping.setOrder(order);
+        orderMapping.setCompanyId(orderMappingDTO.getCompanyId());
+        orderMapping.setCompanyName(orderMappingDTO.getCompanyName());
+
+        orderMappingDAO.save(orderMapping);
+    }
+
+    @Override
+    public OrderMappingDTO getMapping(String companyName, Integer companyOrderId) throws Exception {
+        Optional<OrderMapping> orderMapping = orderMappingDAO.findFirstByCompanyIdAndCompanyName(companyOrderId, companyName);
+        if (orderMapping.isEmpty()) {
+            throw new NotFoundException("Company order id not found");
+        }
+        return OrderMappingDTO.fromEntity(orderMapping.get());
     }
 }
