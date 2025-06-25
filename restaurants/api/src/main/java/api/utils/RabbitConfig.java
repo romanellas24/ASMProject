@@ -22,6 +22,8 @@ public class RabbitConfig {
     public final static String DECISIONS_ROUTING_KEY ="order.new_decision";
     public final static String DELETED_ORDERS_ROUTING_KEY="order.deleted";
     public final static String NEW_ORDERS_ROUTING_KEY="order.new";
+    public final static String TIMEOUT_ORDERS_QUEUE="orders.timeout";
+    public final static String TIMEOUT_ORDERS_ROUTING_KEY="orders.timeout.key";
 
 
 
@@ -41,6 +43,9 @@ public class RabbitConfig {
     public Queue newOrdersQueue() {return new Queue(NEW_ORDERS_QUEUE);}
 
     @Bean
+    public Queue timeoutQueue() {return new Queue(TIMEOUT_ORDERS_QUEUE);}
+
+    @Bean
     public Binding waitingOrderBinding(Queue waitingOrdersQueue, TopicExchange orderExchange){
         return BindingBuilder.bind(waitingOrdersQueue).to(orderExchange).with(WAITING_ORDERS_ROUTING_KEY);
     }
@@ -58,6 +63,11 @@ public class RabbitConfig {
     @Bean
     public Binding newOrdersBinding(Queue newOrdersQueue, TopicExchange exchange) {
         return BindingBuilder.bind(newOrdersQueue).to(exchange).with(NEW_ORDERS_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding timeoutOrder(Queue timeoutQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(timeoutQueue).to(exchange).with(TIMEOUT_ORDERS_ROUTING_KEY);
     }
 
     @Bean

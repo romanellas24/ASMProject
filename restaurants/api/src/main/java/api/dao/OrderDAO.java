@@ -1,6 +1,7 @@
 package api.dao;
 
 import api.entity.Order;
+import api.utils.OrderStatus;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +17,5 @@ public interface OrderDAO extends JpaRepository<Order, Integer> {
     @EntityGraph(attributePaths = "dishOrders")
     Optional<Order> findById(Integer id);
 
-    void deleteOrderById(Integer id);
-
-    List<Order> getAllByDeliveryTimeBefore(LocalDateTime deliveryTimeBefore);
-
-    Page<Order> findAllByDeliveryTimeAfterAndDeliveryTimeBeforeOrderByDeliveryTimeAsc(LocalDateTime endOfDay, LocalDateTime startOfDay, Pageable pageable);
+    Page<Order> findAllByStatusAndDeliveryTimeAfterAndDeliveryTimeBeforeOrderByDeliveryTimeAsc(OrderStatus orderStatus, LocalDateTime now, LocalDateTime endOfDay, Pageable pageable);
 }

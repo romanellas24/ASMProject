@@ -1,12 +1,16 @@
 package api.controller;
 
+import api.dao.OrderMappingDAO;
 import api.dto.*;
+import api.entity.Order;
+import api.exception.CompanyIdException;
 import api.exception.InvalidDateTimeFormat;
 import api.exception.NotFoundException;
 import api.service.DishService;
 import api.service.MenuService;
 import api.service.OrderService;
 import api.service.RabbitService;
+import api.utils.OrderStatus;
 import api.utils.PendingRequests;
 import api.utils.StringToDate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -45,6 +50,7 @@ public class OrderController {
 
     @Autowired
     private PendingRequests pendingRequests;
+
     @Autowired
     private MenuService menuService;
 
@@ -63,13 +69,21 @@ public class OrderController {
     })
     public OrderDTO getOrder(
             @Parameter(description = "order's id", required = true, example = "1")
-            @PathVariable("id") Integer id) throws Exception {
-        return orderService.getOrder(id);
+            @PathVariable("id") Integer id,
+            @Parameter(description = "Optional company name. If provided, the order is is mapped to company order id",
+                    required = false, example = "acmeat")
+            @RequestParam(value = "company", required = false) String companyName) throws Exception {
+        if (companyName != null && !companyName.isEmpty()) {
+            companyName = companyName.toLowerCase();
+            return orderService.getOrder(id, companyName);
+        } else {
+            return orderService.getOrder(id);
+        }
     }
 
     @GetMapping
     @ResponseBody
-    @Operation(description = "get all orders id day")
+    @Operation(description = "get all orders id day (ONLY order ACCEPTED)")
     @ApiResponses({
             @ApiResponse(responseCode = "200",
                     description = "dish found",
@@ -125,48 +139,65 @@ public class OrderController {
 
         orderRequest.setCompanyName(orderRequest.getCompanyName().toLowerCase());
 
+        if (!orderService.isIdCompanyValid(orderRequest.getId(), orderRequest.getCompanyName())){
+            throw new CompanyIdException("Company order id already exists");
+        }
+
         //this will throw error for invalid id
         dishService.checkIds(orderRequest.getDishIds());
 
         // check if ids are in menù
-        LocalDate date = StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime()).toLocalDate();
+        LocalDate date = StringToDate.convertStringToLocalDate(orderRequest.getDeliveryTime());
         menuService.checkIdsInMenu(orderRequest.getDishIds(), date);
 
-        String correlationId = UUID.randomUUID().toString();
-        WaitingOrderDTO waitingOrderDTO = WaitingOrderDTO.from(orderRequest, correlationId);
+        LocalDateTime dateTime = StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime());
 
-        rabbitService.publishWaitingOrder(waitingOrderDTO);
+        //add order in db with status PENDING
+        Integer orderId  = orderService.createOrder(orderRequest.getDishes(), StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime()));
 
-        log.info("waiting order: {} send in rabbit queue.",waitingOrderDTO.toString());
+        DishDTO[] dishes = dishService.getDishes(orderRequest.getDishIds());
+
+        OrderDTO orderPendingDTO = OrderDTO.fromOrderRequest(orderRequest, dateTime, dishes, orderId);
+
+        rabbitService.publishWaitingOrder(orderPendingDTO);
+
+        log.info("waiting order: {} send in rabbit queue.", orderPendingDTO);
 
         CompletableFuture<ResponseOrderDTO> future = new CompletableFuture<>();
-        pendingRequests.put(correlationId, future, waitingOrderDTO);
+        pendingRequests.put(future, orderId);
 
         CompletableFuture.delayedExecutor(3, TimeUnit.MINUTES).execute(() -> {
-            pendingRequests.timeout(correlationId);
+            try {
+                orderService.updateOrderStatus(orderId, OrderStatus.TIMED_OUT);
+                log.warn("Order {} has been timed out.", orderId);
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
+            rabbitService.publishTimeout(orderId);
+            pendingRequests.timeout(orderId);
         });
 
         return future.thenApply(responseOrderDTO -> {
+            try{
+                if (responseOrderDTO.isAccepted()){
+                    rabbitService.publishNewOrder(responseOrderDTO.getOrder().getId());
+                    OrderMappingDTO orderMappingDTO = new OrderMappingDTO();
+                    orderMappingDTO.setCompanyName(orderRequest.getCompanyName());
+                    orderMappingDTO.setCompanyId(orderRequest.getId());
+                    orderMappingDTO.setOrderId(responseOrderDTO.getOrder().getId());
 
-
-
-            if (responseOrderDTO.isAccepted()){
-                rabbitService.publishNewOrder(responseOrderDTO.getOrder().getId());
-                OrderMappingDTO orderMappingDTO = new OrderMappingDTO();
-                orderMappingDTO.setCompanyName(orderRequest.getCompanyName());
-                orderMappingDTO.setCompanyId(orderRequest.getId());
-                orderMappingDTO.setOrderId(responseOrderDTO.getOrder().getId());
-
-                try {
+                    orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.ACCEPTED);
                     orderService.saveMapping(responseOrderDTO, orderMappingDTO);
-                } catch (Exception e) {
-                    throw new CompletionException(e);
+                } else {
+                    orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.REJECTED);
                 }
+            } catch (Exception e) {
+                log.error(e.getMessage());
             }
             return responseOrderDTO;
 
         }).exceptionally(ex -> {
-            log.error("Error during mapping order save.", ex);
+            log.warn(ex.getMessage());
             throw new CompletionException(ex);
         });
     }

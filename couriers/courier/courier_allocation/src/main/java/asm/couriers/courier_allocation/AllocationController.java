@@ -60,11 +60,11 @@ public class AllocationController {
     )
     public AvailabilityDTO checkAvailability(RequestAvailDTO request) throws Exception {
 
-        if (!StringToLocalDateTime.isStringValid(request.getExpectedDeliveryTime())){
+        if (!StringToLocalDateTime.isStringValid(request.getDeliveryTime())){
             throw new InvalidDateTimeFormat("Invalid format in request");
         }
 
-        LocalDateTime dateTimeDelivery = StringToLocalDateTime.convertStringToLocalDateTime(request.getExpectedDeliveryTime());
+        LocalDateTime dateTimeDelivery = StringToLocalDateTime.convertStringToLocalDateTime(request.getDeliveryTime());
 
         /*
             Per controllo disponibilitá dato:
@@ -73,7 +73,7 @@ public class AllocationController {
                 * orario di consegna
             controllare se un veicolo é disponibile
         */
-        AvailabilityDTO availabilityDTO = mapsService.getInfoDelivery(request.getRestAddr(),request.getClientAddr());
+        AvailabilityDTO availabilityDTO = mapsService.getInfoDelivery(request.getLocalAddress(),request.getUserAddress());
         try {
             Integer vehicleId = allocationService.vehicle_available(availabilityDTO.getTime(), dateTimeDelivery);
             availabilityDTO.setIsVehicleAvailable(true);

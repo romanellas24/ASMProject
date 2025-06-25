@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import restaurant.WSHandler;
 import restaurant.dto.DecisionOrderDTO;
 import restaurant.dto.OrderBasicInfoDTO;
-import restaurant.dto.WaitingOrderDTO;
+import restaurant.dto.OrderDTO;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +31,11 @@ public class RabbitServiceImpl implements RabbitService {
 
     @Override
     @RabbitListener(queues = RabbitConfig.WAITING_ORDERS_QUEUE)
-    public void handleWaitingOrder(WaitingOrderDTO waitingOrderDTO) {
+    public void handleWaitingOrder(OrderDTO waitingOrderDTO) {
         try {
             wsHandler.putOrder(waitingOrderDTO);
         } catch (Exception e) {
-            this.publishDecision(new DecisionOrderDTO(waitingOrderDTO.getCorrelationID(), false));
+            this.publishDecision(new DecisionOrderDTO(waitingOrderDTO.getId(), false));
         }
     }
 
@@ -57,5 +57,10 @@ public class RabbitServiceImpl implements RabbitService {
         wsHandler.sendChangesInOrder(orderBasicInfoDTO);
     }
 
+    @Override
+    @RabbitListener(queues = RabbitConfig.TIMEOUT_ORDERS_QUEUE)
+    public void handleTimeoutOrder(Integer id) throws Exception {
+        wsHandler.deleteTimeoutOrder(id);
+    }
 
 }

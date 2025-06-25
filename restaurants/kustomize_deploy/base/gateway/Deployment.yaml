@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gateway-restaurant
-          image: tiesta/asm_restaurant_gateway:0.19
+          image: tiesta/asm_restaurant_gateway:0.20
           imagePullPolicy: IfNotPresent
           ports:
             - name: all
@@ -65,5 +65,8 @@ spec:
                 configMapKeyRef:
                   name: restaurant-app-cm
                   key: acmeatUser
-
-                  
+            - name: LOCAL_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: restaurant-app-cm
+                  key: localName

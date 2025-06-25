@@ -43,6 +43,7 @@ acmeatUser=acmeat
 mysql_server=mysql-restaurant
 mysql-database-name=restaurant
 mysql-user-username=restaurateur
+localName=$NAME
 EOF
 
   #generate ingress.yaml

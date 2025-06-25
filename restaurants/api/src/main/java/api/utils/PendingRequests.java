@@ -1,9 +1,7 @@
 package api.utils;
 
 import api.dto.ResponseOrderDTO;
-import api.dto.WaitingOrderDTO;
-import api.service.RabbitService;
-import org.springframework.data.util.Pair;
+import api.exception.TimeoutException;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,30 +11,26 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class PendingRequests {
 
-    private final Map<String, Pair<CompletableFuture<ResponseOrderDTO>, WaitingOrderDTO>> requests = new ConcurrentHashMap<>();
+    // maps order_id -> response (future)
+    private final Map<Integer, CompletableFuture<ResponseOrderDTO>> requests = new ConcurrentHashMap<>();
 
-    public void put(String correlationId, CompletableFuture<ResponseOrderDTO> future, WaitingOrderDTO waitingOrderDTO) {
-        requests.put(correlationId, Pair.of(future, waitingOrderDTO));
+    public void put(CompletableFuture<ResponseOrderDTO> future, Integer id) {
+        requests.put(id, future);
     }
 
-    public Boolean checkExists(String correlationId) {
-        return requests.containsKey(correlationId);
+    public Boolean checkExists(Integer id) {
+        return requests.containsKey(id);
     }
 
-    public WaitingOrderDTO getWaitingOrder(String correlationId) {
-        return requests.get(correlationId).getSecond();
-    }
-
-    public void complete(String correlationId, ResponseOrderDTO result) {
-        CompletableFuture<ResponseOrderDTO> future = requests.remove(correlationId).getFirst();
+    public void complete(Integer id, ResponseOrderDTO result) {
+        CompletableFuture<ResponseOrderDTO> future = requests.remove(id);
         future.complete(result);
     }
 
-    public void timeout(String correlationId) {
-        Pair<CompletableFuture<ResponseOrderDTO>, WaitingOrderDTO> tmp = requests.remove(correlationId);
-        if(tmp != null) {
-            CompletableFuture<ResponseOrderDTO> future = tmp.getFirst();
-            future.complete(new ResponseOrderDTO(false,null));
+    public void timeout(Integer id) {
+        CompletableFuture<ResponseOrderDTO> future = requests.remove(id);
+        if(future != null) {
+            future.completeExceptionally(new TimeoutException("restaurant doesn't answer in 3 minutes"));
         }
     }
 }

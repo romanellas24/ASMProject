@@ -1,13 +1,15 @@
 package restaurant.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class DishInOrderDTO {
+@AllArgsConstructor
+public class DishDTO {
     private Integer id;
-    private Integer quantity;
+    private String name;
+    private String description;
+    private Double price;
+
 }

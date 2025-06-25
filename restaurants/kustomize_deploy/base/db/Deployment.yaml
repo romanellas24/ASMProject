@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: docker.io/tiesta/asm_restaurant_db:0.15
+          image: docker.io/tiesta/asm_restaurant_db:0.19
           ports:
           - containerPort: 3306
             name: mysql

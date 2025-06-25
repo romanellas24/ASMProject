@@ -3,7 +3,6 @@ package api.controller;
 import api.dto.ExceptionDTO;
 import api.dto.MenuDTO;
 import api.dto.UpdateMenuResponseDTO;
-import api.exception.InvalidDishId;
 import api.service.MenuService;
 import api.utils.MenuUpdateDate;
 import io.swagger.v3.oas.annotations.Operation;

@@ -10,4 +10,5 @@ public interface DishService {
     void checkId(Integer id) throws InvalidDishId;
     DishDTO getDish(Integer id);
     List<DishDTO> getAll();
+    DishDTO[] getDishes(Integer[] ids);
 }

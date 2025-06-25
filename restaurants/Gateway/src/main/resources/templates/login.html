@@ -56,8 +56,8 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
+    const beUrl = [[${beUrl}]];
 
-    const beUrl = /*[[${beurl}]]*/ 'http://localhost:8080';
     const loginForm = document.getElementById('loginForm');
     const errorMessageDiv = document.getElementById('errorMessage');
 
@@ -65,9 +65,12 @@
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
+            console.log(beUrl);
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const loginApiUrl = beUrl + '/auth/login';
+
 
             errorMessageDiv.style.display = 'none';
             errorMessageDiv.textContent = '';
@@ -98,29 +101,6 @@
                 localStorage.setItem('jwt', jwtToken);
 
                 window.location.href = "/";
-
-                // try {
-                //     const resourceResponse = await fetch(protectedUrl, {
-                //         method: 'GET',
-                //         headers: {
-                //             'Authorization': `Bearer ${jwtToken}`
-                //         }
-                //     });
-                //
-                //     if (!resourceResponse.ok) {
-                //         throw new Error('Accesso non autorizzato alla risorsa protetta.');
-                //     }
-                //
-                //     const userData = await resourceResponse.json();
-                //     alert(userData);
-                //
-                //     // Mostra i dati o redirigi in base alla tua logica
-                //     // Se vuoi usare redirect reale: window.location.href = '/dashboard';
-                //     window.location.href = '/'
-                // } catch (fetchErr) {
-                //     console.error('Errore durante il fetch della risorsa protetta:', fetchErr);
-                //     window.location.href = '/auth/login?error';
-                // }
 
             } catch (err) {
                 console.error('Errore nella richiesta di login:', err);

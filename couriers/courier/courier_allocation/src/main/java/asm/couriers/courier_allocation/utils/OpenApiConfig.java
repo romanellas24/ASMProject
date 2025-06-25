@@ -1,4 +1,4 @@
-package asm.couriers.gateway;
+package asm.couriers.courier_allocation.utils;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;

@@ -3,14 +3,12 @@ package api.service.impl;
 import api.dao.DishOrderDAO;
 import api.dao.OrderDAO;
 import api.dao.OrderMappingDAO;
-import api.dto.DishInOrderDTO;
-import api.dto.OrderDTO;
-import api.dto.OrderMappingDTO;
-import api.dto.ResponseOrderDTO;
+import api.dto.*;
 import api.entity.Order;
 import api.entity.OrderMapping;
 import api.exception.NotFoundException;
 import api.service.OrderService;
+import api.utils.OrderStatus;
 import api.utils.StringToDate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +48,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public OrderDTO getOrder(Integer id, String companyName) throws Exception {
+        OrderMappingDTO mapping = this.getMapping(companyName, id);
+        return this.getOrder(mapping.getOrderId());
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer createOrder(DishInOrderDTO[] dishIds, LocalDateTime deliveryTime) throws Exception {
+    public Integer createOrder(DishBasicInfoDTO[] dishIds, LocalDateTime deliveryTime) throws Exception {
         //order ids checked before send to rabbit
         //create order
         Order order = new Order(deliveryTime);
@@ -60,10 +65,25 @@ public class OrderServiceImpl implements OrderService {
         Integer orderId = order.getId();
 
         // add dish for order
-        for (DishInOrderDTO dish : dishIds) {
+        for (DishBasicInfoDTO dish : dishIds) {
             dishOrderDAO.insertDishOrder(orderId, dish.getId(), dish.getQuantity());
         }
         return orderId;
+    }
+
+    @Override
+    @Transactional()
+    public void updateOrderStatus(Integer id, OrderStatus status) throws Exception {
+        Optional<Order> order = orderDAO.findById(id);
+        if (order.isEmpty()){
+            throw new NotFoundException("Id not found");
+        }
+        Order orderMod = order.get();
+        orderMod.setStatus(status);
+        try {
+            orderDAO.save(orderMod);
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -96,9 +116,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Boolean isIdCompanyValid(Integer id, String companyName) throws Exception {
+        return !orderMappingDAO.existsByCompanyIdAndCompanyName(id, companyName);
+    }
+
+    @Override
     public List<OrderDTO> getOrdersByDayPaged(LocalDate day, Integer page) {
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Order> pagedOrders = orderDAO.findAllByDeliveryTimeAfterAndDeliveryTimeBeforeOrderByDeliveryTimeAsc(
+        Page<Order> pagedOrders = orderDAO.findAllByStatusAndDeliveryTimeAfterAndDeliveryTimeBeforeOrderByDeliveryTimeAsc(
+                OrderStatus.ACCEPTED,
                 LocalDateTime.now(),
                 StringToDate.getEndOfDay(day),
                 pageable);

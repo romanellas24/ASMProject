@@ -48,6 +48,13 @@ public class ExceptionController {
         return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CompanyIdException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDTO> invalidCompanyOrderId(CompanyIdException companyIdException) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO(companyIdException.getMessage(), 400);
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ExceptionDTO> internalServerException(Exception exception) {

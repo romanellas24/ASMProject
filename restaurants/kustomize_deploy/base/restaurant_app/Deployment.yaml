@@ -31,7 +31,7 @@ spec:
                   key: rabbitPort
       containers:
         - name: app-restaurant
-          image: tiesta/asm_restaurant_app:0.4
+          image: tiesta/asm_restaurant_app:0.7
           imagePullPolicy: IfNotPresent
           ports:
             - name: all

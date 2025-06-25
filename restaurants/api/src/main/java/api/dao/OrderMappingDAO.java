@@ -12,5 +12,5 @@ public interface OrderMappingDAO extends JpaRepository<OrderMapping, Integer> {
 
     Optional<OrderMapping> findFirstByCompanyIdAndCompanyName(Integer companyId, String companyName);
 
-    OrderMapping getFirstByCompanyIdAndCompanyName(Integer companyId, String companyName);
+    boolean existsByCompanyIdAndCompanyName(Integer companyId, String companyName);
 }

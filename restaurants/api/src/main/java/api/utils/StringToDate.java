@@ -23,7 +23,11 @@ public class StringToDate {
     }
 
     public static LocalDate convertStringToLocalDate(String date) {
-        return LocalDate.parse(date, localDateFormatter);
+        if (isStringValid(date)) {
+            return convertStringToLocalDateTime(date).toLocalDate();
+        } else {
+            return LocalDate.parse(date, localDateFormatter);
+        }
     }
 
     public static boolean isStringLocalDateValid(String date) {

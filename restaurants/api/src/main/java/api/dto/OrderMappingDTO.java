@@ -1,8 +1,6 @@
 package api.dto;
 
-import api.entity.Order;
 import api.entity.OrderMapping;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data

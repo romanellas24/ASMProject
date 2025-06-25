@@ -5,47 +5,40 @@
     <title>Gestione Ordini</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         body {
             padding-top: 2rem;
             background-color: #f1f3f5;
         }
-
         .order-card {
             margin-bottom: 1.5rem;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
-
         .card-title {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            align-items-center;
         }
-
-        .correlation-id-badge {
-            font-size: 0.85rem;
-            background-color: #000;
-            color: #fff;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.3rem;
-            margin-top: 0.5rem;
+        .order-id-badge {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #6c757d;
         }
-
         .dish-list {
             list-style: none;
             padding-left: 0;
-            margin-bottom: 0;
         }
-
         .dish-list li {
             font-size: 0.95rem;
             padding: 0.2rem 0;
             color: #495057;
         }
-
         .btn-decision {
             min-width: 120px;
+        }
+        .card-footer {
+            background-color: #e9ecef;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -53,45 +46,52 @@
 
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="/" class="btn btn-outline-secondary">&larr; Torna alla home</a>
+        <a href="/" class="btn btn-outline-secondary">&larr; Torna alla Home</a>
         <h2 class="mb-0 text-primary">Ordini in Attesa</h2>
+        <span id="order-count" class="badge bg-primary rounded-pill fs-5">0</span>
     </div>
 
     <div id="orders-container" class="row">
-        <!-- Ordini dinamici -->
     </div>
 </div>
 
-<!-- Template ordine -->
 <template id="order-template">
-    <div class="col-md-6 order-card">
-        <div class="card shadow rounded">
+    <div class="col-md-6 col-lg-4 order-card">
+        <div class="card shadow-sm rounded-3">
             <div class="card-body">
                 <h5 class="card-title">
-                    Nuovo Ordine
-                    <span class="correlation-id-badge w-100 mt-2 text-center"></span>
+                    <span>Nuovo Ordine</span>
+                    <span class="order-id-badge"></span>
                 </h5>
+                <p class="card-text mb-2">
+                    <strong>Orario Consegna:</strong>
+                    <span class="delivery-time"></span>
+                </p>
                 <p class="card-text mb-3">
-                    <strong>Piatti richiesti:</strong>
+                    <strong>Piatti:</strong>
                 <ul class="dish-list"></ul>
                 </p>
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end align-items-center">
                     <button class="btn btn-success btn-decision me-2 btn-accept">Accetta</button>
                     <button class="btn btn-danger btn-decision btn-reject">Rifiuta</button>
                 </div>
+            </div>
+            <div class="card-footer text-end fs-5">
+                <strong>Totale:</strong>
+                <span class="total-price"></span>
             </div>
         </div>
     </div>
 </template>
 
-<!-- WebSocket JS -->
 <script>
     const BASE_URL = "[[${beUrl}]]";
-    const jwt = localStorage.getItem("jwt")
-    const socket = new WebSocket("ws://" + BASE_URL + "/ws?token=" + jwt);
+    const jwt = localStorage.getItem("jwt");
+    const socket = new WebSocket("wss://" + BASE_URL + "/ws?token=" + jwt);
 
     socket.onopen = () => {
-        console.log("WebSocket connesso a ws://" + BASE_URL + "/ws");
+        console.log("WebSocket connesso a wss://" + BASE_URL + "/ws");
+        console.log("WebSocket connesso a wss://" + BASE_URL + "/ws");
     };
 
     socket.onmessage = (event) => {
@@ -99,68 +99,86 @@
             const data = JSON.parse(event.data);
             console.log("Messaggio ricevuto:", data);
 
-            if (Array.isArray(data.dishes) && data.correlationID) {
+            if (data.id && data.deliveryTime && Array.isArray(data.dishes)) {
                 renderOrderCard(data);
-            } else if (data.correlationId && typeof data.accepted === "boolean") {
-                removeOrderCardByCorrelationId(data.correlationId);
+            } else if (data.id && data.timeout === true) {
+                removeOrderCardById(data.id, true);
+            } else if (data.orderId && typeof data.accepted === 'boolean') {
+                removeOrderCardById(data.orderId, false);
             }
 
         } catch (err) {
-            console.error("Errore parsing messaggio:", event.data);
+            console.error("Errore parsing messaggio:", event.data, err);
         }
+        updateOrderCount();
+    };
+
+    socket.onclose = () => {
+        console.log("WebSocket disconnesso.");
     };
 
     function renderOrderCard(order) {
-        const template = document.getElementById("order-template");
-        const clone = template.content.cloneNode(true);
-
-        // Mostra il Correlation ID
-        clone.querySelector(".correlation-id-badge").textContent = `ID Correlazione: ${order.correlationID}`;
-
-        // Mostra l'elenco dei piatti con quantità
-        const dishList = clone.querySelector(".dish-list");
-        order.dishes.forEach(dish => {
-            const li = document.createElement("li");
-            li.textContent = `ID: ${dish.id} (x${dish.quantity})`;
-            dishList.appendChild(li);
-        });
-
-        // Listener bottoni
-        const acceptBtn = clone.querySelector(".btn-accept");
-        const rejectBtn = clone.querySelector(".btn-reject");
-
-        acceptBtn.addEventListener("click", () => sendDecision(order.correlationID, true));
-        rejectBtn.addEventListener("click", () => sendDecision(order.correlationID, false));
-
-        // Aggiungi la card all'inizio
-        document.getElementById("orders-container").prepend(clone);
-    }
-
-    function sendDecision(correlationId, accepted) {
-        if (!correlationId) {
-            console.warn("Correlation ID mancante!");
+        if (document.querySelector(`.order-card[data-order-id='${order.id}']`)) {
+            console.log(`Ordine ${order.id} già presente, ignoro.`);
             return;
         }
 
-        const decision = {
-            correlationId: correlationId,
-            accepted: accepted
-        };
+        const template = document.getElementById("order-template");
+        const clone = template.content.cloneNode(true);
+        const cardElement = clone.querySelector(".order-card");
 
-        socket.send(JSON.stringify(decision));
-        console.log("Inviata decisione:", decision);
+        cardElement.dataset.orderId = order.id;
+        clone.querySelector(".order-id-badge").textContent = `#${order.id}`;
 
-        removeOrderCardByCorrelationId(correlationId);
+        const deliveryTime = new Date(order.deliveryTime);
+        clone.querySelector(".delivery-time").textContent = deliveryTime.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+        const formattedPrice = (order.totalPrice || 0).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+        clone.querySelector(".total-price").textContent = formattedPrice;
+
+        const dishList = clone.querySelector(".dish-list");
+        order.dishes.forEach(dish => {
+            const li = document.createElement("li");
+            li.textContent = `${dish.dish.name || 'Piatto ' + dish.dish.id} (x${dish.quantity})`;
+            dishList.appendChild(li);
+        });
+
+        clone.querySelector(".btn-accept").addEventListener("click", () => sendDecision(order.id, true));
+        clone.querySelector(".btn-reject").addEventListener("click", () => sendDecision(order.id, false));
+
+        document.getElementById("orders-container").prepend(clone);
     }
 
-    function removeOrderCardByCorrelationId(correlationId) {
-        const badges = document.querySelectorAll(".correlation-id-badge");
-        badges.forEach(badge => {
-            if (badge.textContent.includes(correlationId)) {
-                const card = badge.closest(".order-card");
-                if (card) card.remove();
+    function sendDecision(id, accepted) {
+        if (!id) {
+            console.warn("ID Ordine mancante!");
+            return;
+        }
+        const decision = { id, accepted };
+        socket.send(JSON.stringify(decision));
+        console.log("Inviata decisione:", decision);
+        removeOrderCardById(id, false);
+    }
+
+    function removeOrderCardById(orderId, isTimeout) {
+        const card = document.querySelector(`.order-card[data-order-id='${orderId}']`);
+        if (card) {
+            if (isTimeout) {
+                console.warn(`Ordine #${orderId} rimosso per timeout.`);
+                card.querySelector('.card').classList.add('border-warning', 'border-3');
             }
-        });
+            card.style.transform = 'scale(0.95)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.remove();
+                updateOrderCount();
+            }, 500);
+        }
+    }
+
+    function updateOrderCount() {
+        const count = document.querySelectorAll("#orders-container .order-card").length;
+        document.getElementById("order-count").textContent = count;
     }
 </script>
 

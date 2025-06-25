@@ -55,7 +55,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: $NAME.local
+    - host: $NAME.romanellas.cloud
       http:
         paths:
           - path: /

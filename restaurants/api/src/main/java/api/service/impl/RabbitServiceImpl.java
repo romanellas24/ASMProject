@@ -26,30 +26,36 @@ public class RabbitServiceImpl implements RabbitService {
     @RabbitListener(queues = RabbitConfig.DECISIONS_QUEUE)
     public void handleDecision(DecisionOrderDTO decisionOrderDTO) throws Exception {
 
-        String correlationId = decisionOrderDTO.getCorrelationId();
+        Integer id = decisionOrderDTO.getId();
 
-        if(!pendingRequests.checkExists(correlationId)) {
+        if(!pendingRequests.checkExists(id)) {
             return;
         }
 
         if(!decisionOrderDTO.getAccepted()){
-            pendingRequests.complete(correlationId, new ResponseOrderDTO(false,null));
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setId(id);
+            pendingRequests.complete(id, new ResponseOrderDTO(false, orderDTO));
             return;
         }
 
-        WaitingOrderDTO waitingOrder = pendingRequests.getWaitingOrder(correlationId);
+        OrderDTO orderPendingDto =  orderService.getOrder(id);
 
-        if(waitingOrder == null) {
-            throw new ServerException("Internal server error: Waiting order not found");
-        }
-
-        Integer orderId = orderService.createOrder(waitingOrder.getDishes(), waitingOrder.getOrderTime());
-        OrderDTO order = orderService.getOrder(orderId);
-        pendingRequests.complete(correlationId, new ResponseOrderDTO(true,order));
+        pendingRequests.complete(id, new ResponseOrderDTO(true, orderPendingDto));
     }
 
     @Override
-    public void publishWaitingOrder(WaitingOrderDTO waitingOrderDTO) {
+    public void publishTimeout(Integer orderId) {
+        rabbitTemplate.convertAndSend(
+                RabbitConfig.ORDER_EXCHANGE,
+                RabbitConfig.TIMEOUT_ORDERS_ROUTING_KEY,
+                orderId
+        );
+    }
+
+
+    @Override
+    public void publishWaitingOrder(OrderDTO waitingOrderDTO) {
         rabbitTemplate.convertAndSend(
                 RabbitConfig.ORDER_EXCHANGE,
                 RabbitConfig.WAITING_ORDERS_ROUTING_KEY,

@@ -1,13 +1,13 @@
-package api.dto;
+package restaurant.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class DishInOrderDTO {
-    private Integer id;
+@AllArgsConstructor
+public class DishOrderDTO {
+    private DishDTO dish;
     private Integer quantity;
 }

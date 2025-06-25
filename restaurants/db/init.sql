@@ -4,6 +4,7 @@ USE restaurant;
 CREATE TABLE IF NOT EXISTS orders (
     id INT NOT NULL AUTO_INCREMENT,
     delivery_time DATETIME NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id)
 );
@@ -31,10 +32,17 @@ CREATE TABLE IF NOT EXISTS daily_menu (
     FOREIGN KEY (dish_id) REFERENCES dish(id)
 );
 
+CREATE TABLE IF NOT EXISTS order_mapping (
+    local_order_id INT NOT NULL,
+    company_id INT NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    FOREIGN KEY (local_order_id) REFERENCES orders(id),
+    UNIQUE (company_id, company_name)
+);
+
 
 DELETE FROM daily_menu;
 DELETE FROM dish;
-
 
 INSERT INTO dish (name, description, price)
 SELECT name, description, price
