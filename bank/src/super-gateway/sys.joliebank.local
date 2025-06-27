@@ -9,6 +9,15 @@ http {
 
 	    server_name _;
 
+	    location /soap {
+                proxy_pass http://joliebank-gateway-service.default.svc.cluster.local:9001;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+	    }
+
 	    location /account {
                 proxy_pass http://joliebank-gateway-service.default.svc.cluster.local:9005;
                 proxy_http_version 1.1;

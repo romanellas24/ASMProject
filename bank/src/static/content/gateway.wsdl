@@ -462,7 +462,7 @@
     </wsdl:binding>
     <wsdl:service name="BANK_GATEWAY_2Service">
         <wsdl:port name="BANK_GATEWAY_2ServicePort" binding="tns:BANK_GATEWAY_2SOAPBinding">
-            <soap:address location="http://localhost:9001"/>
+            <soap:address location="https://joliebank.romanellas.cloud/soap"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
