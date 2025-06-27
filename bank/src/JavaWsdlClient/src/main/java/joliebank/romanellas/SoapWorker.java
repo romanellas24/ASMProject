@@ -3,12 +3,11 @@ package joliebank.romanellas;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 
-import org.w3._2001.xmlschema.BANKGATEWAY;
-import org.w3._2001.xmlschema.BANKGATEWAYService;
-
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
+import wsdl.cloud.romanellas.joliebank.BANKGATEWAY2;
+import wsdl.cloud.romanellas.joliebank.BANKGATEWAY2Service;
 
 public class SoapWorker {
     public static void main(String[] args) {
@@ -23,8 +22,8 @@ public class SoapWorker {
                 .handler((JobClient jobClient, ActivatedJob job) -> {
                     try {
                         // Qui chiami il tuo SOAP client generato da wsimport
-                        BANKGATEWAYService service = new BANKGATEWAYService();
-                        BANKGATEWAY port = service.getBANKGATEWAYServicePort();
+                        BANKGATEWAY2Service service = new BANKGATEWAY2Service();
+                        BANKGATEWAY2 port = service.getBANKGATEWAY2ServicePort();
 
                         /*
                         PostPay request = new PostPay();

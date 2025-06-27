@@ -19,11 +19,12 @@ inputPort BANK_GATEWAY {
 
 inputPort BANK_GATEWAY_2 {
     Location: "socket://localhost:9001"
-    //Location: "local"
-    //Protocol: sodep
     Protocol: soap {
-        .wsdl = "./wsdl.xml";
+        .wsdl = "./wsdl.xml"
 	    .wsdl.port = "BankGatewayInterface"
+	    .namespace = "joliebank.romanellas.cloud"
+	    .debug = true
+	    .compression = false
     }
     Interfaces: BankGatewayInterface
 }
