@@ -35,10 +35,10 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(TimeoutException.class)
-    @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
+    @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
     public ResponseEntity<ExceptionDTO> timeoutException(TimeoutException timeoutException) {
-        ExceptionDTO exceptionDTO = new ExceptionDTO(timeoutException.getMessage(), 504);
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.GATEWAY_TIMEOUT);
+        ExceptionDTO exceptionDTO = new ExceptionDTO(timeoutException.getMessage(), 408);
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.REQUEST_TIMEOUT);
     }
 
     @ExceptionHandler(InvalidDateTimeFormat.class)
@@ -54,6 +54,14 @@ public class ExceptionController {
         ExceptionDTO exceptionDTO = new ExceptionDTO(companyIdException.getMessage(), 400);
         return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InvalidDate.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDTO> invalidDate(InvalidDate companyIdException) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO(companyIdException.getMessage(), 400);
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

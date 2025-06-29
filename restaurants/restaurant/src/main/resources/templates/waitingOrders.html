@@ -17,7 +17,7 @@
         .card-title {
             display: flex;
             justify-content: space-between;
-            align-items-center;
+            align-items: center;
         }
         .order-id-badge {
             font-size: 0.9rem;
@@ -88,14 +88,24 @@
     const BASE_URL = "[[${beUrl}]]";
     const jwt = localStorage.getItem("jwt");
     const socket = new WebSocket("wss://" + BASE_URL + "/ws?token=" + jwt);
+    let heartbeatInterval;
 
     socket.onopen = () => {
         console.log("WebSocket connesso a wss://" + BASE_URL + "/ws");
-        console.log("WebSocket connesso a wss://" + BASE_URL + "/ws");
+        heartbeatInterval = setInterval(() => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send("ping");
+            }
+        }, 10000);
     };
 
     socket.onmessage = (event) => {
         try {
+
+            if (event.data === "pong") {
+                return;
+            }
+
             const data = JSON.parse(event.data);
             console.log("Messaggio ricevuto:", data);
 
@@ -115,6 +125,7 @@
 
     socket.onclose = () => {
         console.log("WebSocket disconnesso.");
+        clearInterval(heartbeatInterval);
     };
 
     function renderOrderCard(order) {

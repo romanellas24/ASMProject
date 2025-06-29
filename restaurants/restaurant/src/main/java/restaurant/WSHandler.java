@@ -56,9 +56,16 @@ public class WSHandler implements WebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        // decode to DTO
         String payload = message.getPayload().toString();
+
+        if ("ping".equals(payload)) {
+            session.sendMessage(new TextMessage("pong"));
+            return;
+        }
+
         try {
+
+            // decode to DTO
             DecisionOrderDTO decision = objectMapper.readValue(payload, DecisionOrderDTO.class);
             ordersInPending.remove(decision.getId());
             rabbit.publishDecision(decision);

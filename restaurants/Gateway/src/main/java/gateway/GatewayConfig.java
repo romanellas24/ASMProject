@@ -60,6 +60,7 @@ public class GatewayConfig {
                 .route("ws", r-> r
                         .path("/ws","/ws/**")
                         .filters(f -> f
+                                .preserveHostHeader()
                                 .filter(jwtWSFilter)
                         )
                         .uri(wsService)

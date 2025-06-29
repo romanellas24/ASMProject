@@ -4,6 +4,7 @@ import api.dao.OrderMappingDAO;
 import api.dto.*;
 import api.entity.Order;
 import api.exception.CompanyIdException;
+import api.exception.InvalidDate;
 import api.exception.InvalidDateTimeFormat;
 import api.exception.NotFoundException;
 import api.service.DishService;
@@ -146,11 +147,22 @@ public class OrderController {
         //this will throw error for invalid id
         dishService.checkIds(orderRequest.getDishIds());
 
-        // check if ids are in menù
+        LocalDateTime dateTime = StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime());
         LocalDate date = StringToDate.convertStringToLocalDate(orderRequest.getDeliveryTime());
+
+        if (!date.isEqual(LocalDate.now())){
+            throw new InvalidDate("Restaurant takes order only for today!");
+        }
+
+        if (dateTime.isBefore(LocalDateTime.now())){
+            throw new InvalidDate("Restaurant can't make order in past!");
+        }
+
+
+
+        // check if ids are in menù
         menuService.checkIdsInMenu(orderRequest.getDishIds(), date);
 
-        LocalDateTime dateTime = StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime());
 
         //add order in db with status PENDING
         Integer orderId  = orderService.createOrder(orderRequest.getDishes(), StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime()));
@@ -166,40 +178,47 @@ public class OrderController {
         CompletableFuture<ResponseOrderDTO> future = new CompletableFuture<>();
         pendingRequests.put(future, orderId);
 
-        CompletableFuture.delayedExecutor(3, TimeUnit.MINUTES).execute(() -> {
-            try {
-                orderService.updateOrderStatus(orderId, OrderStatus.TIMED_OUT);
-                log.warn("Order {} has been timed out.", orderId);
-            } catch (Exception e) {
-                throw new CompletionException(e);
-            }
-            rabbitService.publishTimeout(orderId);
-            pendingRequests.timeout(orderId);
-        });
+        return future
+                .orTimeout(3, TimeUnit.MINUTES)
+                .thenApply(responseOrderDTO -> {
+                    try{
+                        if (responseOrderDTO.isAccepted()){
+                            rabbitService.publishNewOrder(responseOrderDTO.getOrder().getId());
+                            OrderMappingDTO orderMappingDTO = new OrderMappingDTO();
+                            orderMappingDTO.setCompanyName(orderRequest.getCompanyName());
+                            orderMappingDTO.setCompanyId(orderRequest.getId());
+                            orderMappingDTO.setOrderId(responseOrderDTO.getOrder().getId());
 
-        return future.thenApply(responseOrderDTO -> {
-            try{
-                if (responseOrderDTO.isAccepted()){
-                    rabbitService.publishNewOrder(responseOrderDTO.getOrder().getId());
-                    OrderMappingDTO orderMappingDTO = new OrderMappingDTO();
-                    orderMappingDTO.setCompanyName(orderRequest.getCompanyName());
-                    orderMappingDTO.setCompanyId(orderRequest.getId());
-                    orderMappingDTO.setOrderId(responseOrderDTO.getOrder().getId());
+                            orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.ACCEPTED);
+                            orderService.saveMapping(responseOrderDTO, orderMappingDTO);
+                        } else {
+                            orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.REJECTED);
+                        }
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        throw new CompletionException("Error during processing of restaurant response", e);
+                    }
+                    return responseOrderDTO;
+            }).exceptionally(ex -> {
 
-                    orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.ACCEPTED);
-                    orderService.saveMapping(responseOrderDTO, orderMappingDTO);
-                } else {
-                    orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.REJECTED);
+                Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+                if (cause instanceof java.util.concurrent.TimeoutException){
+                    log.warn("Order {} has been timed out.", orderId);
+
+                    try {
+                        orderService.updateOrderStatus(orderId, OrderStatus.TIMED_OUT);
+                        rabbitService.publishTimeout(orderId);
+                        pendingRequests.timeout(orderId);
+                    } catch (Exception e) {
+                        log.error("Failure cleaning order {}", orderId, e);
+                    }
+
+                    throw new api.exception.TimeoutException("restaurant didn't answer in 3 minutes for order " + orderId);
                 }
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-            return responseOrderDTO;
+                log.error("Error processing order {}", orderId, ex);
 
-        }).exceptionally(ex -> {
-            log.warn(ex.getMessage());
-            throw new CompletionException(ex);
-        });
+                throw new CompletionException(ex);
+            });
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")

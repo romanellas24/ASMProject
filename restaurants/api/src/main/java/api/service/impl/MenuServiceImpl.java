@@ -65,7 +65,7 @@ public class MenuServiceImpl implements MenuService {
     private void checkIdInMenu(Integer id, LocalDate date) throws InvalidDishId {
         DailyMenuId dailyMenuId = new DailyMenuId(date, id);
         if (!dailyMenuDAO.existsById(dailyMenuId)){
-            throw new InvalidDishId("Invalid id: " + id + "This id is not present in " + date.toString() + " date.");
+            throw new InvalidDishId("Invalid id: " + id + ". This id is not present in " + date.toString() + " date menu.");
         }
     }
 
