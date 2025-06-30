@@ -1,3 +1,12 @@
+type AccountExistsRequest:void {
+  .account[1,1]:int
+}
+
+type AccountExistsResponse:void {
+  .exists[1,1]:int
+  .status[1,1]:int
+}
+
 type AccountInfo:void {
   .owner[1,1]:string
   .account_id[1,1]:int
@@ -129,6 +138,7 @@ interface BANK_GATEWAYInterface {
 RequestResponse:
   deletePay( RefundRequest )( RefundResponse ),
   getAccount( AccountRequest )( AccountResponse ),
+  getAccountExists( AccountExistsRequest )( AccountExistsResponse ),
   getCheckPay( GetCheckPayRequest )( GetCheckPayResponse ),
   getTransactions( TransactionsRequest )( TransactionsResponse ),
   postAccount( PostAccountRequest )( PostAccountResponse ),

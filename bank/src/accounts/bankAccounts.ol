@@ -6,6 +6,7 @@ include "string_utils.iol"
 include "json_utils.iol"
 include "database.iol"
 include "../locations.ol"
+include "../shared.ol"
 
 execution{ concurrent }
 
@@ -73,30 +74,6 @@ define checkMoney
         queryRequest = sql_cmd;
         queryRequest.account = account;
         queryRequest.amount = amount;
-        query@Database( queryRequest )( queryReturn );
-        if(#queryReturn.row > 0){
-            if(queryReturn.row[0].cnt != 0){
-                check_result = queryReturn.row[0].cnt
-            }
-        }
-    }
-}
-
-//account, check_result
-define checkAccount 
-{
-    scope ( checkMoneyScope ) {
-        sql_cmd = "SELECT COUNT(*) AS cnt FROM tbl_account WHERE id = :account";
-        install ( SQLException =>
-            println@Console("---------------------------------")();
-            println@Console("Failed Query: ")();
-            println@Console(sql_cmd)();
-            println@Console("account:" + account)();
-            println@Console(checkMoneyScope.SQLException.Error)();
-            println@Console("---------------------------------")()
-        );
-        queryRequest = sql_cmd;
-        queryRequest.account = account;
         query@Database( queryRequest )( queryReturn );
         if(#queryReturn.row > 0){
             if(queryReturn.row[0].cnt != 0){
@@ -355,6 +332,14 @@ main {
                 response.param.msg = "PAN already exists"
             }
         }
+    }]
+
+    [getAccountExists(request)(response) {
+        account = request.param.account;
+        check_result = 0;
+        checkAccount;
+        response.param.status = 200;
+        response.praram.exists = check_result;
     }]
 
     

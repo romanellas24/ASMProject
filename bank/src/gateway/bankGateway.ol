@@ -117,4 +117,10 @@ main {
         response << internalRes.param
     }]
 
+    [getAccountExists(request)(response){
+        internalReq.param << request;
+        getAccountExists@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
 }

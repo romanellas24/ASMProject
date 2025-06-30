@@ -46,6 +46,14 @@ type CreateCardResponseBe: void {
     .param: CreateCardResponse
 }
 
+type AccountExistsRequestBe: void {
+    .param: AccountExistsRequest
+}
+
+type AccountExistsResponseBe: void {
+    .param: AccountExistsResponse
+}
+
 interface BankAccountsI {
     RequestResponse:
         postAccount(PostAccountRequestBe)(PostAccountResponseBe),
@@ -53,5 +61,6 @@ interface BankAccountsI {
         putDeposit(DepositRequestBe)(DepositResponseBe),
         getAccount(AccountRequestBe)(AccountResponseBe),
         getTransactions(TransactionsRequestBe)(TransactionsResponseBe),
-        postCreateCard(CreateCardRequestBe)(CreateCardResponseBe)
+        postCreateCard(CreateCardRequestBe)(CreateCardResponseBe),
+        getAccountExists(AccountExistsRequestBe)(AccountExistsResponseBe)
 }

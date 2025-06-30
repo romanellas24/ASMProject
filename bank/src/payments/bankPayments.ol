@@ -7,6 +7,7 @@ include "string_utils.iol"
 include "database.iol"
 
 include "../locations.ol"
+include "../shared.ol"
 
 execution{ concurrent }
 
@@ -228,12 +229,19 @@ main {
         //Storing params
         amount = request.param.amount;
         dest_account = request.param.dest_account;
-        //Asking for token
-        askForTokenProcedure;
-        //Update the generated token (here variable token is defined and populated)
-        populateTokenProcedure
-        //Returns token
-        response.param.token = token
+        account = dest_account;
+        check_result = 0;
+        checkAccount;
+        if(check_result == 0){
+            response.param.token = ""
+        } else {
+            //Asking for token
+            askForTokenProcedure;
+            //Update the generated token (here variable token is defined and populated)
+            populateTokenProcedure;
+            //Returns token
+            response.param.token = token
+        }
     }]
 
 

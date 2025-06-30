@@ -126,6 +126,15 @@ type NotRefoundResponse: void {
     .msg: string
 }
 
+type AccountExistsRequest: void {
+    .account: int
+}
+
+type AccountExistsResponse: void {
+    .status: int
+    .exists: int
+}
+
 
 interface BankGatewayInterface {
     RequestResponse:
@@ -139,7 +148,8 @@ interface BankGatewayInterface {
         getAccount(AccountRequest)(AccountResponse),
         getTransactions(TransactionsRequest)(TransactionsResponse),
         putNotRefaundable(NotRefoundRequest)(NotRefoundResponse),
-        postCreateCard(CreateCardRequest)(CreateCardResponse)
+        postCreateCard(CreateCardRequest)(CreateCardResponse),
+        getAccountExists(AccountExistsRequest)(AccountExistsResponse)
 }
 
 
