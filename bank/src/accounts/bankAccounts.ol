@@ -339,7 +339,7 @@ main {
         check_result = 0;
         checkAccount;
         response.param.status = 200;
-        response.praram.exists = check_result;
+        response.param.exists = int(check_result)
     }]
 
     

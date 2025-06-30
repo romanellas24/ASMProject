@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0pws2em" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.36.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0pws2em" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.36.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.4.0">
   <bpmn:collaboration id="Collaboration_1lxugtd">
+    <bpmn:extensionElements />
     <bpmn:participant id="Participant_1f1s4uf" name="Bank" processRef="Process_0isl86x" />
     <bpmn:participant id="Participant_12u6dfc" name="Seller" />
     <bpmn:messageFlow id="Flow_192amip" sourceRef="Participant_12u6dfc" targetRef="Event_0vtlerm" />
@@ -8,18 +9,28 @@
   </bpmn:collaboration>
   <bpmn:process id="Process_0isl86x" isExecutable="true">
     <bpmn:startEvent id="Event_0vtlerm">
+      <bpmn:extensionElements />
       <bpmn:outgoing>Flow_17372ed</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0bj9l4x" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0bj9l4x" messageRef="Message_176g09v" />
     </bpmn:startEvent>
     <bpmn:serviceTask id="Activity_0r8q1wv" name="Check if the Account exists">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-check-account-exists" retries="3" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_17372ed</bpmn:incoming>
       <bpmn:outgoing>Flow_0wy8j3c</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_13pncr1" name="Process the token creation">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-create-token" retries="3" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wy8j3c</bpmn:incoming>
       <bpmn:outgoing>Flow_0jeoe1e</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_1p80bw5">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="diagram-return-token" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0jeoe1e</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1w6wggf" />
     </bpmn:endEvent>
@@ -28,6 +39,7 @@
     <bpmn:sequenceFlow id="Flow_0jeoe1e" sourceRef="Activity_13pncr1" targetRef="Event_1p80bw5" />
   </bpmn:process>
   <bpmn:message id="Message_34oq4n1" name="Message_34oq4n1" />
+  <bpmn:message id="Message_176g09v" name="CreateTokenRequest" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1lxugtd">
       <bpmndi:BPMNShape id="Participant_1f1s4uf_di" bpmnElement="Participant_1f1s4uf" isHorizontal="true">

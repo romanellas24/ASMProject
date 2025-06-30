@@ -94,6 +94,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetAccountExists }
+     * 
+     */
+    public GetAccountExists createGetAccountExists() {
+        return new GetAccountExists();
+    }
+
+    /**
+     * Create an instance of {@link GetAccountExistsResponse }
+     * 
+     */
+    public GetAccountExistsResponse createGetAccountExistsResponse() {
+        return new GetAccountExistsResponse();
+    }
+
+    /**
      * Create an instance of {@link PostAccount }
      * 
      */

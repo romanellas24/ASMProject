@@ -12,7 +12,7 @@ public class LocalTest {
             BANKGATEWAY2 port = service.getBANKGATEWAY2ServicePort();
 
             // Invia la richiesta e ricevi la risposta
-            String response = port.postPay(3.41, 2);
+            String response = port.postPay(3.41, 1);
 
             // Stampa il risultato
             System.out.println("Risultato: " + response);

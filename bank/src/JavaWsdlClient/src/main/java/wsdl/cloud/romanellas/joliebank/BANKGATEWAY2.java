@@ -116,6 +116,23 @@ public interface BANKGATEWAY2 {
 
     /**
      * 
+     * @param exists
+     * @param account
+     * @param status
+     */
+    @WebMethod(action = "getAccountExists")
+    @RequestWrapper(localName = "getAccountExists", targetNamespace = "joliebank.romanellas.cloud", className = "xsd.cloud.romanellas.joliebank.GetAccountExists")
+    @ResponseWrapper(localName = "getAccountExistsResponse", targetNamespace = "joliebank.romanellas.cloud", className = "xsd.cloud.romanellas.joliebank.GetAccountExistsResponse")
+    public void getAccountExists(
+        @WebParam(name = "account", targetNamespace = "")
+        int account,
+        @WebParam(name = "exists", targetNamespace = "", mode = WebParam.Mode.OUT)
+        Holder<Integer> exists,
+        @WebParam(name = "status", targetNamespace = "", mode = WebParam.Mode.OUT)
+        Holder<Integer> status);
+
+    /**
+     * 
      * @param owner
      * @return
      *     returns int
