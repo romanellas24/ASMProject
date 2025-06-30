@@ -79,10 +79,10 @@
   <bpmn:process id="Process_0rl4x38" isExecutable="false">
     <bpmn:laneSet id="LaneSet_17ge5nr">
       <bpmn:lane id="Lane_01ccavg" name="Creazione token">
-        <bpmn:flowNodeRef>Activity_01ebvtr</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1g0sn3l</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_18fh0k0</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0v7q0la</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_01ebvtr</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_03i9da5" name="Pagamento token">
         <bpmn:flowNodeRef>Event_0ormo6p</bpmn:flowNodeRef>
@@ -91,10 +91,6 @@
         <bpmn:flowNodeRef>Event_17nasmn</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:task id="Activity_01ebvtr" name="Il microservizio crea un token generico">
-      <bpmn:incoming>Flow_0ct58ld</bpmn:incoming>
-      <bpmn:outgoing>Flow_062ylel</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:task id="Activity_1g0sn3l" name="Il token viene popolato con le informazioni date">
       <bpmn:incoming>Flow_062ylel</bpmn:incoming>
       <bpmn:outgoing>Flow_0tbpq9s</bpmn:outgoing>
@@ -129,6 +125,10 @@
       <bpmn:incoming>Flow_0oqqqrp</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_129awtz" />
     </bpmn:endEvent>
+    <bpmn:task id="Activity_01ebvtr" name="Il microservizio crea un token generico">
+      <bpmn:incoming>Flow_0ct58ld</bpmn:incoming>
+      <bpmn:outgoing>Flow_062ylel</bpmn:outgoing>
+    </bpmn:task>
   </bpmn:process>
   <bpmn:message id="Message_2gk7en3" name="Message_2gk7en3">
     <bpmn:extensionElements>
@@ -219,16 +219,12 @@
         <dc:Bounds x="160" y="740" width="1500" height="380" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_01ccavg_di" bpmnElement="Lane_01ccavg" isHorizontal="true">
-        <dc:Bounds x="190" y="740" width="1470" height="180" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_03i9da5_di" bpmnElement="Lane_03i9da5" isHorizontal="true">
         <dc:Bounds x="190" y="920" width="1470" height="200" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_19mtl2o_di" bpmnElement="Activity_01ebvtr">
-        <dc:Bounds x="320" y="780" width="100" height="80" />
+      <bpmndi:BPMNShape id="Lane_01ccavg_di" bpmnElement="Lane_01ccavg" isHorizontal="true">
+        <dc:Bounds x="190" y="740" width="1470" height="180" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1g0sn3l_di" bpmnElement="Activity_1g0sn3l">
@@ -254,6 +250,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_192nbnd_di" bpmnElement="Event_17nasmn">
         <dc:Bounds x="1372" y="1002" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1p5m8ta_di" bpmnElement="Activity_01ebvtr">
+        <dc:Bounds x="320" y="780" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0ct58ld_di" bpmnElement="Flow_0ct58ld">
         <di:waypoint x="268" y="820" />
