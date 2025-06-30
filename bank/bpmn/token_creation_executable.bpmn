@@ -5,7 +5,6 @@
     <bpmn:participant id="Participant_1f1s4uf" name="Bank" processRef="Process_0isl86x" />
     <bpmn:participant id="Participant_12u6dfc" name="Seller" />
     <bpmn:messageFlow id="Flow_192amip" sourceRef="Participant_12u6dfc" targetRef="Event_0vtlerm" />
-    <bpmn:messageFlow id="Flow_18pcmto" sourceRef="Event_1p80bw5" targetRef="Participant_12u6dfc" />
   </bpmn:collaboration>
   <bpmn:process id="Process_0isl86x" isExecutable="true">
     <bpmn:startEvent id="Event_0vtlerm">
@@ -25,25 +24,30 @@
         <zeebe:taskDefinition type="jolie-create-token" retries="3" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wy8j3c</bpmn:incoming>
-      <bpmn:outgoing>Flow_0jeoe1e</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0vpn6ul</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_1p80bw5">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="diagram-return-token" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0jeoe1e</bpmn:incoming>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1w6wggf" />
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_17372ed" sourceRef="Event_0vtlerm" targetRef="Activity_0r8q1wv" />
     <bpmn:sequenceFlow id="Flow_0wy8j3c" sourceRef="Activity_0r8q1wv" targetRef="Activity_13pncr1" />
-    <bpmn:sequenceFlow id="Flow_0jeoe1e" sourceRef="Activity_13pncr1" targetRef="Event_1p80bw5" />
+    <bpmn:endEvent id="Event_1mq8lgv" name="CreateTokenEndEvent">
+      <bpmn:incoming>Flow_0vpn6ul</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0vpn6ul" sourceRef="Activity_13pncr1" targetRef="Event_1mq8lgv" />
+    <bpmn:boundaryEvent id="Event_0lvznc8" attachedToRef="Activity_0r8q1wv">
+      <bpmn:outgoing>Flow_1suz0yz</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1yha427" errorRef="Error_0ivw24s" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1suz0yz" sourceRef="Event_0lvznc8" targetRef="Event_1ykf3n1" />
+    <bpmn:endEvent id="Event_1ykf3n1" name="CreateTokenEndError">
+      <bpmn:incoming>Flow_1suz0yz</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmn:message id="Message_34oq4n1" name="Message_34oq4n1" />
   <bpmn:message id="Message_176g09v" name="CreateTokenRequest" />
+  <bpmn:error id="Error_0ivw24s" name="Error_0u644vp" errorCode="CreateTokenDestinationAccountNotFound" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1lxugtd">
       <bpmndi:BPMNShape id="Participant_1f1s4uf_di" bpmnElement="Participant_1f1s4uf" isHorizontal="true">
-        <dc:Bounds x="132" y="280" width="558" height="250" />
+        <dc:Bounds x="132" y="280" width="558" height="350" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0ilcci8_di" bpmnElement="Event_0vtlerm">
@@ -56,8 +60,20 @@
         <dc:Bounds x="460" y="370" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1l7i0eb_di" bpmnElement="Event_1p80bw5">
+      <bpmndi:BPMNShape id="Event_1mq8lgv_di" bpmnElement="Event_1mq8lgv">
         <dc:Bounds x="622" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="599" y="435" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ykf3n1_di" bpmnElement="Event_1ykf3n1">
+        <dc:Bounds x="502" y="512" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="476" y="555" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fp7qrs_di" bpmnElement="Event_0lvznc8">
+        <dc:Bounds x="382" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_17372ed_di" bpmnElement="Flow_17372ed">
         <di:waypoint x="248" y="410" />
@@ -67,9 +83,14 @@
         <di:waypoint x="400" y="410" />
         <di:waypoint x="460" y="410" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0jeoe1e_di" bpmnElement="Flow_0jeoe1e">
+      <bpmndi:BPMNEdge id="Flow_0vpn6ul_di" bpmnElement="Flow_0vpn6ul">
         <di:waypoint x="560" y="410" />
         <di:waypoint x="622" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1suz0yz_di" bpmnElement="Flow_1suz0yz">
+        <di:waypoint x="400" y="468" />
+        <di:waypoint x="400" y="530" />
+        <di:waypoint x="502" y="530" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_12u6dfc_di" bpmnElement="Participant_12u6dfc" isHorizontal="true">
         <dc:Bounds x="132" y="80" width="568" height="60" />
@@ -78,10 +99,6 @@
       <bpmndi:BPMNEdge id="Flow_192amip_di" bpmnElement="Flow_192amip">
         <di:waypoint x="230" y="140" />
         <di:waypoint x="230" y="392" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_18pcmto_di" bpmnElement="Flow_18pcmto">
-        <di:waypoint x="640" y="392" />
-        <di:waypoint x="640" y="140" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

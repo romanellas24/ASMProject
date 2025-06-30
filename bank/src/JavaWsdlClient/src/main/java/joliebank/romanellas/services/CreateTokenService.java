@@ -5,12 +5,13 @@ import io.camunda.zeebe.client.ZeebeClient;
 import java.util.Map;
 
 // Importa le classi generate da wsimport
+import io.camunda.zeebe.model.bpmn.BpmnModelException;
 import wsdl.cloud.romanellas.joliebank.BANKGATEWAY2;
 import wsdl.cloud.romanellas.joliebank.BANKGATEWAY2Service;
 
 import javax.xml.ws.Holder;
 
-public class CreateTokenServiceTest {
+public class CreateTokenService {
 
     public static void main(String[] args) {
         ZeebeClient client = ZeebeClient.newClientBuilder()
@@ -34,6 +35,16 @@ public class CreateTokenServiceTest {
                         Holder<Integer> status = new Holder<>();
 
                         port.getAccountExists(account, exists, status);
+
+                        if(exists.value == 0) {
+                            jobClient.newThrowErrorCommand(job.getKey())
+                                    .errorCode("CreateTokenDestinationAccountNotFound")
+                                    .errorMessage("Destination Account not found: " + account)
+                                    .send()
+                                    .join();
+                            return;
+                        }
+
 
                         // Completa job
                         jobClient.newCompleteCommand(job.getKey())
@@ -83,17 +94,6 @@ public class CreateTokenServiceTest {
                 .open();
 
         System.out.println("SOAP Workers avviati...");
-
-
-        // 1. AVVIO DEL PROCESSO VIA MESSAGE START EVENT
-        client.newPublishMessageCommand()
-                .messageName("CreateTokenRequest")
-                .correlationKey("start") // oppure un vero valore se il BPMN lo richiede
-                .variables("{\"amount\": 5.12, \"account\": 1}")
-                .send()
-                .join();
-
-        System.out.println("Inviato il messaggio per far partire il processo...");
 
         // Mantieni il worker in esecuzione
         while (true) {
