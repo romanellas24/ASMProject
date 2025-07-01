@@ -1,8 +1,8 @@
-package joliebank.romanellas.publishers;
+package joliebank.romanellas.dispatchers;
 
 import io.camunda.zeebe.client.ZeebeClient;
 
-public class SendMessageCreateToken {
+public class CreateTokenDispatcher {
 
     public static void main(String[] args) {
         ZeebeClient client = ZeebeClient.newClientBuilder().gatewayAddress("116.203.198.188:26500")  // Modifica se usi Camunda SaaS o altro endpoint
@@ -12,14 +12,14 @@ public class SendMessageCreateToken {
         client.newPublishMessageCommand()
                 .messageName("CreateTokenRequest")
                 .correlationKey("start") // oppure un vero valore se il BPMN lo richiede
-                .variables("{\"amount\": 5.12, \"account\": 1}")
+                .variables("{\"amount\": 5.12, \"account\": 3}")
                 .send()
                 .join();
 
         System.out.println("Inviato il messaggio per far partire il processo - VALID...");
 
 
-        // 1. AVVIO DEL PROCESSO VIA MESSAGE START EVENT
+        // 2. AVVIO DEL PROCESSO VIA MESSAGE START EVENT
         client.newPublishMessageCommand()
                 .messageName("CreateTokenRequest")
                 .correlationKey("start") // oppure un vero valore se il BPMN lo richiede

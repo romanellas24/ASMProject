@@ -33,6 +33,21 @@ type PutPayResponse: void {
     .code: int
 }
 
+type CheckPaymentDataRequest: void {
+    .pan: string
+    .cvv: int
+    .expire_month: int
+    .expire_year: int
+    .card_holder_first_name: string
+    .card_holder_last_name: string
+    .token: string
+}
+
+type CheckPaymentDataResponse: void {
+    .status: string
+    .code: int
+}
+
 type RefundRequest: void {
     .token: string
 }
@@ -141,6 +156,7 @@ interface BankGatewayInterface {
         getCheckPay(GetCheckPayRequest)(GetCheckPayResponse),
         postPay(PostPayRequest)(PostPayResponse),
         putPay(PutPayRequest)(PutPayResponse),
+        checkPaymentData(CheckPaymentDataRequest)(CheckPaymentDataResponse),
         deletePay(RefundRequest)(RefundResponse),
         postAccount(PostAccountRequest)(PostAccountResponse),
         putWithdraw(WithdrawRequest)(WithdrawResponse),

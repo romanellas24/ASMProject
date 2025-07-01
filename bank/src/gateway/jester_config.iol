@@ -21,6 +21,21 @@ type AccountResponse:void {
   .array[0,*]:AccountInfo
 }
 
+type CheckPaymentDataRequest:void {
+  .cvv[1,1]:int
+  .expire_month[1,1]:int
+  .card_holder_first_name[1,1]:string
+  .expire_year[1,1]:int
+  .pan[1,1]:string
+  .card_holder_last_name[1,1]:string
+  .token[1,1]:string
+}
+
+type CheckPaymentDataResponse:void {
+  .code[1,1]:int
+  .status[1,1]:string
+}
+
 type CreateCardRequest:void {
   .cvv[1,1]:int
   .expire_month[1,1]:int
@@ -136,6 +151,7 @@ type WithdrawResponse:void {
 
 interface BANK_GATEWAYInterface {
 RequestResponse:
+  checkPaymentData( CheckPaymentDataRequest )( CheckPaymentDataResponse ),
   deletePay( RefundRequest )( RefundResponse ),
   getAccount( AccountRequest )( AccountResponse ),
   getAccountExists( AccountExistsRequest )( AccountExistsResponse ),

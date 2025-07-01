@@ -104,6 +104,20 @@ define checkPaymentData
             println@Console(checkPaymentDataScope.SQLException.Error)();
             println@Console("---------------------------------")()
         );
+
+        println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("token:" + token)();
+            println@Console("pan:" + pan)();
+            println@Console("cvv:" + cvv)();
+            println@Console("fullname:" + fullname)();
+            println@Console("expire_month:" + expire_month)();
+            println@Console("expire_year:" + expire_year)();
+            println@Console("Throwed:")();
+            println@Console(checkPaymentDataScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+
         queryRequest = sql_cmd;
         queryRequest.token = token;
         queryRequest.pan = pan;
@@ -287,6 +301,44 @@ main {
                     response.param.code = 500
                 }
                 
+            }   
+        }
+    }]
+
+    [checkPaymentData(request)(response){
+        pan = request.param.pan;
+        cvv = request.param.cvv;
+        expire_month = request.param.expire_month;
+        expire_year = request.param.expire_year;
+        card_holder_first_name = request.param.card_holder_first_name;
+        card_holder_last_name = request.param.card_holder_last_name;
+        token = request.param.token;
+
+        expire_year = expire_year + 2000;
+
+        if(pan == "" || 
+                cvv <= 0 || 
+                expire_month <= 0 || 
+                expire_month > 12 || 
+                expire_year < 2000 || 
+                card_holder_first_name == "" || 
+                card_holder_last_name == "" || 
+                token == "") {
+            response.param.status = "Invalid params (1)";
+            response.param.code = 400
+        } else {
+            fullname = card_holder_first_name + " " + card_holder_last_name;
+            undef(card_holder_first_name);
+            undef(card_holder_last_name);
+            trim@StringUtils(fullname)(fullname);
+            cnt = 0;
+            checkPaymentData;
+            if(cnt != 1){
+                response.param.status = "Invalid params (2)";
+                response.param.code = 400
+            } else {
+                response.param.status = "Ok.";
+                response.param.code = 200
             }   
         }
     }]

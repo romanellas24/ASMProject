@@ -1,30 +1,27 @@
 package joliebank.romanellas.services;
 
 import io.camunda.zeebe.client.ZeebeClient;
-
-import java.util.Map;
-
-// Importa le classi generate da wsimport
-import io.camunda.zeebe.model.bpmn.BpmnModelException;
 import wsdl.cloud.romanellas.joliebank.BANKGATEWAY2;
 import wsdl.cloud.romanellas.joliebank.BANKGATEWAY2Service;
 
 import javax.xml.ws.Holder;
+import java.util.Map;
 
 public class CreateTokenService {
 
-    public static void main(String[] args) {
-        ZeebeClient client = ZeebeClient.newClientBuilder()
-                .gatewayAddress("116.203.198.188:26500")  // Modifica se usi Camunda SaaS o altro endpoint
-                .usePlaintext()
-                .build();
+    private ZeebeClient client;
 
+    public CreateTokenService(ZeebeClient client) {
+        this.client = client;
+    }
+
+    public void jolieCheckAccountExists() {
         //Worker per il primo service task
         client.newWorker()
                 .jobType("jolie-check-account-exists")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
                     try {
-                        System.out.println("Triggerato ST 1");
+                        System.out.println("called jolie-check-account-exists");
                         BANKGATEWAY2Service service = new BANKGATEWAY2Service();
                         BANKGATEWAY2 port = service.getBANKGATEWAY2ServicePort();
 
@@ -36,6 +33,10 @@ public class CreateTokenService {
 
                         port.getAccountExists(account, exists, status);
 
+                        /*
+
+                        Solleva un'eccezione
+
                         if(exists.value == 0) {
                             jobClient.newThrowErrorCommand(job.getKey())
                                     .errorCode("CreateTokenDestinationAccountNotFound")
@@ -44,11 +45,13 @@ public class CreateTokenService {
                                     .join();
                             return;
                         }
+                         */
 
+                        boolean isExists = exists.value != 0;
 
                         // Completa job
                         jobClient.newCompleteCommand(job.getKey())
-                                .variables(Map.of("exists", exists.value))
+                                .variables(Map.of("exists", isExists))
                                 .send()
                                 .join();
 
@@ -61,13 +64,15 @@ public class CreateTokenService {
                     }
                 })
                 .open();
+    }
 
+    public void jolieCreateToken() {
         // Worker per il secondo Service Task
         client.newWorker()
                 .jobType("jolie-create-token")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
                     try {
-                        System.out.println("Triggerato ST 2");
+                        System.out.println("called jolie-create-token");
                         BANKGATEWAY2Service service = new BANKGATEWAY2Service();
                         BANKGATEWAY2 port = service.getBANKGATEWAY2ServicePort();
 
@@ -76,6 +81,7 @@ public class CreateTokenService {
                         int account = (int) vars.get("account");
 
                         String response = port.postPay(amount, account);
+                        System.out.println("Created token: " + response);
 
                         // Completa job
                         jobClient.newCompleteCommand(job.getKey())
@@ -92,18 +98,5 @@ public class CreateTokenService {
                     }
                 })
                 .open();
-
-        System.out.println("SOAP Workers avviati...");
-
-        // Mantieni il worker in esecuzione
-        while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                break;
-            }
-        }
-
-        client.close();
     }
 }

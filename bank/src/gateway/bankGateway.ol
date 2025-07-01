@@ -33,6 +33,7 @@ outputPort BankPaymentsPort {
     Location: LOCATIONS_API_PAYMENTS
     Protocol: xmlrpc { 
         .compression = false
+        .debug = true
     }
     Interfaces: BankPaymentsI
 }
@@ -41,7 +42,7 @@ outputPort BankAccountsPort {
     Location: LOCATIONS_API_ACCOUNTS
     Protocol: xmlrpc { 
         .compression = false
-        .debug = false
+        .debug = true
     }
     Interfaces: BankAccountsI
 }
@@ -66,6 +67,12 @@ main {
     [ putPay( request )( response ) {
         internalReq.param << request;
         putPay@BankPaymentsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [ checkPaymentData( request )( response ) {
+        internalReq.param << request;
+        checkPaymentData@BankPaymentsPort(internalReq)(internalRes);
         response << internalRes.param
     }]
 

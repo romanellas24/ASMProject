@@ -1,18 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions targetNamespace="joliebank.romanellas.cloud.wsdl" xmlns:xsd1="joliebank.romanellas.cloud.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="joliebank.romanellas.cloud.wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
   <wsdl:types>
-    <xs:schema targetNamespace="joliebank.romanellas.cloud.xsd" xmlns:sch="joliebank.romanellas.cloud.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="postCreateCard"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="acc_id" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postCreateCardResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="msg" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="getCheckPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getCheckPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="beneficiary" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deletePay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deletePayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putNotRefaundable"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putNotRefaundableResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="msg" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="getAccountExists"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="getAccountExistsResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="exists" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postAccount"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="owner" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="postAccountResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="identifier" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getAccount"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="page" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:complexType name="AccountInfo"><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="owner" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="account_id" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="balance" type="xs:double"/></xs:sequence></xs:complexType><xs:element name="getAccountResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="unbounded" minOccurs="0" name="array" type="sch:AccountInfo"/></xs:sequence></xs:complexType></xs:element><xs:element name="getTransactions"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="page" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="acc_id" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:complexType name="TransactionInfo"><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="payment_request_time" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="src_owner" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="src_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="deletable" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="transaction_on" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="dest_owner" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType><xs:element name="getTransactionsResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="unbounded" minOccurs="0" name="array" type="sch:TransactionInfo"/></xs:sequence></xs:complexType></xs:element><xs:element name="putWithdraw"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="putWithdrawResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_first_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_last_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putDeposit"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="putDepositResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element></xs:schema>
+    <xs:schema targetNamespace="joliebank.romanellas.cloud.xsd" xmlns:sch="joliebank.romanellas.cloud.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="postCreateCard"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="acc_id" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postCreateCardResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="msg" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="checkPaymentData"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_first_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_last_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="checkPaymentDataResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getCheckPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getCheckPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="beneficiary" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deletePay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="deletePayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putNotRefaundable"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putNotRefaundableResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="msg" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getTransactions"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="page" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="acc_id" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:complexType name="TransactionInfo"><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:double"/><xs:element maxOccurs="1" minOccurs="1" name="dest_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="payment_request_time" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="src_owner" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="src_account" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="deletable" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="transaction_on" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="dest_owner" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType><xs:element name="getTransactionsResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="unbounded" minOccurs="0" name="array" type="sch:TransactionInfo"/></xs:sequence></xs:complexType></xs:element><xs:element name="putWithdraw"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="putWithdrawResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="getAccountExists"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="getAccountExistsResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="exists" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="postAccount"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="owner" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="postAccountResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="identifier" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="getAccount"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="page" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:complexType name="AccountInfo"><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="owner" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="account_id" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="balance" type="xs:double"/></xs:sequence></xs:complexType><xs:element name="getAccountResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="unbounded" minOccurs="0" name="array" type="sch:AccountInfo"/></xs:sequence></xs:complexType></xs:element><xs:element name="putPay"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="cvv" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="expire_month" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_first_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="expire_year" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="pan" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="card_holder_last_name" type="xs:string"/><xs:element maxOccurs="1" minOccurs="1" name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putPayResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="code" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element><xs:element name="putDeposit"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="amount" type="xs:int"/><xs:element maxOccurs="1" minOccurs="1" name="account" type="xs:int"/></xs:sequence></xs:complexType></xs:element><xs:element name="putDepositResponse"><xs:complexType><xs:sequence><xs:element maxOccurs="1" minOccurs="1" name="status" type="xs:string"/></xs:sequence></xs:complexType></xs:element></xs:schema>
   </wsdl:types>
-  <wsdl:message name="GetCheckPayRequest">
-    <wsdl:part name="body" element="xsd1:getCheckPay">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="PostAccountResponse">
     <wsdl:part name="body" element="xsd1:postAccountResponse">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="PostAccountRequest">
     <wsdl:part name="body" element="xsd1:postAccount">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AccountExistsRequest">
+    <wsdl:part name="body" element="xsd1:getAccountExists">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RefundResponse">
+    <wsdl:part name="body" element="xsd1:deletePayResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PostPayRequest">
+    <wsdl:part name="body" element="xsd1:postPay">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AccountExistsResponse">
+    <wsdl:part name="body" element="xsd1:getAccountExistsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="NotRefoundResponse">
+    <wsdl:part name="body" element="xsd1:putNotRefaundableResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CheckPaymentDataResponse">
+    <wsdl:part name="body" element="xsd1:checkPaymentDataResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PutPayRequest">
+    <wsdl:part name="body" element="xsd1:putPay">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetCheckPayResponse">
+    <wsdl:part name="body" element="xsd1:getCheckPayResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DepositResponse">
+    <wsdl:part name="body" element="xsd1:putDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetCheckPayRequest">
+    <wsdl:part name="body" element="xsd1:getCheckPay">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="TransactionsRequest">
@@ -23,10 +59,6 @@
     <wsdl:part name="body" element="xsd1:deletePay">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="AccountExistsRequest">
-    <wsdl:part name="body" element="xsd1:getAccountExists">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="CreateCardResponse">
     <wsdl:part name="body" element="xsd1:postCreateCardResponse">
     </wsdl:part>
@@ -35,16 +67,12 @@
     <wsdl:part name="body" element="xsd1:putWithdrawResponse">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="AccountResponse">
-    <wsdl:part name="body" element="xsd1:getAccountResponse">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="WithdrawRequest">
     <wsdl:part name="body" element="xsd1:putWithdraw">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="RefundResponse">
-    <wsdl:part name="body" element="xsd1:deletePayResponse">
+  <wsdl:message name="AccountResponse">
+    <wsdl:part name="body" element="xsd1:getAccountResponse">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="NotRefoundRequest">
@@ -63,40 +91,20 @@
     <wsdl:part name="body" element="xsd1:getAccount">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="PostPayRequest">
-    <wsdl:part name="body" element="xsd1:postPay">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="AccountExistsResponse">
-    <wsdl:part name="body" element="xsd1:getAccountExistsResponse">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="PostPayResponse">
     <wsdl:part name="body" element="xsd1:postPayResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CheckPaymentDataRequest">
+    <wsdl:part name="body" element="xsd1:checkPaymentData">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="TransactionsResponse">
     <wsdl:part name="body" element="xsd1:getTransactionsResponse">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="NotRefoundResponse">
-    <wsdl:part name="body" element="xsd1:putNotRefaundableResponse">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="PutPayRequest">
-    <wsdl:part name="body" element="xsd1:putPay">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="DepositRequest">
     <wsdl:part name="body" element="xsd1:putDeposit">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="GetCheckPayResponse">
-    <wsdl:part name="body" element="xsd1:getCheckPayResponse">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="DepositResponse">
-    <wsdl:part name="body" element="xsd1:putDepositResponse">
     </wsdl:part>
   </wsdl:message>
   <wsdl:portType name="BANK_GATEWAY_2">
@@ -104,6 +112,12 @@
       <wsdl:input message="tns:CreateCardRequest">
     </wsdl:input>
       <wsdl:output message="tns:CreateCardResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="checkPaymentData">
+      <wsdl:input message="tns:CheckPaymentDataRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:CheckPaymentDataResponse">
     </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="getCheckPay">
@@ -124,28 +138,10 @@
       <wsdl:output message="tns:NotRefoundResponse">
     </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="getAccountExists">
-      <wsdl:input message="tns:AccountExistsRequest">
-    </wsdl:input>
-      <wsdl:output message="tns:AccountExistsResponse">
-    </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="postAccount">
-      <wsdl:input message="tns:PostAccountRequest">
-    </wsdl:input>
-      <wsdl:output message="tns:PostAccountResponse">
-    </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="postPay">
       <wsdl:input message="tns:PostPayRequest">
     </wsdl:input>
       <wsdl:output message="tns:PostPayResponse">
-    </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="getAccount">
-      <wsdl:input message="tns:AccountRequest">
-    </wsdl:input>
-      <wsdl:output message="tns:AccountResponse">
     </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="getTransactions">
@@ -158,6 +154,24 @@
       <wsdl:input message="tns:WithdrawRequest">
     </wsdl:input>
       <wsdl:output message="tns:WithdrawResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAccountExists">
+      <wsdl:input message="tns:AccountExistsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:AccountExistsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="postAccount">
+      <wsdl:input message="tns:PostAccountRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:PostAccountResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAccount">
+      <wsdl:input message="tns:AccountRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:AccountResponse">
     </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="putPay">
@@ -177,6 +191,15 @@
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="postCreateCard">
       <soap:operation soapAction="postCreateCard" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="checkPaymentData">
+      <soap:operation soapAction="checkPaymentData" style="document"/>
       <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
@@ -211,35 +234,8 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="getAccountExists">
-      <soap:operation soapAction="getAccountExists" style="document"/>
-      <wsdl:input>
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="postAccount">
-      <soap:operation soapAction="postAccount" style="document"/>
-      <wsdl:input>
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="postPay">
       <soap:operation soapAction="postPay" style="document"/>
-      <wsdl:input>
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="getAccount">
-      <soap:operation soapAction="getAccount" style="document"/>
       <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
@@ -258,6 +254,33 @@
     </wsdl:operation>
     <wsdl:operation name="putWithdraw">
       <soap:operation soapAction="putWithdraw" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAccountExists">
+      <soap:operation soapAction="getAccountExists" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="postAccount">
+      <soap:operation soapAction="postAccount" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAccount">
+      <soap:operation soapAction="getAccount" style="document"/>
       <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>

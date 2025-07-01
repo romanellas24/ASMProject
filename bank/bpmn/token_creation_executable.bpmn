@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0pws2em" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.36.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.4.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0pws2em" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.36.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.4.0">
   <bpmn:collaboration id="Collaboration_1lxugtd">
     <bpmn:extensionElements />
     <bpmn:participant id="Participant_1f1s4uf" name="Bank" processRef="Process_0isl86x" />
@@ -7,36 +7,42 @@
     <bpmn:messageFlow id="Flow_192amip" sourceRef="Participant_12u6dfc" targetRef="Event_0vtlerm" />
   </bpmn:collaboration>
   <bpmn:process id="Process_0isl86x" isExecutable="true">
-    <bpmn:startEvent id="Event_0vtlerm">
-      <bpmn:extensionElements />
-      <bpmn:outgoing>Flow_17372ed</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0bj9l4x" messageRef="Message_176g09v" />
-    </bpmn:startEvent>
-    <bpmn:serviceTask id="Activity_0r8q1wv" name="Check if the Account exists">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="jolie-check-account-exists" retries="3" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_17372ed</bpmn:incoming>
-      <bpmn:outgoing>Flow_0wy8j3c</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_13pncr1" name="Process the token creation">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="jolie-create-token" retries="3" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0wy8j3c</bpmn:incoming>
-      <bpmn:outgoing>Flow_0vpn6ul</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_17372ed" sourceRef="Event_0vtlerm" targetRef="Activity_0r8q1wv" />
-    <bpmn:sequenceFlow id="Flow_0wy8j3c" sourceRef="Activity_0r8q1wv" targetRef="Activity_13pncr1" />
     <bpmn:endEvent id="Event_1mq8lgv" name="CreateTokenEndEvent">
       <bpmn:incoming>Flow_0vpn6ul</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0vpn6ul" sourceRef="Activity_13pncr1" targetRef="Event_1mq8lgv" />
-    <bpmn:boundaryEvent id="Event_0lvznc8" attachedToRef="Activity_0r8q1wv">
+    <bpmn:sequenceFlow id="Flow_1suz0yz" sourceRef="Gateway_07ev7bp" targetRef="Event_1ykf3n1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=exists != true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0620t4p" sourceRef="Activity_0r8q1wv" targetRef="Gateway_07ev7bp" />
+    <bpmn:serviceTask id="Activity_13pncr1" name="Process the token creation">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-create-token" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_199dhq7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vpn6ul</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_07ev7bp">
+      <bpmn:incoming>Flow_0620t4p</bpmn:incoming>
       <bpmn:outgoing>Flow_1suz0yz</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_1yha427" errorRef="Error_0ivw24s" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1suz0yz" sourceRef="Event_0lvznc8" targetRef="Event_1ykf3n1" />
+      <bpmn:outgoing>Flow_199dhq7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_0r8q1wv" name="Check if the Account exists">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-check-account-exists" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k6a148</bpmn:incoming>
+      <bpmn:outgoing>Flow_0620t4p</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="Event_0vtlerm">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_1k6a148</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0bj9l4x" messageRef="Message_176g09v" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1k6a148" sourceRef="Event_0vtlerm" targetRef="Activity_0r8q1wv" />
+    <bpmn:sequenceFlow id="Flow_199dhq7" sourceRef="Gateway_07ev7bp" targetRef="Activity_13pncr1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=exists = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_1ykf3n1" name="CreateTokenEndError">
       <bpmn:incoming>Flow_1suz0yz</bpmn:incoming>
     </bpmn:endEvent>
@@ -47,17 +53,7 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1lxugtd">
       <bpmndi:BPMNShape id="Participant_1f1s4uf_di" bpmnElement="Participant_1f1s4uf" isHorizontal="true">
-        <dc:Bounds x="132" y="280" width="558" height="350" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0ilcci8_di" bpmnElement="Event_0vtlerm">
-        <dc:Bounds x="212" y="392" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1e39fsk_di" bpmnElement="Activity_0r8q1wv">
-        <dc:Bounds x="300" y="370" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0wt0zp6_di" bpmnElement="Activity_13pncr1">
-        <dc:Bounds x="460" y="370" width="100" height="80" />
+        <dc:Bounds x="132" y="280" width="578" height="435" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1mq8lgv_di" bpmnElement="Event_1mq8lgv">
@@ -66,39 +62,54 @@
           <dc:Bounds x="599" y="435" width="89" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wt0zp6_di" bpmnElement="Activity_13pncr1">
+        <dc:Bounds x="490" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07ev7bp_di" bpmnElement="Gateway_07ev7bp" isMarkerVisible="true">
+        <dc:Bounds x="405" y="455" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1e39fsk_di" bpmnElement="Activity_0r8q1wv">
+        <dc:Bounds x="280" y="440" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ilcci8_di" bpmnElement="Event_0vtlerm">
+        <dc:Bounds x="172" y="462" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ykf3n1_di" bpmnElement="Event_1ykf3n1">
-        <dc:Bounds x="502" y="512" width="36" height="36" />
+        <dc:Bounds x="622" y="512" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="476" y="555" width="89" height="27" />
+          <dc:Bounds x="596" y="555" width="89" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1fp7qrs_di" bpmnElement="Event_0lvznc8">
-        <dc:Bounds x="382" y="432" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_17372ed_di" bpmnElement="Flow_17372ed">
-        <di:waypoint x="248" y="410" />
-        <di:waypoint x="300" y="410" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0wy8j3c_di" bpmnElement="Flow_0wy8j3c">
-        <di:waypoint x="400" y="410" />
-        <di:waypoint x="460" y="410" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0vpn6ul_di" bpmnElement="Flow_0vpn6ul">
-        <di:waypoint x="560" y="410" />
+        <di:waypoint x="590" y="410" />
         <di:waypoint x="622" y="410" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1suz0yz_di" bpmnElement="Flow_1suz0yz">
-        <di:waypoint x="400" y="468" />
-        <di:waypoint x="400" y="530" />
-        <di:waypoint x="502" y="530" />
+        <di:waypoint x="430" y="505" />
+        <di:waypoint x="430" y="530" />
+        <di:waypoint x="622" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0620t4p_di" bpmnElement="Flow_0620t4p">
+        <di:waypoint x="380" y="480" />
+        <di:waypoint x="405" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k6a148_di" bpmnElement="Flow_1k6a148">
+        <di:waypoint x="208" y="480" />
+        <di:waypoint x="280" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_199dhq7_di" bpmnElement="Flow_199dhq7">
+        <di:waypoint x="430" y="455" />
+        <di:waypoint x="430" y="410" />
+        <di:waypoint x="490" y="410" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_12u6dfc_di" bpmnElement="Participant_12u6dfc" isHorizontal="true">
-        <dc:Bounds x="132" y="80" width="568" height="60" />
+        <dc:Bounds x="132" y="80" width="578" height="60" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_192amip_di" bpmnElement="Flow_192amip">
-        <di:waypoint x="230" y="140" />
-        <di:waypoint x="230" y="392" />
+        <di:waypoint x="190" y="140" />
+        <di:waypoint x="190" y="462" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
