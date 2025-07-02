@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { BehaviorSubject, map, mergeMap, Observable, repeatWhen, Subject, Subscription, switchMap, take, tap, withLatestFrom } from 'rxjs';
@@ -8,7 +8,7 @@ import { LocalsService } from 'src/app/services/locals.service';
 import { MenuService } from 'src/app/services/menu.service';
 import { OrderService } from 'src/app/services/order.service';
 import { UserService } from 'src/app/services/user.service';
-
+import { DOCUMENT } from '@angular/common';
 @Component({
   selector: 'app-sidemenu',
   templateUrl: './sidemenu.component.html',
@@ -33,6 +33,7 @@ export class SidemenuComponent implements OnInit,OnDestroy {
    
 
   constructor(
+    @Inject(DOCUMENT) private document: Document,
     private eventsService:EventsService,
     private orderSvc: OrderService,
     private localSvc : LocalsService,
@@ -156,7 +157,7 @@ export class SidemenuComponent implements OnInit,OnDestroy {
   }
 
   public goToBank(){
-    window.alert("TO DO")
+   this.document.location.href = 'https://joliebank.romanellas.cloud/pay.html';
   }
 
   ngOnDestroy(): void {
