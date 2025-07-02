@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Creato il: Giu 06, 2025 alle 16:47
+-- Creato il: Giu 30, 2025 alle 16:27
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.0.30
 
@@ -36,17 +36,19 @@ CREATE TABLE `LOCALE` (
   `ORA_CHIUSURA` varchar(50) NOT NULL,
   `INDIRIZZO` varchar(100) NOT NULL,
   `GIORNI_APERTURA` varchar(100) NOT NULL,
-  `DISPONIBILE` tinyint(1) NOT NULL
+  `DISPONIBILE` tinyint(1) NOT NULL,
+  `URL` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dump dei dati per la tabella `LOCALE`
 --
 
-INSERT INTO `LOCALE` (`ID`, `NOME`, `ORA_APERTURA`, `ORA_CHIUSURA`, `INDIRIZZO`, `GIORNI_APERTURA`, `DISPONIBILE`) VALUES
-(1, 'Pizzeria Primavera', '09:00', '18:00', 'VIa Aldrovanni 16, Bologna', 'Lun,\r\nMar,\r\nMer,\r\nGio,\r\nVen,\r\nDom', 1),
-(1156626705, 'via Ciccio Ingrassia', '09:00', '10:00', 'via Ciccio Ingrassia, San salvo', 'L,M,G,V', 1),
-(1680778671, 'Pizzeria Cosmo', '09:00', '17:00', 'Via Calzone 23', 'Lun.Mar,Mer', 1);
+INSERT INTO `LOCALE` (`ID`, `NOME`, `ORA_APERTURA`, `ORA_CHIUSURA`, `INDIRIZZO`, `GIORNI_APERTURA`, `DISPONIBILE`, `URL`) VALUES
+(1, 'Pizzeria Primavera', '09:00', '18:00', 'VIa Aldrovanni 16, Bologna', 'Lun,\r\nMar,\r\nMer,\r\nGio,\r\nVen,\r\nDom', 1, 'braciebasilico.romanellas.cloud'),
+(1156626705, 'via Ciccio Ingrassia', '09:00', '10:00', 'via Ciccio Ingrassia, San salvo', 'L,M,G,V', 1, ''),
+(1680778671, 'Pizzeria Cosmo', '09:00', '17:00', 'Via Calzone 23', 'Lun.Mar,Mer', 1, ''),
+(1958374511, 'Osteria mare e bosco', '09:00', '22:00', 'Via delle Moline 14, Bologna', 'Lun,Mar,mer.Gio,Ven,Sab', 1, 'osteriamareebosco.romanellas.cloud');
 
 -- --------------------------------------------------------
 
@@ -59,17 +61,25 @@ CREATE TABLE `MENU` (
   `DESCRIZIONE` varchar(500) NOT NULL,
   `TIPO` varchar(50) NOT NULL,
   `PREZZO` int(11) NOT NULL,
-  `ID_LOCALE` int(11) NOT NULL
+  `ID_LOCALE` int(11) NOT NULL,
+  `DATA` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dump dei dati per la tabella `MENU`
 --
 
-INSERT INTO `MENU` (`ID`, `DESCRIZIONE`, `TIPO`, `PREZZO`, `ID_LOCALE`) VALUES
-(1, 'il menu è buono', 'Giorno', 30, 1156626705),
-(23, 'Prova 1', 'Cena', 23, 23),
-(559034578, 'è buono', 'Cena', 50, 0);
+INSERT INTO `MENU` (`ID`, `DESCRIZIONE`, `TIPO`, `PREZZO`, `ID_LOCALE`, `DATA`) VALUES
+(1, 'nuovo menu', 'Pesce', 0, 1, '2025-06-13'),
+(23, 'Prova 1', 'Cena', 23, 23, ''),
+(116724299, 'Daily Menu', 'Carne', 0, 1, '2025-06-13'),
+(559034578, 'è buono', 'Cena', 50, 0, ''),
+(713227581, 'Daily Menu', 'Carne', 0, 1, '2025-06-13'),
+(1384498373, 'Daily Menu', 'Carne', 0, 1, '2025-06-13'),
+(1443431554, 'Daily Menu', 'Carne', 0, 1, '2025-06-13'),
+(1645620109, 'Daily Menu', 'Carne', 0, 1, '2025-06-13'),
+(1929440470, 'Daily Menu', 'Carne', 0, 1, '2025-06-13'),
+(1966904463, 'Daily Menu', 'Carne', 0, 1, '2025-06-13');
 
 -- --------------------------------------------------------
 
@@ -95,8 +105,40 @@ CREATE TABLE `ORDINE` (
 --
 
 INSERT INTO `ORDINE` (`ID_UTENTE`, `ID`, `ID_LOCALE`, `ID_SOC_C`, `ORA_CONSEGNA`, `ORA_ACQUISTO`, `ID_TRANSAZIONE`, `PREZZO`, `ID_MENU`, `QUANTITÀ`) VALUES
-(1, 1743403723, 1, 0, '06/06/2025 16:00:00', '', 0, 500, 0, 1),
-(1, 1977689015, 1, 0, '06/06/2025 18:40:00', '', 0, 500, 0, 1);
+(1, 325255409, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
+(1, 540349496, 1, 0, '28-06-2025 19:45', '', 0, 2, 1, 2),
+(1, 726841941, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
+(1, 733051372, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
+(1, 846664558, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
+(1, 1113967202, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
+(1, 1655534448, 1, 0, '28-06-2025 19:45', '', 0, 2, 1, 2),
+(1, 1977689015, 1, 0, '06/06/2025 18:40:00', '', 0, 500, 0, 1),
+(1, 2136033152, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `PIATTO`
+--
+
+CREATE TABLE `PIATTO` (
+  `ID` int(11) NOT NULL,
+  `NOME` varchar(50) NOT NULL,
+  `DESCRIZIONE` varchar(256) NOT NULL,
+  `PREZZO` int(11) NOT NULL,
+  `MENU_ID` int(11) NOT NULL,
+  `DATA` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `PIATTO`
+--
+
+INSERT INTO `PIATTO` (`ID`, `NOME`, `DESCRIZIONE`, `PREZZO`, `MENU_ID`, `DATA`) VALUES
+(1, 'carbonara', '\"Jowls, Egg yolks, Pecorino Romano PDO,Black pepper\"', 8, 1, '2025-06-13'),
+(23, 'carbonara', 'string', 0, 0, '2025-06-13'),
+(24, 'carbonara222', 'aaaaaaaaaaaaaaaaa', 0, 0, '2025-06-13'),
+(1492068332, 'carbo', 'aaaaaaaaaaaaaaaaa', 0, 0, '2025-06-13');
 
 -- --------------------------------------------------------
 
@@ -163,6 +205,12 @@ ALTER TABLE `ORDINE`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indici per le tabelle `PIATTO`
+--
+ALTER TABLE `PIATTO`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indici per le tabelle `SOCIETÀ_CONSEGNA`
 --
 ALTER TABLE `SOCIETÀ_CONSEGNA`
@@ -182,19 +230,25 @@ ALTER TABLE `UTENTE`
 -- AUTO_INCREMENT per la tabella `LOCALE`
 --
 ALTER TABLE `LOCALE`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1680778672;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1958374512;
 
 --
 -- AUTO_INCREMENT per la tabella `MENU`
 --
 ALTER TABLE `MENU`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=998091918;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1966904464;
 
 --
 -- AUTO_INCREMENT per la tabella `ORDINE`
 --
 ALTER TABLE `ORDINE`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2064889091;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2136033153;
+
+--
+-- AUTO_INCREMENT per la tabella `PIATTO`
+--
+ALTER TABLE `PIATTO`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1492068333;
 
 --
 -- AUTO_INCREMENT per la tabella `SOCIETÀ_CONSEGNA`
