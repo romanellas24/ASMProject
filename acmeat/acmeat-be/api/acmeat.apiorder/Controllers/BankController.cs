@@ -30,7 +30,7 @@ namespace acmeat.api.order
         //TO DO INSERT FAKEBANK URL
         private static HttpClient sharedClient = new()
         {
-            BaseAddress = new Uri("https://jsonplaceholder.typicode.com"),
+            BaseAddress = new Uri("https://joliebank.romanellas.cloud/"),
         };
 
 
@@ -45,63 +45,51 @@ namespace acmeat.api.order
             
         }
 
-        //TO DO INSERT FAKEBANK URL
+        //TO DO SET TRANSACTIONID AS STRING
        
         [HttpPut]
-        public async Task<string> Pay(PaymentInfo paymentInfo)
+        public async Task<GeneralResponse> VerifyPayment(string  transactionId,int orderId)
         {
-            Console.WriteLine($"received payment Info  {System.Text.Json.JsonSerializer.Serialize(paymentInfo)}");
-
+            Console.WriteLine($"received payment Info for order with id {orderId}");
+            GeneralResponse generalResponse = new GeneralResponse();
             //TO DO INSERT THE BANK ENDOPOINT
-            await sharedClient.PutAsJsonAsync("/Pay", paymentInfo);
-
-            return GenerateJwtToken(paymentInfo.IBAN);
-
-        }
-
-
-
-
-        [HttpGet("{Token}")]
-        public async Task<PaymentInfo> GetPaymentInfo(string Token)
-        {
-            Console.WriteLine($"Token received: {Token}. Getting Payment info");
-            
-
-            return  new PaymentInfo(await _orderClient.GetPaymentInfo(Token));
-
-            // TO DO REMOVE WHEN BANK ENDPOINT IS READY THE REQUEST MUST BE DONE BY THE BANK CLIENT
-          
-        }
-
-        [HttpDelete("{Token}")]
-        public async Task<HttpResponseMessage> DeleteTransaction(string Token){
-            Console.WriteLine($"token received: {Token}. Deleting transaction");
-            var mock = Mock.Create<ITaskAsync>();
-            Mock.Arrange(() => mock.AsyncExecute(Token));
-            await mock.AsyncExecute(Token);
-
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-        }
-        private string GenerateJwtToken(string username)
-        {
-            var claims = new[]
+            BankPaymentVerification? bankPaymentVerification = await sharedClient.GetFromJsonAsync<BankPaymentVerification>(sharedClient.BaseAddress + "payments/"+ transactionId);
+            if (bankPaymentVerification != null && bankPaymentVerification.status == "Paid")
             {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+                _logger.LogInformation($"Payment confirmed, updating order {orderId}");
+                generalResponse = await _orderClient.UpdateOrder(new Order { Id = orderId, Quantity = 3 });
+                _logger.LogInformation($"order update : {generalResponse.Message}");
+                return generalResponse;
+            }
+            else
+            {
+                generalResponse.Message = "an error occured during token verification";
+                return generalResponse;
+            }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("acmeat/acmeat-be/api/key/keyfile"));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        }
 
-            var token = new JwtSecurityToken(
-                issuer: "yourdomain.com",
-                audience: "yourdomain.com",
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+
+        [HttpDelete("{transactionId}")]
+        public async Task<GeneralResponse> DeleteTransaction(string transactionId){
+            Console.WriteLine($"token received: {transactionId}. Deleting transaction");
+
+            GeneralResponse generalResponse = new GeneralResponse();
+
+            HttpResponseMessage? bankTransctiondeletion = await sharedClient.DeleteAsync(sharedClient.BaseAddress + "payments/"+ transactionId);
+            if (bankTransctiondeletion != null && bankTransctiondeletion.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                
+                _logger.LogInformation($"refound started");
+                generalResponse.Message = "OK";
+                return generalResponse;
+            }
+            else
+            {
+                generalResponse.Message = $"an error occured during transaction deletion code:{bankTransctiondeletion?.StatusCode} content: {bankTransctiondeletion?.Content}";
+                return generalResponse;
+            }
         }
     }
 }
