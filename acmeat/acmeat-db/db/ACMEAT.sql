@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Creato il: Giu 30, 2025 alle 16:27
+-- Creato il: Lug 03, 2025 alle 16:40
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.0.30
 
@@ -45,10 +45,11 @@ CREATE TABLE `LOCALE` (
 --
 
 INSERT INTO `LOCALE` (`ID`, `NOME`, `ORA_APERTURA`, `ORA_CHIUSURA`, `INDIRIZZO`, `GIORNI_APERTURA`, `DISPONIBILE`, `URL`) VALUES
-(1, 'Pizzeria Primavera', '09:00', '18:00', 'VIa Aldrovanni 16, Bologna', 'Lun,\r\nMar,\r\nMer,\r\nGio,\r\nVen,\r\nDom', 1, 'braciebasilico.romanellas.cloud'),
-(1156626705, 'via Ciccio Ingrassia', '09:00', '10:00', 'via Ciccio Ingrassia, San salvo', 'L,M,G,V', 1, ''),
-(1680778671, 'Pizzeria Cosmo', '09:00', '17:00', 'Via Calzone 23', 'Lun.Mar,Mer', 1, ''),
-(1958374511, 'Osteria mare e bosco', '09:00', '22:00', 'Via delle Moline 14, Bologna', 'Lun,Mar,mer.Gio,Ven,Sab', 1, 'osteriamareebosco.romanellas.cloud');
+(1, 'Braci e Basilico', '09:00', '18:00', 'VIa Aldrovanni 16, Bologna', 'Lun,\r\nMar,\r\nMer,\r\nGio,\r\nVen,\r\nDom', 1, 'braciebasilico.romanellas.cloud'),
+(1958374512, 'Osteria mare e bosco', '12:00', '22:00', 'Via Guglielmo Oberdan 16, Bologna', 'Lun,Mar,Mer,Gio,Ven', 1, 'osteriamareebosco.romanellas.cloud'),
+(1958374513, 'Il Vicoletto Segreto', '11:00', '22:00', 'Via Edoardo Ferravilla 3, Bologna', 'Lun', 1, 'ilvicolettosegreto.romanellas.cloud'),
+(1958374514, 'La Forchetta ribelle', '12:00', '22:00', 'Via Mondo 23, Bologna', 'Lun,Mar,Mer,Gio,Ven,Sab', 1, 'laforchettaribelle.romanellas.cloud'),
+(1958374515, 'Cantina Fior di sale', '12:00', '22:00', 'Contrada Vazzieri 12, Campobasso', 'Lun,Mar,Mer,Gio', 1, 'cantinafiordisale.romanellaas.cloud');
 
 -- --------------------------------------------------------
 
@@ -94,7 +95,7 @@ CREATE TABLE `ORDINE` (
   `ID_SOC_C` int(11) NOT NULL,
   `ORA_CONSEGNA` varchar(50) NOT NULL,
   `ORA_ACQUISTO` varchar(50) NOT NULL,
-  `ID_TRANSAZIONE` int(11) NOT NULL,
+  `ID_TRANSAZIONE` varchar(50) NOT NULL,
   `PREZZO` int(11) NOT NULL,
   `ID_MENU` int(11) NOT NULL,
   `QUANTITÀ` int(11) NOT NULL
@@ -105,15 +106,7 @@ CREATE TABLE `ORDINE` (
 --
 
 INSERT INTO `ORDINE` (`ID_UTENTE`, `ID`, `ID_LOCALE`, `ID_SOC_C`, `ORA_CONSEGNA`, `ORA_ACQUISTO`, `ID_TRANSAZIONE`, `PREZZO`, `ID_MENU`, `QUANTITÀ`) VALUES
-(1, 325255409, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
-(1, 540349496, 1, 0, '28-06-2025 19:45', '', 0, 2, 1, 2),
-(1, 726841941, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
-(1, 733051372, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
-(1, 846664558, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
-(1, 1113967202, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1),
-(1, 1655534448, 1, 0, '28-06-2025 19:45', '', 0, 2, 1, 2),
-(1, 1977689015, 1, 0, '06/06/2025 18:40:00', '', 0, 500, 0, 1),
-(1, 2136033152, 1, 0, '28-06-2025 18:45', '', 0, 1, 1, 1);
+(1, 998387053, 1, 0, '03-07-2025 19:00', '', '', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -159,7 +152,11 @@ CREATE TABLE `SOCIETÀ_CONSEGNA` (
 --
 
 INSERT INTO `SOCIETÀ_CONSEGNA` (`ID`, `NOME`, `INDIRIZZO`, `PREZZO`, `DISPONIBILE`) VALUES
-(1, 'deliveroo', 'via boznan, Ungheria', 2, 1);
+(1, 'deliveroo', 'via boznan, Ungheria', 2, 1),
+(2, 'cimangiamo.romanellas.cloud', 'Via Mondo 14, Bologna', 10, 1),
+(3, 'famechimica.romanellas.cloud', 'Via edoardo Ferravilla 19,Bologna', 12, 1),
+(4, 'panzafly.romanellas.cloud', 'Via delle Lame 116, Bologna', 5, 1),
+(5, 'toctocgnam.romanellas.cloud', 'Via Edmondo de Amicis 14, Campobasso ', 12, 1);
 
 -- --------------------------------------------------------
 
@@ -230,7 +227,7 @@ ALTER TABLE `UTENTE`
 -- AUTO_INCREMENT per la tabella `LOCALE`
 --
 ALTER TABLE `LOCALE`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1958374512;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1958374516;
 
 --
 -- AUTO_INCREMENT per la tabella `MENU`
@@ -254,7 +251,7 @@ ALTER TABLE `PIATTO`
 -- AUTO_INCREMENT per la tabella `SOCIETÀ_CONSEGNA`
 --
 ALTER TABLE `SOCIETÀ_CONSEGNA`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `UTENTE`
