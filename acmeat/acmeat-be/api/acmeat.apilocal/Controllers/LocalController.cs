@@ -125,6 +125,16 @@ namespace acmeat.api.local
 
         }
 
+        [HttpPost]
+        public async Task<server.local.client.GeneralResponse> CheckLocalAvailability(LocalAvailabilty localAvailabilty)
+        {
+            _logger.LogInformation($"Checking Local availability: {localAvailabilty.localUrl} ");
+
+            return await _localClient.CheckOrderAvailability(localAvailabilty.deliveryTime,localAvailabilty.dishes,localAvailabilty.localUrl);
+
+        }
+
+
         [HttpPatch]
         public async Task<server.local.client.GeneralResponse> UpdateLocal(LocalInfo localInfo)
         {

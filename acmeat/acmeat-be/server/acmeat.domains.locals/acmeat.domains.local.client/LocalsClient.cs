@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 using acmeat.db.order;
 using acmeat.server.order.client;
-
+using Azure.Core;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -38,7 +42,24 @@ namespace acmeat.server.local.client
 
     // }
 
+    public class AuthLocal
+    {
+        public AuthLocal() { }
+        public required string username { get; set; }
+        public required string password { get; set; }
+    }
 
+    public class AuthToken
+    {
+        [JsonConstructor]
+        public AuthToken(string jwt)
+        {
+
+            this.jwt = jwt;
+        }
+        [JsonProperty("jwt")]
+        public required string jwt { get; set; }
+    }
     public class LocalClient
     {
 
@@ -50,11 +71,11 @@ namespace acmeat.server.local.client
 
         private Dictionary<string, string> map = new Dictionary<string, string>()
         {
-            {"braciebasilico.romanellas.cloud","80f22804dd14e07889619ec9b1309bc9cd3ca6f9cfcaee3f17d4e8bdbd954197"},
-            {"osteriamareebosco.romanellas.cloud","a0e29ffd3c729ba0c2aafce4c7d9de96d6d63184b4429d9794af66b43a813d04"},
-            {"ilvicolettosegreto.romanellas.cloud","187f762581ae8eebf48e78c33c645c42009eef76441d3b5c328285f337db211c"},
-            {"laforchettaribelle.romanellas.cloud","bc94bbdf31f3f69617cae08a985b08bd8d8d094264cf7a7f83167cafc40455a5"},
-            {"cantinafiordisale.romanellaas.cloud","0ad7c62f635bcbb964f97540add5522d599c3af9fa603916245bc208571bd09e"},
+            {"braciebasilico.romanellas.cloud","468965f7f8b123e992f92d60c77a8866b9196ebcc769e9223f5705f550784487"},
+            {"osteriamareebosco.romanellas.cloud","522726a3c54729c462fb20e2fd83c271c12d33dc0eb3ceb75919aed1c4a8c209"},
+            {"ilvicolettosegreto.romanellas.cloud","07dab70e031d47001f7ebc0cee7759e0c1e7aa21e2e9f52ecae485ab29ddd599"},
+            {"laforchettaribelle.romanellas.cloud","99bb7268a02d722247f955d0b7abb0d889b00b292861599c33241cfba069e769"},
+            {"cantinafiordisale.romanellaas.cloud","3bd31909ecbf4ebd6f974d45a921f91dcdc893848e8012c5a6c35d4cbdf1ffb6"},
         };
         private readonly HttpClientHandler _httpClientHandler;
 
@@ -126,65 +147,108 @@ namespace acmeat.server.local.client
             return await _client.DeleteLocalAsync(local);
         }
 
-        //check if the order can be placed at specific  local
-        public async Task<GeneralResponse> CheckOrderAvailability(Order order, List<DishInfo> dishes, string localUrl)
+        public async Task AuthenticateToLocal(string localUrl)
         {
-            Console.WriteLine($"Order received: {JsonConvert.SerializeObject(order)} sending to local with: {localUrl}");
+            Console.WriteLine($"Authenticating to {localUrl}");
+
             string? localToken = map.GetValueOrDefault(localUrl);
 
             if (localToken != null)
             {
+                AuthLocal authLocal = new AuthLocal()
+                {
+                    username = "acmeat",
+                    password = localToken
+                };
+                HttpResponseMessage? jsonResponse = await _sharedClient.PostAsJsonAsync(new Uri(protocol + localUrl + "/auth/login"), authLocal);
 
-                _sharedClient.DefaultRequestHeaders.Add("Authorization", localToken);
+                if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    AuthToken? authToken = await jsonResponse.Content.ReadFromJsonAsync<AuthToken>();
+
+                    //flush headers
+                    _sharedClient.DefaultRequestHeaders.Clear();
+                    _sharedClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken?.jwt);
+
+                }
+                else
+                {
+                    throw new Exception($"Response from {localUrl} wasn't successfull {jsonResponse?.StatusCode} : {jsonResponse?.Content}");
+                }
             }
             else
             {
-                throw new Exception($"Local url{localUrl} is not defined in the allowed ones");
+                throw new Exception($"Local with url {localUrl} doesn't exist");
             }
 
 
-            var jsonResponse = await _sharedClient.PostAsJsonAsync(new Uri(protocol + localUrl + "/api/order"),
+
+        }
+
+        //check if the order can be placed at specific  local 
+        //IMPORTANT -> REQUEST COULD GO TIMEOUT 10S IN DEV AND 180S WHEN DEPLOYED
+        public async Task<GeneralResponse> CheckOrderAvailability(string deliveryTime, List<DishInfo> dishes, string localUrl)
+        {
+            Console.WriteLine($"Checking Availability to local with: {localUrl}");
+            await AuthenticateToLocal(localUrl);
+
+            var time = TimeSpan.Parse(deliveryTime);
+
+
+
+            HttpResponseMessage? jsonResponse = await _sharedClient.PostAsJsonAsync(new Uri(protocol + localUrl + "/api/order"),
 
             // TO DO: SEND THE REQUEST TO LOCALS
             new
             {
                 dishes,
-                deliveryTime = order.DeliveryTime,
-                dishIds = dishes.Select(dish => dish.Id)
+                deliveryTime = DateTime.Today.Add(time).ToUniversalTime().ToString("yyyy-MM-dd HH:mm"),
+                companyName = "acmeat"
 
             }
             );
-            Console.WriteLine($"{jsonResponse}");
 
             GeneralResponse resposne = new GeneralResponse();
-            resposne.Message = "OK";
-            return resposne;
-        }
-        
-        public async Task<GeneralResponse> CommunicateOrderCancellation(int orderId, string localUrl)
-        {
-            Console.WriteLine($"Order cacellation: {orderId}");
-            string? localToken = map.GetValueOrDefault(localUrl);
-
-            if (localToken != null)
+            if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
             {
 
-                _sharedClient.DefaultRequestHeaders.Add("Authorization", localToken);
+                resposne.Message = "OK";
+
             }
             else
             {
-                throw new Exception($"Local url{localUrl} is not defined in the allowed ones");
+                resposne.Message = $"Something went wrong checking awailability: {jsonResponse}";
             }
-           
+            
+             return resposne;
 
-            var jsonResponse = await _sharedClient.DeleteAsync(new Uri(protocol + localUrl + "/api/order/"+orderId)
+
+
+        }
+
+        public async Task<GeneralResponse> CommunicateOrderCancellation(int orderId, string localUrl)
+        {
+            Console.WriteLine($"Order cacellation: {orderId}");
+            await AuthenticateToLocal(localUrl);
+
+
+            var jsonResponse = await _sharedClient.DeleteAsync(new Uri(protocol + localUrl + "/api/order/" + orderId)
 
             );
-            Console.WriteLine($"{jsonResponse}");
+
+             GeneralResponse resposne = new GeneralResponse();
+            if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
+            {
+
+                resposne.Message = "OK";
+
+            }
+            else
+            {
+                resposne.Message = $"Something went wrong cancelling order: {jsonResponse}";
+            }
             
-            GeneralResponse resposne = new GeneralResponse();
-            resposne.Message = "OK";
-            return resposne;
+             return resposne;
         }
     }
 }
