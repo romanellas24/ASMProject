@@ -10,7 +10,7 @@ public class OrderInfo{
                     int UserId,
                      string DeliveryTime,
                      string PurchaseTime,
-                     int TransactionId,
+                     string TransactionId,
                      int Price,
                      int MenuId,
                      int Quantity,
@@ -47,7 +47,7 @@ public class OrderInfo{
     public int Id {get;set;}
     public string DeliveryTime {get;set;}
     public string PurchaseTime {get;set;}
-    public int TransactionId {get;set;}
+    public string TransactionId {get;set;}
     public int Price {get;set;}
     public int MenuId {get;set;}
     public int Quantity {get;set;}

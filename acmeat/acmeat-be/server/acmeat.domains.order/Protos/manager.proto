@@ -44,7 +44,7 @@ message Order{
 
   int32 Price = 7;
 
-  int32 TransactionId =8;
+  string TransactionId =8;
 
   int32 MenuId = 9;
   int32 Quantity = 10;
