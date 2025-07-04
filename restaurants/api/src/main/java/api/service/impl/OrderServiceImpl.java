@@ -93,6 +93,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Boolean existsOrder(Integer id, String companyName) {
+        return orderMappingDAO.existsByCompanyIdAndCompanyName(id, companyName);
+    }
+
+    @Override
     public Boolean deleteOrder(Integer id) {
         try{
             orderDAO.deleteById(id);
@@ -136,9 +141,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void saveMapping(ResponseOrderDTO responseOrderDTO, OrderMappingDTO orderMappingDTO) throws Exception {
+    public void saveMapping(OrderMappingDTO orderMappingDTO) throws Exception {
         OrderMapping orderMapping = new OrderMapping();
-        Order order = orderDAO.findById(responseOrderDTO.getOrder().getId()).orElse(null);
+        Order order = orderDAO.findById(orderMappingDTO.getOrderId()).orElse(null);
         if (order == null) {
             throw new NotFoundException("order not found");
         }

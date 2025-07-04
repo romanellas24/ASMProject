@@ -1,17 +1,21 @@
 package api.utils;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 public class StringToDate {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final ZoneId ITALIAN_ZONE_ID = ZoneId.of("Europe/Rome");
+
+    public static ZonedDateTime convertStringToZonedDateTime(String date) {
+        return LocalDateTime.parse(date, formatter).atZone(ITALIAN_ZONE_ID);
+    }
 
     public static LocalDateTime convertStringToLocalDateTime(String date) {
         return LocalDateTime.parse(date, formatter);
     }
+
 
     public static boolean isStringValid(String date) {
         try {

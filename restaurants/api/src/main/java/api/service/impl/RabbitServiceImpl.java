@@ -1,7 +1,6 @@
 package api.service.impl;
 
 import api.dto.*;
-import api.exception.ServerException;
 import api.service.OrderService;
 import api.service.RabbitService;
 import api.utils.PendingRequests;
@@ -55,11 +54,10 @@ public class RabbitServiceImpl implements RabbitService {
 
 
     @Override
-    public void publishWaitingOrder(OrderDTO waitingOrderDTO) {
+    public void publishWaitingOrder() {
         rabbitTemplate.convertAndSend(
                 RabbitConfig.ORDER_EXCHANGE,
-                RabbitConfig.WAITING_ORDERS_ROUTING_KEY,
-                waitingOrderDTO
+                RabbitConfig.WAITING_ORDERS_ROUTING_KEY
         );
     }
 
@@ -78,6 +76,15 @@ public class RabbitServiceImpl implements RabbitService {
                 RabbitConfig.ORDER_EXCHANGE,
                 RabbitConfig.NEW_ORDERS_ROUTING_KEY,
                 id
+        );
+    }
+
+    @Override
+    public void publishEvent(WebSocketEventDTO webSocketEventDTO) {
+        rabbitTemplate.convertAndSend(
+                RabbitConfig.ORDER_EXCHANGE,
+                RabbitConfig.EVENT_ROUTING_KEY,
+                webSocketEventDTO
         );
     }
 }

@@ -30,10 +30,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
@@ -61,33 +59,6 @@ public class OrderController {
 
     @Autowired
     private ZeebeClient zeebeClient;
-
-    @GetMapping("/{id}")
-    @ResponseBody
-    @Operation(description = "Get dish by id")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200",
-                    description = "dish found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = OrderDTO.class)
-                    )
-            ),
-            @ApiResponse(responseCode = "404", description = "id not found")
-    })
-    public OrderDTO getOrder(
-            @Parameter(description = "order's id", required = true, example = "1")
-            @PathVariable("id") Integer id,
-            @Parameter(description = "Optional company name. If provided, the order is is mapped to company order id",
-                    required = false, example = "acmeat")
-            @RequestParam(value = "company", required = false) String companyName) throws Exception {
-        if (companyName != null && !companyName.isEmpty()) {
-            companyName = companyName.toLowerCase();
-            return orderService.getOrder(id, companyName);
-        } else {
-            return orderService.getOrder(id);
-        }
-    }
 
     @GetMapping
     @ResponseBody
@@ -120,6 +91,35 @@ public class OrderController {
         return orderService.getOrdersByDayPaged(date, page);
     }
 
+    @GetMapping("/{id}")
+    @ResponseBody
+    @Operation(description = "Get dish by id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description = "dish found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = OrderDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "id not found")
+    })
+    public OrderDTO getOrder(
+            @Parameter(description = "order's id", required = true, example = "1")
+            @PathVariable("id") Integer id,
+            @Parameter(description = "Optional company name. If provided, the order is is mapped to company order id",
+                    required = false, example = "acmeat")
+            @RequestParam(value = "company", required = false) String companyName) throws Exception {
+        if (companyName != null && !companyName.isEmpty()) {
+            companyName = companyName.toLowerCase();
+            return orderService.getOrder(id, companyName);
+        } else {
+            return orderService.getOrder(id);
+        }
+    }
+
+
+
     @PostMapping
     @ResponseBody
     @Operation(
@@ -128,7 +128,7 @@ public class OrderController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order successfully created and being processed",
-                    content = @Content(schema = @Schema(implementation = ResponseOrderDTO.class))),
+                    content = @Content(schema = @Schema(implementation = ApiSuccessResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid date format or missing data",
                     content = @Content(schema = @Schema(implementation = ExceptionDTO.class))),
             @ApiResponse(responseCode = "404", description = "Some dish IDs not found or not in menu",
@@ -154,6 +154,7 @@ public class OrderController {
         //this will throw error for invalid id
         dishService.checkIds(orderRequest.getDishIds());
 
+        ZonedDateTime zonedDateTime = StringToDate.convertStringToZonedDateTime(orderRequest.getDeliveryTime());
         LocalDateTime dateTime = StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime());
         LocalDate date = StringToDate.convertStringToLocalDate(orderRequest.getDeliveryTime());
 
@@ -171,74 +172,16 @@ public class OrderController {
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("body", orderRequest);
-        
-        //TODO: CHANGE BPMN PROCESS ID
-        zeebeClient.newCreateInstanceCommand()
-                .bpmnProcessId("TODO: CHANGE")
-                .latestVersion()
+        variables.put("deliveryTimeZoned", zonedDateTime);
+
+        zeebeClient.newPublishMessageCommand()
+                .messageName("CreateOrderMessage")
+                .correlationKey(orderRequest.getCompanyName() + "-" + orderRequest.getId())
                 .variables(variables)
                 .send()
                 .join();
 
-
         return ResponseEntity.accepted().body(new ApiSuccessResponse("Valid order data. Elaborating..."));
-
-
-        //add order in db with status PENDING
-//        Integer orderId  = orderService.createOrder(orderRequest.getDishes(), StringToDate.convertStringToLocalDateTime(orderRequest.getDeliveryTime()));
-//
-//        DishDTO[] dishes = dishService.getDishes(orderRequest.getDishIds());
-//
-//        OrderDTO orderPendingDTO = OrderDTO.fromOrderRequest(orderRequest, dateTime, dishes, orderId);
-//
-//        rabbitService.publishWaitingOrder(orderPendingDTO);
-//
-//        log.info("waiting order: {} send in rabbit queue.", orderPendingDTO);
-//
-//        CompletableFuture<ResponseOrderDTO> future = new CompletableFuture<>();
-//        pendingRequests.put(future, orderId);
-//
-//        return future
-//                .orTimeout(3, TimeUnit.MINUTES)
-//                .thenApply(responseOrderDTO -> {
-//                    try{
-//                        if (responseOrderDTO.isAccepted()){
-//                            rabbitService.publishNewOrder(responseOrderDTO.getOrder().getId());
-//                            OrderMappingDTO orderMappingDTO = new OrderMappingDTO();
-//                            orderMappingDTO.setCompanyName(orderRequest.getCompanyName());
-//                            orderMappingDTO.setCompanyId(orderRequest.getId());
-//                            orderMappingDTO.setOrderId(responseOrderDTO.getOrder().getId());
-//
-//                            orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.ACCEPTED);
-//                            orderService.saveMapping(responseOrderDTO, orderMappingDTO);
-//                        } else {
-//                            orderService.updateOrderStatus(responseOrderDTO.getOrder().getId(), OrderStatus.REJECTED);
-//                        }
-//                    } catch (Exception e) {
-//                        log.error(e.getMessage());
-//                        throw new CompletionException("Error during processing of restaurant response", e);
-//                    }
-//                    return responseOrderDTO;
-//            }).exceptionally(ex -> {
-//
-//                Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-//                if (cause instanceof java.util.concurrent.TimeoutException){
-//                    log.warn("Order {} has been timed out.", orderId);
-//
-//                    try {
-//                        orderService.updateOrderStatus(orderId, OrderStatus.TIMED_OUT);
-//                        rabbitService.publishTimeout(orderId);
-//                        pendingRequests.timeout(orderId);
-//                    } catch (Exception e) {
-//                        log.error("Failure cleaning order {}", orderId, e);
-//                    }
-//
-//                    throw new api.exception.TimeoutException("restaurant didn't answer in 3 minutes for order " + orderId);
-//                }
-//                log.error("Error processing order {}", orderId, ex);
-//
-//                throw new CompletionException(ex);
-//            });
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
@@ -249,11 +192,11 @@ public class OrderController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order successfully deleted",
-                    content = @Content(schema = @Schema(implementation = DeleteOrderResponseDTO.class))),
+                    content = @Content(schema = @Schema(implementation = ApiSuccessResponse.class))),
             @ApiResponse(responseCode = "404", description = "Order not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDTO.class))),
     })
-    public DeleteOrderResponseDTO deleteOrder(
+    public ResponseEntity<ApiSuccessResponse> deleteOrder(
             @Parameter(description = "ID of the order to delete.", required = true, example = "42")
             @PathVariable("id") Integer id,
             @Parameter(description = "Optional company name. If provided, the order will be mapped to this company before deletion.",
@@ -261,12 +204,27 @@ public class OrderController {
             @RequestParam(value = "company", required = false) String companyName) throws Exception {
 
 
-        DeleteOrderResponseDTO deleteOrderResponseDTO = (companyName == null || companyName.isEmpty()) ? deleteOrderRest(id) : deleteOrderCompany(id,companyName);
-        if(deleteOrderResponseDTO.getDeleted()){
-            rabbitService.publishDeletedOrder(deleteOrderResponseDTO.getOrderId());
-            log.info("deleted order: {}.",deleteOrderResponseDTO.getOrderId());
+        if (((companyName == null || companyName.isEmpty())  && !orderService.existsOrder(id)) || !(orderService.existsOrder(id, Objects.requireNonNull(companyName).toLowerCase()))){
+            throw new NotFoundException("Id not found");
         }
-        return deleteOrderResponseDTO;
+
+        zeebeClient.newPublishMessageCommand()
+                .messageName("DeleteOrderMessage")
+                .correlationKey("delete("+id+"-"+companyName+")" )
+                .send()
+                .join();
+
+        return ResponseEntity.accepted().body(new ApiSuccessResponse("Valid order data. Elaborating..."));
+
+//
+//
+//
+//        DeleteOrderResponseDTO deleteOrderResponseDTO = (companyName == null || companyName.isEmpty()) ? deleteOrderRest(id) : deleteOrderCompany(id,companyName);
+//        if(deleteOrderResponseDTO.getDeleted()){
+//            rabbitService.publishDeletedOrder(deleteOrderResponseDTO.getOrderId());
+//            log.info("deleted order: {}.",deleteOrderResponseDTO.getOrderId());
+//        }
+//        return deleteOrderResponseDTO;
     }
 
     private DeleteOrderResponseDTO deleteOrderCompany(Integer id, String companyName) throws Exception {

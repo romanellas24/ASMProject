@@ -15,10 +15,12 @@ public interface OrderService {
     Integer createOrder(DishBasicInfoDTO[] dishes, LocalDateTime deliveryTime) throws Exception;
     void updateOrderStatus(Integer id, OrderStatus status) throws Exception;
     Boolean existsOrder(Integer id);
+    Boolean existsOrder(Integer id, String companyName);
     Boolean deleteOrder(Integer id);
     Boolean deleteOrder(OrderMappingDTO mapping);
     Boolean isIdCompanyValid(Integer id, String companyName) throws Exception;
     List<OrderDTO> getOrdersByDayPaged(LocalDate day, Integer page);
-    void saveMapping(ResponseOrderDTO responseOrderDTO, OrderMappingDTO orderMappingDTO) throws Exception;
+    void saveMapping(OrderMappingDTO orderMappingDTO) throws Exception;
     OrderMappingDTO getMapping(String companyName, Integer companyOrderId) throws Exception;
+
 }

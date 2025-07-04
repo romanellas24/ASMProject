@@ -10,6 +10,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DecisionOrderDTO implements Serializable {
-    private Integer id;
+    private String taskId;
     private Boolean accepted;
 }

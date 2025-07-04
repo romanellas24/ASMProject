@@ -86,41 +86,29 @@
 
 <script>
     const BASE_URL = "[[${beUrl}]]";
-    const jwt = localStorage.getItem("jwt");
-    const socket = new WebSocket("wss://" + BASE_URL + "/ws?token=" + jwt);
+    const WS_URL = "ws://" + BASE_URL + "/ws?token=" + localStorage.getItem("jwt");
+    const socket = new WebSocket(WS_URL);
     let heartbeatInterval;
 
     socket.onopen = () => {
-        console.log("WebSocket connesso a wss://" + BASE_URL + "/ws");
+        console.log("WebSocket connesso a " + WS_URL);
         heartbeatInterval = setInterval(() => {
             if (socket.readyState === WebSocket.OPEN) {
                 socket.send("ping");
             }
         }, 10000);
-    };
+        const command = {
+            command: "GET_WAITING_ORDERS",
+            payload: {}
+        };
 
-    socket.onmessage = (event) => {
         try {
-
-            if (event.data === "pong") {
-                return;
-            }
-
-            const data = JSON.parse(event.data);
-            console.log("Messaggio ricevuto:", data);
-
-            if (data.id && data.deliveryTime && Array.isArray(data.dishes)) {
-                renderOrderCard(data);
-            } else if (data.id && data.timeout === true) {
-                removeOrderCardById(data.id, true);
-            } else if (data.orderId && typeof data.accepted === 'boolean') {
-                removeOrderCardById(data.orderId, false);
-            }
-
-        } catch (err) {
-            console.error("Errore parsing messaggio:", event.data, err);
+            socket.send(JSON.stringify(command));
+            console.log("Comando inviato via WebSocket:", command);
+        } catch (error) {
+            console.error("Impossibile inviare comando via WebSocket:", error);
         }
-        updateOrderCount();
+
     };
 
     socket.onclose = () => {
@@ -128,9 +116,44 @@
         clearInterval(heartbeatInterval);
     };
 
-    function renderOrderCard(order) {
-        if (document.querySelector(`.order-card[data-order-id='${order.id}']`)) {
-            console.log(`Ordine ${order.id} già presente, ignoro.`);
+    socket.onmessage = (messageEvent) => {
+        if (messageEvent.data === "pong") {
+            return;
+        }
+        try {
+            const event = JSON.parse(messageEvent.data);
+            console.log("Evento ricevuto:", event);
+
+            switch (event.eventType) {
+                case "ORDER_WAITING":
+                    rerenderAllTasks(event.payload.tasks || []);
+                    break;
+                case "ORDER_DELETED":
+                    removeOrderCardById(event.payload.orderId, false);
+                    break;
+                case "ORDER_TIMED_OUT":
+                    removeOrderCardById(event.payload.orderId, true);
+                    break;
+                default:
+                    console.warn("Tipo di evento non gestito:", event.eventType);
+            }
+        } catch (err) {
+            console.error("Errore durante la gestione del messaggio WebSocket:", err);
+        }
+    };
+
+    function rerenderAllTasks(tasks) {
+        const container = document.getElementById("orders-container");
+        container.innerHTML = '';
+        tasks.forEach(task => renderOrderCard(task));
+        updateOrderCount();
+    }
+
+    function renderOrderCard(task) {
+        const orderData = task.orderData;
+        const taskId = task.taskId;
+
+        if (document.querySelector(`.order-card[data-task-id='${taskId}']`)) {
             return;
         }
 
@@ -138,37 +161,55 @@
         const clone = template.content.cloneNode(true);
         const cardElement = clone.querySelector(".order-card");
 
-        cardElement.dataset.orderId = order.id;
-        clone.querySelector(".order-id-badge").textContent = `#${order.id}`;
+        cardElement.dataset.orderId = orderData.id;
+        cardElement.dataset.taskId = taskId;
 
-        const deliveryTime = new Date(order.deliveryTime);
+        clone.querySelector(".order-id-badge").textContent = `#${orderData.id}`;
+
+        const deliveryTime = new Date(orderData.deliveryTime);
         clone.querySelector(".delivery-time").textContent = deliveryTime.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 
-        const formattedPrice = (order.totalPrice || 0).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
+        const formattedPrice = (orderData.totalPrice || 0).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
         clone.querySelector(".total-price").textContent = formattedPrice;
 
         const dishList = clone.querySelector(".dish-list");
-        order.dishes.forEach(dish => {
+        orderData.dishes.forEach(dishInfo => {
             const li = document.createElement("li");
-            li.textContent = `${dish.dish.name || 'Piatto ' + dish.dish.id} (x${dish.quantity})`;
+            li.textContent = `${dishInfo.dish.name || 'Piatto Sconosciuto'} (x${dishInfo.quantity})`;
             dishList.appendChild(li);
         });
 
-        clone.querySelector(".btn-accept").addEventListener("click", () => sendDecision(order.id, true));
-        clone.querySelector(".btn-reject").addEventListener("click", () => sendDecision(order.id, false));
+        clone.querySelector(".btn-accept").addEventListener("click", (e) => sendDecision(e.currentTarget.closest('.order-card'), true));
+        clone.querySelector(".btn-reject").addEventListener("click", (e) => sendDecision(e.currentTarget.closest('.order-card'), false));
 
         document.getElementById("orders-container").prepend(clone);
     }
 
-    function sendDecision(id, accepted) {
-        if (!id) {
-            console.warn("ID Ordine mancante!");
+    function sendDecision(cardElement, accepted) {
+        const taskId = cardElement.dataset.taskId;
+        if (!taskId) {
+            console.error("ID del Task mancante! Impossibile inviare il comando.");
             return;
         }
-        const decision = { id, accepted };
-        socket.send(JSON.stringify(decision));
-        console.log("Inviata decisione:", decision);
-        removeOrderCardById(id, false);
+
+        const command = {
+            command: "COMPLETE_TASK_WAITING",
+            payload: {
+                taskId: taskId,
+                accepted: accepted
+            }
+        };
+
+        try {
+            socket.send(JSON.stringify(command));
+            console.log("Comando inviato via WebSocket:", command);
+
+            const orderId = cardElement.dataset.orderId;
+            removeOrderCardById(orderId, false);
+        } catch (error) {
+            console.error("Impossibile inviare comando via WebSocket:", error);
+            alert("Errore di connessione. Impossibile comunicare la decisione.");
+        }
     }
 
     function removeOrderCardById(orderId, isTimeout) {
