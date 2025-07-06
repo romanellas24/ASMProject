@@ -9,7 +9,6 @@ public interface DishDao
   {
     public Dish GetDishById(int DishId);
     public List<Dish> GetDishsByMenuId(int MenuId);
-  public List<Dish> GetDishsByDate(string date);
     public List<Dish> GetDishs();
 
 

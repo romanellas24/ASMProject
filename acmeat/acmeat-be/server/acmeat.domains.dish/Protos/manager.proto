@@ -7,7 +7,6 @@ service GrpcDish {
   rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
   rpc GetDishById(Id)returns(Dish);
   rpc GetDishsByMenuId(Id)returns(DishList);
-  rpc GetDishsByDate(Date)returns(DishList);
   rpc GetDishs(Id) returns (DishList);
   rpc CreateDish(Dish) returns(GeneralResponse);
   rpc UpdateDish(Dish) returns (GeneralResponse);
@@ -46,7 +45,6 @@ message Dish{
 
    int32 Price=4 ;
    int32 MenuId=5;
-   string Date=6;
 
    
 }

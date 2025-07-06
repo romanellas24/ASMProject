@@ -196,7 +196,7 @@ public class GrpcDishManagerService : server.dish.manager.GrpcDish.GrpcDishBase
 
     public server.dish.Dish ConvertGrpcToServerModel(server.dish.manager.Dish dish)
     {
-        return new server.dish.Dish(dish.Id,dish.Name,dish.Description,dish.Price,dish.Price,dish.Date);
+        return new server.dish.Dish(dish.Id,dish.Name,dish.Description,dish.Price,dish.Price);
     }
 
 
@@ -208,7 +208,6 @@ public class GrpcDishManagerService : server.dish.manager.GrpcDish.GrpcDishBase
         disht.Name = dish.Name;
         disht.Price = dish.Price;
         disht.MenuId = dish.MenuId;
-        disht.Date = dish.Date;
         return disht;
 
     }

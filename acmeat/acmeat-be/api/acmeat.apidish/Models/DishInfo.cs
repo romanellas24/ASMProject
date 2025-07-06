@@ -7,27 +7,15 @@ public class DishInfo
 
     [JsonConstructor]
     public DishInfo(
-            string Name, string Description, int Price, int MenuId, string Date)
+            string Name, string Description, int Price, int MenuId)
     {
        this.Id = new Random().Next();
         this.Description = Description;
         this.Name = Name;
         this.Price = Price;
         this.MenuId = MenuId;
-        this.Date = Date;
     }
 
-
-    public DishInfo(
-            string Name, string Description, int Price, int MenuId)
-    {
-       this.Id = Id;
-        this.Description = Description;
-        this.Name = Name;
-        this.Price = Price;
-        this.MenuId = MenuId;
-        this.Date =  DateTime.Now.ToString("yyyy-MM-dd");
-    }
 
     public DishInfo(acmeat.server.dish.client.Dish dish)
     {
@@ -37,7 +25,7 @@ public class DishInfo
         this.Name = dish.Name;
         this.Price = dish.Price;
         this.MenuId = dish.MenuId;
-        this.Date = dish.Date;
+        
 
     }
 
@@ -53,7 +41,7 @@ public class DishInfo
     public int MenuId { get; set; }
 
 
-    public string Date { get; set; }
+    
     public acmeat.server.dish.client.Dish Convert()
     {
         acmeat.server.dish.client.Dish dish = new acmeat.server.dish.client.Dish();
@@ -62,7 +50,7 @@ public class DishInfo
         dish.Name = this.Name;
         dish.Price = this.Price;
         dish.MenuId = this.MenuId;
-        dish.Date = this.Date;
+        
         return dish;
     }
 }

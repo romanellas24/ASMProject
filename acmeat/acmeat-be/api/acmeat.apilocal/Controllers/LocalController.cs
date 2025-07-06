@@ -79,16 +79,32 @@ namespace acmeat.api.local
         public async Task<server.local.client.GeneralResponse> ApplyDailyUpdate(DailyUpdate dailyUpdate)
         {
             _logger.LogInformation($"Applying Daily Update from : {dailyUpdate.LocalUrl}");
+            //https://learn.microsoft.com/en-us/dotnet/standard/datetime/how-to-use-dateonly-timeonly
+            TimeOnly timeOnly = TimeOnly.FromDateTime(DateTime.Now);
+            _logger.LogInformation($"Current time {timeOnly.Hour}:{timeOnly.Minute}");
+
+
+
+            if (timeOnly.Hour < deadLineHour)
+            {
+                _logger.LogInformation($"Cannot update the local availability its too late...");
+                server.local.client.GeneralResponse response = new server.local.client.GeneralResponse();
+                response.Message = "Cannot update the local availability its too late...";
+                return response;
+            }
+            else
+            {
+
 
              _logger.LogInformation($"Getting Local with Url : {dailyUpdate.LocalUrl}");
             Local local = await _localClient.GetLocalByUrl(dailyUpdate.LocalUrl);
             Menu menu = new Menu()
             {
-                Description = "Daily Menu",
+                Description = "Daily Menu-"+dailyUpdate.LocalUrl+"-"+DateTime.Now,
                 LocalId = local.Id,
-                Price = 0,
+                Price = dailyUpdate.dishes.Select(dish => dish.Price).Aggregate((price1,price2) => price1 + price2),
                 Type = "Carne",
-                Id = new Random().Next()
+                Id = dailyUpdate.dishes.First().MenuId
                 
             };
 
@@ -108,7 +124,7 @@ namespace acmeat.api.local
             dailyUpdate.dishes.ForEach(
                 async dish =>
                 {
-                    dish.Date = DateTime.Now.ToString("yyyy-MM-dd");
+                  
                     dishManagerResponse = await _dishClient.CreateDish(dish);
 
 
@@ -120,6 +136,9 @@ namespace acmeat.api.local
             );
 
             return new server.local.client.GeneralResponse() { Message = "OK" };
+               
+            }
+
 
 
 
@@ -155,29 +174,6 @@ namespace acmeat.api.local
         }
 
 
-        [HttpPost]
-        public async Task<server.local.client.GeneralResponse> SetUnavailabilityByLocalId(int Id)
-        {
-            _logger.LogInformation($"Local with Id: {Id} is unavailable today");
-            //https://learn.microsoft.com/en-us/dotnet/standard/datetime/how-to-use-dateonly-timeonly
-            TimeOnly timeOnly = TimeOnly.FromDateTime(DateTime.Now);
-            _logger.LogInformation($"Current time {timeOnly.Hour}:{timeOnly.Minute}");
-
-            if (timeOnly.Hour > deadLineHour)
-            {
-                _logger.LogInformation($"Cannot update the local availability its too late...");
-                server.local.client.GeneralResponse response = new server.local.client.GeneralResponse();
-                response.Message = "Cannot update the local availability its too late...";
-                return response;
-            }
-            else
-            {
-                _logger.LogInformation("Setting unavailability...");
-                Local local = await _localClient.GetLocalById(Id);
-                local.Available = false;
-                return await _localClient.UpdateLocal(local);
-
-            }
-        }
+        
     }
 }

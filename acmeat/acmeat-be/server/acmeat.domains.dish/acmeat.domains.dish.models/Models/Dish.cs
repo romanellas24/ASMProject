@@ -11,7 +11,7 @@ public class Dish
 
     [JsonConstructor]
     public Dish(
-              int Id, string Name, string Description, int Price, int MenuId, string Date
+              int Id, string Name, string Description, int Price, int MenuId
                )
     {
         this.Id = new Random().Next();
@@ -19,7 +19,6 @@ public class Dish
         this.Name = Name;
         this.Price = Price;
         this.MenuId = MenuId;
-        this.Date = Date;
 
     }
 
@@ -30,7 +29,6 @@ public class Dish
         this.Name = dish.Name;
         this.Price = dish.Price;
         this.MenuId = dish.MenuId;
-        this.Date = dish.Date;
 
     }
 
@@ -45,7 +43,7 @@ public class Dish
     public int MenuId { get; set; }
 
 
-    public string Date { get; set; }
+    // public string Date { get; set; }
 
     public acmeat.db.dish.Dish Convert()
     {
@@ -55,7 +53,6 @@ public class Dish
         dish.Name = this.Name;
         dish.Price = this.Price;
         dish.MenuId = this.MenuId;
-        dish.Date = this.Date;
         return dish;
     }
 }

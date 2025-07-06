@@ -18,7 +18,7 @@ public static class Utils{
     }
 
     public static db.dish.Dish ConvertServerElementIntoDbELement(Dish dish){
-        db.dish.Dish dishDB = new db.dish.Dish(dish.Id,dish.Name,dish.Description,dish.Price,dish.Price,dish.Date);
+        db.dish.Dish dishDB = new db.dish.Dish(dish.Id,dish.Name,dish.Description,dish.Price,dish.Price);
 
         dishDB.Id = dish.Id;
 

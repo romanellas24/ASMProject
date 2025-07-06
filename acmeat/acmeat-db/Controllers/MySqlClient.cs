@@ -236,12 +236,6 @@ namespace acmeat.db.mysql
         }
 
 
-        public List<Dish> GetDishsByDate(string date)
-        {
-            _logger.LogInformation($"Getting Dishes for date {date}");
-            return _DishContext.GetDishsByDate(date);
-        }
-
         public async Task CreateDish(Dish Dish)
         {
             _logger.LogInformation($"Creating Dish with id: {Dish.Id}");

@@ -33,9 +33,6 @@ public class DishContext:MySqlContext
         return PIATTO.Where(dish => dish.MenuId == MenuId).ToList();
     }
     
-    public List<Dish> GetDishsByDate(string Date){
-        return PIATTO.Where(dish => dish.Date == Date).ToList();
-    }
 
     public async Task CreateDish(Dish Dish)
     {

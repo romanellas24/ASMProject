@@ -9,14 +9,13 @@ public class Dish
     {
     }
 
-    public Dish(int Id, string Name, string Description, int Price, int MenuId, string Date)
+    public Dish(int Id, string Name, string Description, int Price, int MenuId)
     {
         this.Id = Id;
         this.Name = Name;
         this.Description = Description;
         this.Price = Price;
         this.MenuId = MenuId;
-        this.Date = Date;
     }
 
     public int Id { get; set; }
@@ -31,7 +30,4 @@ public class Dish
 
     [Column("MENU_ID")]
     public int MenuId { get; set; }
-    
-    [Column("DATA")]
-    public string Date {get;set;}
 }

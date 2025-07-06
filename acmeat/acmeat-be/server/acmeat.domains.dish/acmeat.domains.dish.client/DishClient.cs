@@ -46,14 +46,6 @@ namespace acmeat.server.dish.client
             return await _client.GetDishsByMenuIdAsync(id1);
         }
 
-
-        public async Task<DishList> GetDishsByDate(string date)
-        {
-            Date id1 = new Date();
-            id1.Date_ = date;
-            return await _client.GetDishsByDateAsync(id1);
-        }
-
         public async Task<DishList> GetDishList()
         {
             Id id1 = new Id();

@@ -53,10 +53,4 @@ public class DishReader : DishDao
 
     }
     
-     public List<acmeat.server.dish.Dish>GetDishsByDate(string date){
-        _logger.LogInformation($"Getting Dishs from Local with id : {date}");
-       List<acmeat.db.dish.Dish> dishs= _mysqlClient.GetDishsByDate(date);
-        return Utils.ConvertDbListToServerList(dishs); 
-       
-    }
 }
