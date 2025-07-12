@@ -71,7 +71,7 @@ public class GeneralJobWorker extends Worker {
             MenuDTO menu = this.menuService.getMenu(LocalDate.now());
             String localUrl = "https://" + localName + ".romanellas.cloud";
             client.newCompleteCommand(job.getKey())
-                    .variable("closed", Map.of("menu", menu, "url", localUrl))
+                    .variables(Map.of("menu", menu, "url", localUrl))
                     .send()
                     .join();
 
