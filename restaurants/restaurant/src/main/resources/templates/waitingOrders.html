@@ -86,7 +86,7 @@
 
 <script>
     const BASE_URL = "[[${beUrl}]]";
-    const WS_URL = "ws://" + BASE_URL + "/ws?token=" + localStorage.getItem("jwt");
+    const WS_URL = "wss://" + BASE_URL + "/ws?token=" + localStorage.getItem("jwt");
     const socket = new WebSocket(WS_URL);
     let heartbeatInterval;
 

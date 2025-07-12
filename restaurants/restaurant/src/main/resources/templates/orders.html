@@ -61,10 +61,8 @@
 
 <script>
   const BASE_URL = "[[${beUrl}]]";
-  const WS_URL = "ws://" + BASE_URL + "/ws";
-  //TODO: CHANGE DEBUG
-  const API_URL = "http://localhost:8080";
-  // const API_URL = "http://" + BASE_URL + "/api";
+  const WS_URL = "wss://" + BASE_URL + "/ws";
+  const API_URL = "https://" + BASE_URL + "/api";
   let jwt = localStorage.getItem("jwt");
   let socket;
   let heartbeatInterval;
