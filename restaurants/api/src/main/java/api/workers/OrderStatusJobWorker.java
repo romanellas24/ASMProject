@@ -18,6 +18,7 @@ import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -25,20 +26,28 @@ import java.time.LocalDateTime;
 
 @Component
 @Slf4j
-public class OrderStatusJobWorker {
+public class OrderStatusJobWorker extends Worker {
 
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private DishService dishService;
-    @Autowired
-    private MenuService menuService;
+    private final OrderService orderService;
+    private final DishService dishService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    public OrderStatusJobWorker(ObjectMapper objectMapper,
+                                DishService dishService,
+                                OrderService orderService,
+                                @Value("${local.server.name}") String localName){
+        super(localName, objectMapper);
+        this.dishService = dishService;
+        this.orderService = orderService;
+    }
 
     @JobWorker(type = "create_pending_order")
     public void handleCreatePendingOrder(final JobClient client, final ActivatedJob job) {
+
+        if (!isJobForThisWorker(job)){
+            ignoreJob(client, job);
+            return;
+        }
+
         log.info("Execution of create order in pending job for process #{}", job.getProcessInstanceKey());
 
         final CreateOrderDTO body = objectMapper.convertValue(job.getVariablesAsMap().get("body"), CreateOrderDTO.class);
@@ -65,6 +74,11 @@ public class OrderStatusJobWorker {
 
     @JobWorker(type = "set_order_status_timed_out")
     public void handleSetOrderStatusTimedOut(final JobClient client, final ActivatedJob job) {
+
+        if (!isJobForThisWorker(job)){
+            ignoreJob(client, job);
+            return;
+        }
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Execution of order timeout exception. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
 
@@ -86,6 +100,12 @@ public class OrderStatusJobWorker {
 
     @JobWorker(type = "set_order_status_rejected")
     public void handleSetOrderStatusRejected(final JobClient client, final ActivatedJob job) {
+
+        if (!isJobForThisWorker(job)){
+            ignoreJob(client, job);
+            return;
+        }
+
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Order rejected. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
 
@@ -107,6 +127,12 @@ public class OrderStatusJobWorker {
 
     @JobWorker(type = "set_order_status_accepted")
     public void handleSetOrderStatusAccepted(final JobClient client, final ActivatedJob job) {
+
+        if (!isJobForThisWorker(job)){
+            ignoreJob(client, job);
+            return;
+        }
+
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Order accepted. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
 
@@ -128,6 +154,12 @@ public class OrderStatusJobWorker {
 
     @JobWorker(type = "set_order_status_completed")
     public void handleSetOrderStatusCompleted(final JobClient client, final ActivatedJob job) {
+
+        if (!isJobForThisWorker(job)){
+            ignoreJob(client, job);
+            return;
+        }
+
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Order completed. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
 
@@ -149,6 +181,12 @@ public class OrderStatusJobWorker {
 
     @JobWorker(type = "delete_order_company")
     public void deleteOrder(final JobClient client, final ActivatedJob job) {
+
+        if (!isJobForThisWorker(job)){
+            ignoreJob(client, job);
+            return;
+        }
+
         final CreateOrderDTO body = objectMapper.convertValue(job.getVariablesAsMap().get("body"), CreateOrderDTO.class);
         final Integer id = body.getId();
         String companyName = body.getCompanyName();

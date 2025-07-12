@@ -1,8 +1,6 @@
 package api.controller;
 
-import api.dao.OrderMappingDAO;
 import api.dto.*;
-import api.entity.Order;
 import api.exception.CompanyIdException;
 import api.exception.InvalidDate;
 import api.exception.InvalidDateTimeFormat;
@@ -10,9 +8,6 @@ import api.exception.NotFoundException;
 import api.service.DishService;
 import api.service.MenuService;
 import api.service.OrderService;
-import api.service.RabbitService;
-import api.utils.OrderStatus;
-import api.utils.PendingRequests;
 import api.utils.StringToDate;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +28,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -49,16 +42,13 @@ public class OrderController {
     private OrderService orderService;
 
     @Autowired
-    private RabbitService rabbitService;
-
-    @Autowired
-    private PendingRequests pendingRequests;
-
-    @Autowired
     private MenuService menuService;
 
     @Autowired
     private ZeebeClient zeebeClient;
+
+    @Value("${local.server.name}")
+    private String localName;
 
     @GetMapping
     @ResponseBody
@@ -173,6 +163,7 @@ public class OrderController {
         Map<String, Object> variables = new HashMap<>();
         variables.put("body", orderRequest);
         variables.put("deliveryTimeZoned", zonedDateTime);
+        variables.put("restaurant", this.localName);
 
         zeebeClient.newPublishMessageCommand()
                 .messageName("CreateOrderMessage")
@@ -216,15 +207,6 @@ public class OrderController {
 
         return ResponseEntity.accepted().body(new ApiSuccessResponse("Valid order data. Elaborating..."));
 
-//
-//
-//
-//        DeleteOrderResponseDTO deleteOrderResponseDTO = (companyName == null || companyName.isEmpty()) ? deleteOrderRest(id) : deleteOrderCompany(id,companyName);
-//        if(deleteOrderResponseDTO.getDeleted()){
-//            rabbitService.publishDeletedOrder(deleteOrderResponseDTO.getOrderId());
-//            log.info("deleted order: {}.",deleteOrderResponseDTO.getOrderId());
-//        }
-//        return deleteOrderResponseDTO;
     }
 
     private DeleteOrderResponseDTO deleteOrderCompany(Integer id, String companyName) throws Exception {

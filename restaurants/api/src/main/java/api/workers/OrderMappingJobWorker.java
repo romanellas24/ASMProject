@@ -11,19 +11,30 @@ import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class OrderMappingJobWorker {
-    @Autowired
-    OrderService orderService;
+public class OrderMappingJobWorker extends Worker {
+    private final OrderService orderService;
 
-    @Autowired
-    ObjectMapper objectMapper;
+    public OrderMappingJobWorker(@Value("${local.server.name}") String localName,
+                                 ObjectMapper objectMapper,
+                                 OrderService orderService) {
+        super(localName, objectMapper);
+        this.orderService = orderService;
+    }
+
 
     @JobWorker(type = "save_order_mapping")
     public void saveOrderMapping(final JobClient client, final ActivatedJob job){
+
+        if (!isJobForThisWorker(job)){
+            ignoreJob(client, job);
+            return;
+        }
+
         final CreateOrderDTO body = objectMapper.convertValue(job.getVariablesAsMap().get("body"), CreateOrderDTO.class);
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         OrderMappingDTO orderMappingDTO = new OrderMappingDTO();
