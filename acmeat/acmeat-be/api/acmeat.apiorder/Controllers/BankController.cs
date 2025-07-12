@@ -45,9 +45,7 @@ namespace acmeat.api.order
             
         }
 
-        //TO DO SET TRANSACTIONID AS STRING
-       
-        [HttpPut]
+        [HttpPatch]
         public async Task<GeneralResponse> VerifyPayment(string  transactionId,int orderId)
         {
             Console.WriteLine($"received payment Info for order with id {orderId}");
@@ -57,7 +55,13 @@ namespace acmeat.api.order
             if (bankPaymentVerification != null && bankPaymentVerification.status == "Paid")
             {
                 _logger.LogInformation($"Payment confirmed, updating order {orderId}");
-                generalResponse = await _orderClient.UpdateOrder(new Order { Id = orderId, Quantity = 3 });
+
+                //UPDATE
+                Order orderToUpdate = await _orderClient.GetOrderById(orderId);
+                orderToUpdate.PurchaseTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                orderToUpdate.TransactionId = transactionId;
+
+                generalResponse = await _orderClient.UpdateOrder(orderToUpdate);
                 _logger.LogInformation($"order update : {generalResponse.Message}");
                 return generalResponse;
             }

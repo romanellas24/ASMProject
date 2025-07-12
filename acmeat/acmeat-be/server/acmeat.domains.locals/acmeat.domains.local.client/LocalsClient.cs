@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Zeebe.Client;
 using acmeat.db.order;
 using acmeat.server.order.client;
 using Azure.Core;
@@ -15,6 +15,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Azure;
 //PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.local.client
 {
@@ -173,7 +174,7 @@ namespace acmeat.server.local.client
                 }
                 else
                 {
-                    throw new Exception($"Response from {localUrl} wasn't successfull {jsonResponse?.StatusCode} : {jsonResponse?.Content}");
+                    throw new Exception($"Response from {localUrl} wasn't successfull {jsonResponse?.StatusCode} : {jsonResponse?.Content.ToString()}");
                 }
             }
             else
@@ -219,12 +220,154 @@ namespace acmeat.server.local.client
             {
                 resposne.Message = $"Something went wrong checking awailability: {jsonResponse}";
             }
-            
-             return resposne;
+
+            return resposne;
 
 
 
         }
+
+
+
+        //check if the order can be placed at specific  local 
+        //IMPORTANT -> REQUEST COULD GO TIMEOUT 10S IN DEV AND 180S WHEN DEPLOYED
+        public async Task<GeneralResponse> CheckOrderAvailabilityServiceWorkerAsync(string deliveryTime, List<DishInfo> dishes, string localUrl, ZeebeClient zeebeClient)
+        {
+            Console.WriteLine($"Checking Availability to local with: {localUrl}");
+            GeneralResponse resposne = new GeneralResponse();
+            
+             var tcs = new TaskCompletionSource<GeneralResponse>();
+
+            var tcs2 = new TaskCompletionSource<GeneralResponse>();
+
+
+             var NotifyOrderNotPlacedWorker = zeebeClient
+               .NewWorker()
+               .JobType("NotifyOrderNotPlaced")
+               .Handler(async (jobClient, job) =>
+               {
+                   var localResponse = new GeneralResponse();
+
+                   try
+                   {
+
+                       await jobClient
+                           .NewCompleteJobCommand(job.Key)
+                           .Send();
+
+                       localResponse.Message = "Order canceled. You can order only between 12-14 and 19-22";
+                       tcs2.TrySetResult(localResponse);
+                   }
+                   catch (Exception ex)
+                   {
+                       localResponse.Message = $"Exception in handler: {ex.Message}";
+                       tcs2.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
+                   }
+
+                  
+               })
+               .MaxJobsActive(1)
+               .Name(Environment.MachineName)
+               .PollInterval(TimeSpan.FromSeconds(1))
+               .Timeout(TimeSpan.FromSeconds(10))
+               .Open();
+
+
+             
+
+
+
+var worker = zeebeClient
+       .NewWorker()
+       .JobType("CheckLocalAvailabilty")
+       .Handler( async(jobClient, job) =>
+       {
+           // TO DECOMMENT
+
+           //  AuthenticateToLocal(localUrl).GetAwaiter().GetResult();
+                string jsonStrng =job.Type;
+           var time = TimeSpan.Parse(deliveryTime);
+           var localResponse = new GeneralResponse();
+
+           
+
+
+           //TO DECOMMENT
+           //  HttpResponseMessage? jsonResponse = _sharedClient.PostAsJsonAsync(new Uri(protocol + localUrl + "/api/order"),
+
+           //  // TO DO: SEND THE REQUEST TO LOCALS
+           //  new
+           //  {
+           //      dishes,
+           //      deliveryTime = DateTime.Today.Add(time).ToUniversalTime().ToString("yyyy-MM-dd HH:mm"),
+           //      companyName = "acmeat"
+
+           //  }
+           //  ).GetAwaiter().GetResult();
+
+           //TO DECOMMENT
+           //  if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
+           //  {
+
+           localResponse.Message = "OK";
+           await jobClient
+            .NewCompleteJobCommand(job.Key)
+            .Send()
+        ;
+           tcs.TrySetResult(localResponse);
+
+           // TO DECOMMENT
+           //  }
+           //  else
+           //  {
+           // resposne.Message = $"Something went wrong checking awailability: {jsonResponse}";
+                // FOR EVERY RESPONSE DIFFERENT FROM OK
+                //            jobClient.NewThrowErrorCommand(job.Key)
+           //   .ErrorCode("500")
+           //   .ErrorMessage($"{resposne.Message}")
+           //   .Send()
+           //   .GetAwaiter()
+           //   .GetResult();
+           //  }
+
+       })
+       .MaxJobsActive(1)
+       .Name(Environment.MachineName)
+       .PollInterval(TimeSpan.FromSeconds(1))
+       .Timeout(TimeSpan.FromSeconds(10))
+       .Open();
+
+            // signal.WaitOne(10000);
+
+
+            // }
+            // ;
+
+
+
+
+            //IF BUSINESS RULES ARE BROKEN DON'T CREATE THE ORDER
+
+          var  taskCompleted = await Task.WhenAny(tcs.Task, tcs2.Task);
+            resposne = await taskCompleted;
+
+
+
+
+                return resposne;
+            
+
+            
+
+
+
+
+        }
+
+
+
+
+        
 
         public async Task<GeneralResponse> CommunicateOrderCancellation(int orderId, string localUrl)
         {
@@ -236,7 +379,7 @@ namespace acmeat.server.local.client
 
             );
 
-             GeneralResponse resposne = new GeneralResponse();
+            GeneralResponse resposne = new GeneralResponse();
             if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
             {
 
@@ -247,8 +390,8 @@ namespace acmeat.server.local.client
             {
                 resposne.Message = $"Something went wrong cancelling order: {jsonResponse}";
             }
-            
-             return resposne;
+
+            return resposne;
         }
     }
 }

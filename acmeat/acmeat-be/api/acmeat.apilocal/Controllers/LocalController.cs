@@ -85,7 +85,7 @@ namespace acmeat.api.local
 
 
 
-            if (timeOnly.Hour < deadLineHour)
+            if (timeOnly.Hour > deadLineHour)
             {
                 _logger.LogInformation($"Cannot update the local availability its too late...");
                 server.local.client.GeneralResponse response = new server.local.client.GeneralResponse();

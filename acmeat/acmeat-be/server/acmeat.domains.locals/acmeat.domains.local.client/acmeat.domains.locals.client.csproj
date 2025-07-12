@@ -5,7 +5,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>Acmeat.Server.Local.ClientTest</PackageId>
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -17,6 +17,7 @@
        <PackageReference Include="Google.Protobuf" Version="3.30.2" />
        <PackageReference Include="Acmeat.Db.ClientTest" Version="1.1.4" />
        <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
+        <PackageReference Include="zb-client" Version="2.9.0" />
        <!-- /home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-db/acmeat.db.client.csproj -->
        
        <PackageReference Include="Grpc.Tools" Version="2.71.0">

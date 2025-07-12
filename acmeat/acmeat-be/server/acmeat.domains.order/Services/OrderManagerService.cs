@@ -11,17 +11,17 @@ using System.Linq;
 using System;
 // using acmeat.server.local.client;
 using System.Globalization;
-// using acmeat.server.deliverycompany.client;
-// using acmeat.server.user.client;
-// using static acmeat.server.deliverycompany.client.DeliveryCompanyClient;
-// using acmeat.server.dish.client;
-using Telerik.JustMock;
-using Microsoft.Extensions.Options;
-using System.Threading;
 using Zeebe.Client;
 using NLog.Extensions.Logging;
 using System.Text.Json;
 using Newtonsoft.Json;
+using System.Threading;
+using acmeat.server.local.client;
+using acmeat.server.deliverycompany.client;
+using acmeat.server.user.client;
+using acmeat.server.dish.client;
+using Microsoft.Extensions.Options;
+using acmeat.server.order.client;
 
 namespace acmeat.domains.order.Services;
 
@@ -37,14 +37,17 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     private readonly ILogger<GrpcOrderManagerService> _logger;
     private OrderReader _orderReader;
     private OrderDataWriter _orderDataWriter;
-    // private readonly LocalClient _localClient;
-    // private readonly DeliveryCompanyClient _deliveryCompanyClient;
-    // private readonly UserClient _userClient;
-    // private readonly DishClient _dishClient;
-    // private readonly WaitingTimeLocalResponseOptions _waitingTimeLocalResponseOptions;
+    private readonly LocalClient _localClient;
+    private readonly DeliveryCompanyClient _deliveryCompanyClient;
+    private readonly UserClient _userClient;
+    private readonly DishClient _dishClient;
+    private readonly WaitingTimeLocalResponseOptions _waitingTimeLocalResponseOptions;
 
 
     private static readonly string ZeebeUrl = "127.0.0.1:26500";
+    private static readonly string BPMNDiagramPath = "./Services/Resources/OrderFlowDiagram - Ver1.3b.bpmn";
+    private string? BpmnProcessId = "";
+    private long? ProcessInstanceKey = 0;
     private static readonly string ProcessInstanceVariables = "{\"a\":\"123\"}";
     private static readonly string JobType = "payment-service";
     private static readonly string WorkerName = Environment.MachineName;
@@ -54,28 +57,28 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     public GrpcOrderManagerService(
         ILogger<GrpcOrderManagerService> logger,
         OrderReader orderReader,
-        // LocalClient localClient,
-        // DeliveryCompanyClient deliveryCompanyClient,
-        // UserClient userClient,
-        // DishClient dishClient,
-        OrderDataWriter orderDataWriter
-        // IOptions<WaitingTimeLocalResponseOptions>  waitingTimeLocalResponseOptions
+        OrderDataWriter orderDataWriter,
+        LocalClient localClient,
+        UserClient userClient,
+        DishClient dishClient,
+        DeliveryCompanyClient deliveryCompanyClient,
+        IOptions<WaitingTimeLocalResponseOptions> waitingTimeOptions
         )
     {
         _logger = logger;
         _orderDataWriter = orderDataWriter;
         _orderReader = orderReader;
+        _localClient = localClient;
+        _deliveryCompanyClient = deliveryCompanyClient;
+        _userClient = userClient;
+        _dishClient = dishClient;
+        _waitingTimeLocalResponseOptions = waitingTimeOptions.Value;
 
-                _zeebeClient = (ZeebeClient)ZeebeClient.Builder()
-        .UseLoggerFactory(new NLogLoggerFactory())
-        .UseGatewayAddress(ZeebeUrl)
-        .UsePlainText()
-        .Build();
-        // _deliveryCompanyClient = deliveryCompanyClient;
-        // _userClient = userClient;
-        // _dishClient = dishClient;
-        // _localClient = localClient;
-        // _waitingTimeLocalResponseOptions = waitingTimeLocalResponseOptions.Value;
+        _zeebeClient = (ZeebeClient)ZeebeClient.Builder()
+.UseLoggerFactory(new NLogLoggerFactory())
+.UseGatewayAddress(ZeebeUrl)
+.UsePlainText()
+.Build();
     }
 
     public override Task<server.order.manager.HelloReplyClient> SayHello(server.order.manager.HelloRequestClient request, ServerCallContext context)
@@ -97,7 +100,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     public override Task<server.order.manager.OrderList> GetOrders(server.order.manager.Id id, ServerCallContext context)
     {
         List<server.order.Order> orders = _orderReader.GetOrders();
-        OrderList orderList = new server.order.manager.OrderList();
+        server.order.manager.OrderList orderList = new server.order.manager.OrderList();
 
         orderList.Orders.AddRange(ConvertServerListToGrpc(orders));
 
@@ -110,7 +113,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     public override Task<server.order.manager.OrderList> GetOrdersByUserId(server.order.manager.Id id, ServerCallContext context)
     {
         List<server.order.Order> orders = _orderReader.GetOrderByUserId(id.Id_);
-        OrderList orderList = new server.order.manager.OrderList();
+        server.order.manager.OrderList orderList = new server.order.manager.OrderList();
 
         orderList.Orders.AddRange(ConvertServerListToGrpc(orders));
 
@@ -123,7 +126,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     public override Task<server.order.manager.OrderList> GetOrdersToPay(server.order.manager.Id id, ServerCallContext context)
     {
         List<server.order.Order> orders = _orderReader.GetOrderByUserId(id.Id_).Where(order => order.TransactionId == "").ToList();
-        OrderList orderList = new server.order.manager.OrderList();
+        server.order.manager.OrderList orderList = new server.order.manager.OrderList();
 
         orderList.Orders.AddRange(ConvertServerListToGrpc(orders));
 
@@ -137,171 +140,134 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     {
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
 
-         var topology = await _zeebeClient.TopologyRequest()
-            .Send();
-        var worker =_zeebeClient
-        .NewWorker()
-        .JobType("CreateOrder")
-        .Handler(async (jobClient, job) =>
+        _logger.LogInformation("Started deploying diagram");
+
+
+
+        BpmnProcessId = await DeployProcess(BPMNDiagramPath);
+
+        _logger.LogInformation($"BPMN process id: {BpmnProcessId}");
+
+
+        ProcessInstanceKey = await StartProcessInstance(BpmnProcessId);
+
+        // time to deploy the BPMN diagram
+        await Task.Delay(5000);
+
+        //  https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskcompletionsource-1
+        // FOR EVERY DIFFERENT WORKER USE A NEW TASKCOMPLETION
+        var tcs = new TaskCompletionSource<server.order.manager.GeneralResponse>();
+
+
+
+
+
+
+        var CheckTimeValidityWorker = _zeebeClient
+               .NewWorker()
+               .JobType("CheckTimeValidity")
+               .Handler(async (jobClient, job) =>
+               {
+                   var localResponse = new server.order.manager.GeneralResponse();
+
+                   try
+                   {
+                       //    var time = TimeSpan.Parse(order.DeliveryTime);
+
+                       //    if ((time.Hours < 12 || time.Hours > 14) && (time.Hours < 19 || time.Hours > 22))
+                       //    {
+                       //        localResponse.Message = "Order canceled. You can order only between 12-14 and 19-22";
+
+                       //        await jobClient.NewThrowErrorCommand(job.Key)
+                       //            .ErrorCode("OrderNotRespectingTimeRules")
+                       //            .ErrorMessage(localResponse.Message)
+                       //            .Send();
+
+                       //        tcs.TrySetResult(localResponse);
+                       //        return;
+                       //    }
+                       string jsonStrng = job.Type;
+
+                       await jobClient
+                           .NewCompleteJobCommand(job.Key)
+                           .Variables(JsonConvert.SerializeObject(order))
+                           .Send();
+
+                       localResponse.Message = "OK";
+                       tcs.TrySetResult(localResponse);
+                   }
+                   catch (Exception ex)
+                   {
+                       localResponse.Message = $"Exception in handler: {ex.Message}";
+                       tcs.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
+                   }
+
+
+               })
+               .MaxJobsActive(1)
+               .Name(Environment.MachineName)
+               .PollInterval(TimeSpan.FromSeconds(1))
+               .Timeout(TimeSpan.FromSeconds(10))
+               .Open();
+
+        // signal.WaitOne(10000);
+
+        generalResponse = await tcs.Task;
+
+        // }
+        // ;
+
+        if (generalResponse.Message != "OK")
+            return await Task.FromResult(generalResponse);
+
+        DishList dishlist = _dishClient.GetDishsByMenuId(order.MenuId).GetAwaiter().GetResult();
+        Local local = _localClient.GetLocalById(order.LocalId).GetAwaiter().GetResult();
+        List<DishInfo> dishInfos = dishlist.Dishs.Select(dish => new DishInfo { Id = dish.Id, Quantity = order.Quantity }).ToList();
+
+
+
+        var response = await _localClient.CheckOrderAvailabilityServiceWorkerAsync(
+    order.DeliveryTime,
+   dishInfos,
+     local.Url,
+    _zeebeClient);
+
+
+        if (response.Message != "OK")
         {
+            generalResponse.Message = response.Message;
+            return await Task.FromResult(generalResponse);
+        }
 
+
+
+        try
+        {
             var time = TimeSpan.Parse(order.DeliveryTime);
-            //CHECK IF THE ORDER IS BETWEEN 12-14 AND 19-22
-            if ((time.Hours < 12 || time.Hours > 14) && (time.Hours < 19 || time.Hours > 22))
-            {
-                generalResponse.Message = "Order must be between 12-14 and 19-22. Cannot proceed with order creation";
-                throw new Exception(generalResponse.Message);
-            }
-
             var deliveryTime = DateTime.Today.Add(time);
             order.DeliveryTime = deliveryTime.ToString("dd-MM-yyyy HH:mm");
 
+            _orderDataWriter.SendAsync(
+             new CreateNewOrderCommand(
+                 ConvertGrpcToServerModel(order)
+                 )
+             ).GetAwaiter().GetResult();
+            generalResponse.Message = "OK";
 
 
 
-
-
-            // server.order.Order serverOrder = ConvertGrpcToServerModel(order);
-            // db.order.Order dbOrder = serverOrder.Convert();
-            // Local local = await _localClient.GetLocalById(order.LocalId);
-            // User user = await _userClient.GetUserById(order.UserId);
-            // CancellationTokenSource s_cts = new CancellationTokenSource();
-
-            //LOCAL AVAILABILITY FLOW
-            // DishList dishList = await _dishClient.GetDishsByMenuId(dbOrder.MenuId);
-            // List<DishInfo> dishes = dishList.Dishs.AsEnumerable().Select(dish => new DishInfo(dish.Id, order.Quantity)).ToList();
-
-            // server.local.client.GeneralResponse localAvailabilityResponse = new server.local.client.GeneralResponse();
-            //OLD VERSION
-            // Task checkAvailabilityTask = new Task(async () =>
-            // {
-            //     localAvailabilityResponse = await _localClient.CheckOrderAvailability(dbOrder, dishes, local.Url);
-            // });
-
-
-            // var hasFinishedSuccesfully = checkAvailabilityTask.Wait(_waitingTimeLocalResponseOptions.Time * 1000);
-
-            // if something has went wrong local-side comunicate to the interface 
-            // if (hasFinishedSuccesfully && localAvailabilityResponse.Message != "OK")
-            // {
-
-            //     _logger.LogInformation("The local is unavailable the response took too long. Reason" + localAvailabilityResponse.Message);
-            //     generalResponse.Message = "The local is unavailable the response took too long. Reason" + localAvailabilityResponse.Message;
-            //     return generalResponse;
-            // }
-            // //if the request took to much time just cancel the flow
-            // else if (!hasFinishedSuccesfully)
-            // {
-            //     _logger.LogInformation("The local is unavailable the response took too long. ");
-            //     generalResponse.Message = "The local is unavailable the response took too long.";
-            //     return generalResponse;
-            // }
-
-
-            // try
-            // {
-            //     s_cts.CancelAfter(_waitingTimeLocalResponseOptions.Time * 1000);
-
-            //     localAvailabilityResponse = await _localClient.CheckOrderAvailability(dbOrder, dishes, local.Url, s_cts.Token);
-
-            //     if (localAvailabilityResponse.Message != "OK")
-            //     {
-
-            //         _logger.LogInformation("The local is unavailable the response took too long. Reason:" + localAvailabilityResponse.Message);
-            //         generalResponse.Message = "The local is unavailable the response took too long. Reason: " + localAvailabilityResponse.Message;
-            //         return generalResponse;
-            //     }
-            // }
-            // catch (OperationCanceledException)
-            // {
-            //     _logger.LogInformation("The local is unavailable the response took too long. ");
-            //     generalResponse.Message = "The local is unavailable the response took too long.";
-            //     return generalResponse;
-            // }
-            // finally
-            // {
-            //     s_cts.Dispose();
-            // }
-
-
-
-            //DELIVERY COMPANY FLOW
-
-            // DateTime startTime;
-            // // DateTime endTime;
-
-
-
-
-            // DeliveryCompanyList deliveryCompanyList = await _deliveryCompanyClient.GetDeliveryCompanyList();
-            // DeliveryCompanyList availableCompanies = new DeliveryCompanyList();
-
-
-            // foreach (DeliveryCompany deliveryCompany in deliveryCompanyList.Deliverycompanys)
-            // {
-            //     //TO DO:CHECK IF IT'S 10 KM RANGE
-            //     if (deliveryCompany.Address != null)
-            //     {
-            //         _logger.LogInformation($"Checking availability for deliveryCompany with id : {deliveryCompany.Id}");
-            //         startTime = DateTime.Now;
-            //         // TO DO COUNT UNTIL 15 THEN DELETE THE TASK IF IS NOT RESPONDING
-            //         // get veichle information or message justifying the unavailability
-            //         var deliveryCompanyResponse = await _deliveryCompanyClient.CheckAvailability(new AvailabilityPayload(local.Address, user.Address, deliveryTime.ToString(), deliveryCompany.Id));
-
-
-
-            //         if (deliveryCompanyResponse.Message == "OK")
-            //             availableCompanies.Deliverycompanys.Add(deliveryCompany);
-            //     }
-            // }
-
-            // if (availableCompanies.Deliverycompanys.Count <= 0)
-            //     throw new Exception("No delivery company is available");
-
-            // DeliveryCompany bestCompany = availableCompanies.Deliverycompanys.OrderBy(d => d.Price).First();
-
-            // _logger.LogInformation($"Delivery company selected  with id {bestCompany.Id}");
-
-            // await _deliveryCompanyClient.CommunicateOrder(new AvailabilityPayload(local.Address, user.Address, deliveryTime.ToString(), bestCompany.Id));
-
-
-            try
-            {
-                await _orderDataWriter.SendAsync(
-                 new CreateNewOrderCommand(
-                     ConvertGrpcToServerModel(order)
-                     )
-                 );
-                generalResponse.Message = "OK";
-
-            }
-            catch (Exception ex)
-            {
-                generalResponse.Message = ex.Message;
-                await jobClient.NewFailCommand(job.Key)
-                .Retries(0)
-                .ErrorMessage($"{ex.Message}")
-                .Send();
-            }
-            generalResponse = await Task.FromResult(
-                generalResponse
-            );
-
-
-
-            //SEND COMPLETE TASK TO ZEEGBE
-            // Dictionary<String, Object> outVars = new Dictionary<string, object>
-            // {
-            //     { "ProcessOrderResponse", order }
-            // };
-            var response = jobClient.NewCompleteJobCommand(job.Key)
-            .Send().GetAwaiter().GetResult()
-            ;
         }
-        )
-        .Open();
+        catch (Exception ex)
+        {
+            generalResponse.Message = ex.Message;
 
-        return generalResponse;
+        }
+
+        return await Task.FromResult(generalResponse);
+
+
+
+
 
 
 
@@ -309,6 +275,8 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     public override async Task<server.order.manager.GeneralResponse> UpdateOrder(server.order.manager.Order order, ServerCallContext context)
     {
+
+
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         try
         {
@@ -336,8 +304,18 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
         server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
         DateTime now = DateTime.Now;
-        DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime, "dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture);
-        _logger.LogInformation($"Current time {now.Hour}:{now.Minute}, delivery time: {order.DeliveryTime}, time between now and delivery time is:{Math.Abs((now - deliveryTime).Hours)} hours");
+
+        // TO CHANGE WHEN API IS READY
+        // if (order.DeliveryTime != "COMPLETED" || order.DeliveryTime != "TIMEOUT")
+        // {
+        //     DateTime deliveryTime = DateTime.ParseExact(order.DeliveryTime, "dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture);
+        //     _logger.LogInformation($"Current time {now.Hour}:{now.Minute}, delivery time: {order.DeliveryTime}, time between now and delivery time is:{Math.Abs((now - deliveryTime).Hours)} hours");
+
+
+        //     _logger.LogInformation($"The clause result is: {(now - deliveryTime).Hours}");
+        // }
+
+
 
         // if (order.DeliveryTime == "")
         // {
@@ -354,7 +332,6 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         //     return generalResponse;
         // }
 
-        _logger.LogInformation($"The clause result is: {(now - deliveryTime).Hours}");
 
         try
         {
@@ -403,6 +380,9 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     public server.order.Order ConvertGrpcToServerModel(server.order.manager.Order order)
     {
+
+
+
         return new server.order.Order(
             order.Id,
             order.UserId,
@@ -434,5 +414,162 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         return ordert;
 
     }
+
+    private async Task<string> DeployProcess(String bpmnFile)
+    {
+        var deployRespone = await _zeebeClient.NewDeployCommand()
+            .AddResourceFile(bpmnFile)
+            .Send();
+
+        var bpmnProcessId = deployRespone.Processes[0].BpmnProcessId;
+        return bpmnProcessId;
+    }
+
+
+    //CAMUNDA UTILITIES
+
+    private async Task<long> StartProcessInstance(string bpmnProcessId)
+    {
+        var processInstanceResponse = await _zeebeClient
+                        .NewCreateProcessInstanceCommand()
+                        .BpmnProcessId(bpmnProcessId)
+                        .LatestVersion()
+                        .Send();
+
+        _logger.LogInformation("Process Instance has been started!");
+        var processInstanceKey = processInstanceResponse.ProcessInstanceKey;
+        return processInstanceKey;
+    }
+
+    public override async Task<server.order.manager.GeneralResponse> HandleLocalAvailabilityResponse(server.order.manager.LocalResponse localResponse, ServerCallContext context)
+    {
+        _logger.LogInformation($"Handling Local Availabilty response from local with reason: {localResponse}");
+        server.order.manager.GeneralResponse resposne = new server.order.manager.GeneralResponse();
+
+        try
+        {
+
+
+            string l = JsonConvert.SerializeObject(localResponse);
+            // SIMULATING MESSAGE FROM LOCAL
+            await _zeebeClient
+.NewPublishMessageCommand()
+.MessageName("LocalAvailabitlityResponse")
+.CorrelationKey(localResponse.OrderId.ToString()) // deve essere nel context
+.Variables(JsonConvert.SerializeObject(localResponse))
+.Send();
+
+
+
+
+
+            var tcs = new TaskCompletionSource<server.order.manager.GeneralResponse>();
+
+            var tcs2 = new TaskCompletionSource<server.order.manager.GeneralResponse>();
+
+
+            var CancelOrderWorker = _zeebeClient
+              .NewWorker()
+              .JobType("CancelOrder")
+              .Handler(async (jobClient, job) =>
+              {
+                  var local = new server.order.manager.GeneralResponse();
+
+                  try
+                  {
+                      _logger.LogInformation("Starting Cancel Order Job");
+
+
+                      await _orderDataWriter.SendAsync(
+                        new DeleteNewOrderCommand(
+                        localResponse.OrderId
+                        )
+                        );
+
+                      await jobClient
+                          .NewCompleteJobCommand(job.Key)
+                          .Send();
+
+                      switch (localResponse.Reason)
+                      {
+                          case "TIMEOUT":
+                          local.Message = "Order canceled. Local took too much time ";
+                              break;
+
+                          case "REJECTED":
+                          local.Message = "Order canceled. Local rejected order ";
+                              break;
+
+                          default:
+                          local.Message = "Order canceled. Uknown reason " + localResponse.Reason;
+                              break;
+                        }
+
+                      _logger.LogInformation(local.Message);
+                      
+                      tcs2.TrySetResult(local);
+                  }
+                  catch (Exception ex)
+                  {
+                      local.Message = $"Exception in handler: {ex.Message}";
+                      tcs2.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
+                  }
+
+
+              })
+              .MaxJobsActive(1)
+              .Name(Environment.MachineName)
+              .PollInterval(TimeSpan.FromSeconds(1))
+              .Timeout(TimeSpan.FromSeconds(10))
+              .Open();
+
+
+
+
+
+
+            var worker = _zeebeClient
+                   .NewWorker()
+                   .JobType("CheckDeliveryCompanyAvailability")
+                   .Handler(async (jobClient, job) =>
+                   {
+                       _logger.LogInformation("Checking availabilty from delivery company");
+                     
+                       var localResponse = new server.order.manager.GeneralResponse();
+                       // MAKE CALL TO DELIVERY COMPANY
+
+                       localResponse.Message = "OK";
+                       await jobClient
+                        .NewCompleteJobCommand(job.Key)
+                        .Send()
+                    ;
+                       tcs.TrySetResult(localResponse);
+
+                      
+
+                   })
+                   .MaxJobsActive(1)
+                   .Name(Environment.MachineName)
+                   .PollInterval(TimeSpan.FromSeconds(1))
+                   .Timeout(TimeSpan.FromSeconds(10))
+                   .Open();
+
+
+            var taskCompleted = await Task.WhenAny(tcs.Task, tcs2.Task);
+            resposne = await taskCompleted;
+            return resposne;
+
+        }
+        catch (Exception ex)
+        {
+            resposne.Message = "An error occured: " + ex.Message;
+        }
+
+        return resposne;
+
+    }
+
+
+
 }
 

@@ -96,6 +96,17 @@ namespace acmeat.api.order
 
         }
 
+
+         [HttpPost]
+        public async Task<GeneralResponse> FinishOrder(FinishOrder finishOrder)
+        {
+            Console.WriteLine($"Order with Id {finishOrder.OrderId}has finished with reason: {finishOrder.Reason}");
+            
+            
+            return await _orderClient.HandleLocalAvailabilityResponse(new LocalResponse{OrderId = finishOrder.OrderId, Reason = finishOrder.Reason});
+
+        }
+
          [HttpPatch]
         public async Task<GeneralResponse> UpdateOrder(OrderInfo orderInfo)
         {

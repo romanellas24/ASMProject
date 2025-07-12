@@ -111,10 +111,16 @@ namespace acmeat.server.order.client
         {
             return await _client.DeleteOrderAsync(order);
         }
+
+
+        public async Task<GeneralResponse> HandleLocalAvailabilityResponse(LocalResponse localResponse)
+        {
+            return await _client.HandleLocalAvailabilityResponseAsync(localResponse);
+        }
         #endregion
 
 
-        #pragma warning disable CS0436 // Type conflicts with imported type
+#pragma warning disable CS0436 // Type conflicts with imported type
         #region  Bank
         public async Task<Payment> GetPaymentInfo(string Token)
         {

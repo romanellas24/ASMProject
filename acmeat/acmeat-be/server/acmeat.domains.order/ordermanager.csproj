@@ -16,10 +16,10 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
     <PackageReference Include="zb-client" Version="2.9.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="6.0.1" />
-    <!-- <PackageReference Include="Acmeat.Server.Local.ClientTest" Version="1.0.5" /> -->
-    <!-- <PackageReference Include="Acmeat.Server.DeliveryCompany.ClientTest" Version="1.0.1" /> -->
-    <!-- <PackageReference Include="Acmeat.Server.User.ClientTest" Version="1.0.1" /> -->
-    <!-- <PackageReference Include="Acmeat.Server.Dish.ClientTest" Version="1.0.0" /> -->
+    <PackageReference Include="Acmeat.Server.Local.ClientTest" Version="1.0.5" />
+    <PackageReference Include="Acmeat.Server.DeliveryCompany.ClientTest" Version="1.0.1" />
+    <PackageReference Include="Acmeat.Server.User.ClientTest" Version="1.0.1" />
+    <PackageReference Include="Acmeat.Server.Dish.ClientTest" Version="1.0.1" />
 
     
     
@@ -29,7 +29,7 @@
     <ProjectReference Include="acmeat.domains.order.dataproxy/acmeat.domains.order.dataproxy.csproj" />
      <ProjectReference Include="acmeat.domains.order.datawriter/acmeat.domains.order.datawriter.csproj" />
     <ProjectReference Include="acmeat.domains.order.models/acmeat.domains.order.models.csproj" />
-    <!-- <ProjectReference Include="/home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-be/server/acmeat.domains.locals/acmeat.domains.local.client/acmeat.domains.locals.client.csproj"/> -->
+    <ProjectReference Include="/home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-be/server/acmeat.domains.locals/acmeat.domains.local.client/acmeat.domains.locals.client.csproj"/>
     <!-- <ProjectReference Include="/home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-be/server/acmeat.domains.deliverycompany/acmeat.domains.deliverycompany.client/acmeat.domains.deliverycompany.client.csproj"/> -->
   </ItemGroup>
 

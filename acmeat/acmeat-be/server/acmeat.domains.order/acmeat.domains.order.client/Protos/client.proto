@@ -17,6 +17,8 @@ service GrpcOrder {
   rpc DeleteOrder(Order) returns (GeneralResponse);
   rpc DeleteOrderById(Order) returns (GeneralResponse);
 
+  rpc HandleLocalAvailabilityResponse(LocalResponse) returns (GeneralResponse);
+
 }
 
 message HelloRequestClient {
@@ -33,6 +35,11 @@ message Id{
 
 message GeneralResponse{
   string message=1;
+}
+
+message LocalResponse{
+  int32 OrderId = 1;
+  string Reason =2;
 }
 
 message Order{
