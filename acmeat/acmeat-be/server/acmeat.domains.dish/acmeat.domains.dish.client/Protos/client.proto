@@ -46,7 +46,7 @@ message Dish{
 
    string Name=3 ;
 
-   int32 Price=4 ;
+   float Price=4 ;
    int32 MenuId=5;
 
    

@@ -196,7 +196,7 @@ public class GrpcDishManagerService : server.dish.manager.GrpcDish.GrpcDishBase
 
     public server.dish.Dish ConvertGrpcToServerModel(server.dish.manager.Dish dish)
     {
-        return new server.dish.Dish(dish.Id,dish.Name,dish.Description,dish.Price,dish.Price);
+        return new server.dish.Dish(dish.Id,dish.Name,dish.Description,dish.Price,dish.MenuId);
     }
 
 

@@ -36,7 +36,7 @@ public class DishInfo
     public string Name { get; set; }
 
 
-    public int Price { get; set; }
+    public float Price { get; set; }
 
     public int MenuId { get; set; }
 

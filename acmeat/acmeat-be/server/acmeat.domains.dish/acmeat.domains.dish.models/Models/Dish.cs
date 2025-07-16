@@ -11,10 +11,10 @@ public class Dish
 
     [JsonConstructor]
     public Dish(
-              int Id, string Name, string Description, int Price, int MenuId
+              int Id, string Name, string Description, float Price, int MenuId
                )
     {
-        this.Id = new Random().Next();
+        this.Id = Id;
         this.Description = Description;
         this.Name = Name;
         this.Price = Price;
@@ -38,7 +38,7 @@ public class Dish
     public string Name { get; set; }
 
 
-    public int Price { get; set; }
+    public float Price { get; set; }
 
     public int MenuId { get; set; }
 
