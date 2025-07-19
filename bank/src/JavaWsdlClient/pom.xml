@@ -8,7 +8,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <spring.boot.version>3.1.4</spring.boot.version>
         <zeebe.version>8.4.0</zeebe.version>
         <jaxws.version>2.3.3</jaxws.version>
@@ -66,19 +67,15 @@
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <version>2.3.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.xml.messaging.saaj</groupId>
-                    <artifactId>saaj-impl</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
             <version>1.5.3</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>jakarta.xml.soap</groupId>
@@ -101,8 +98,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
 
