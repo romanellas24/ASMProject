@@ -46,31 +46,17 @@ namespace acmeat.api.order
         }
 
         [HttpPatch]
-        public async Task<GeneralResponse> VerifyPayment(string  transactionId,int orderId)
+        public async Task<GeneralResponse> VerifyPayment(string transactionId, int orderId)
         {
             Console.WriteLine($"received payment Info for order with id {orderId}");
             GeneralResponse generalResponse = new GeneralResponse();
             //TO DO INSERT THE BANK ENDOPOINT
-            BankPaymentVerification? bankPaymentVerification = await sharedClient.GetFromJsonAsync<BankPaymentVerification>(sharedClient.BaseAddress + "payments/"+ transactionId);
-            if (bankPaymentVerification != null && bankPaymentVerification.status == "Paid")
+            return await _orderClient.VerifyPayment(new Payment
             {
-                _logger.LogInformation($"Payment confirmed, updating order {orderId}");
-
-                //UPDATE
-                Order orderToUpdate = await _orderClient.GetOrderById(orderId);
-                orderToUpdate.PurchaseTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-                orderToUpdate.TransactionId = transactionId;
-
-                generalResponse = await _orderClient.UpdateOrder(orderToUpdate);
-                _logger.LogInformation($"order update : {generalResponse.Message}");
-                return generalResponse;
-            }
-            else
-            {
-                generalResponse.Message = "an error occured during token verification";
-                return generalResponse;
-            }
-
+                TransactionId = transactionId,
+                OrderId=orderId
+            });
+          
         }
 
 

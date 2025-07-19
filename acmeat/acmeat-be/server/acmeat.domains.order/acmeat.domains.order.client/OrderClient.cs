@@ -8,27 +8,27 @@ using Telerik.JustMock;
 namespace acmeat.server.order.client
 {
 
-    public class Payment{
+    //     public class Payment{
 
-    public Payment(
-        string IBAN,
-        string Causal,
-        int Price,
-        int TransactionId
-    ){
-        this.IBAN = IBAN;
-        this.Causal =Causal;
-        this.Price = Price;
-        this.TransactionId = TransactionId;
-    }
+    //     public Payment(
+    //         string IBAN,
+    //         string Causal,
+    //         int Price,
+    //         int TransactionId
+    //     ){
+    //         this.IBAN = IBAN;
+    //         this.Causal =Causal;
+    //         this.Price = Price;
+    //         this.TransactionId = TransactionId;
+    //     }
 
 
 
-    public string IBAN {get;set;}
-    public string Causal {get;set;}
-    public int Price {get;set;}
-    public int TransactionId{get;set;}
-}
+    //     public string IBAN {get;set;}
+    //     public string Causal {get;set;}
+    //     public int Price {get;set;}
+    //     public int TransactionId{get;set;}
+    // }
 
     public class OrderClient
     {
@@ -42,10 +42,10 @@ namespace acmeat.server.order.client
         {
             BaseAddress = new Uri("https://jsonplaceholder.typicode.com"),
         };
-         public interface ITaskAsync
-    {
-        Task<int> AsyncExecute(string value);
-    }
+        public interface ITaskAsync
+        {
+            Task<int> AsyncExecute(string value);
+        }
 
 
         public OrderClient(IOptions<OrderClientOptions> options
@@ -122,16 +122,10 @@ namespace acmeat.server.order.client
 
 #pragma warning disable CS0436 // Type conflicts with imported type
         #region  Bank
-        public async Task<Payment> GetPaymentInfo(string Token)
+
+        public async Task<GeneralResponse> VerifyPayment(Payment payment)
         {
-            Console.WriteLine($"Token received: {Token}. Getting Payment info");
-
-            // TO DO REMOVE WHEN BANK ENDPOINT IS READY THE REQUEST MUST BE DONE BY THE BANK CLIENT
-            var mock = Mock.Create<ITaskAsync>();
-            Mock.Arrange(() => mock.AsyncExecute(Token));
-            await mock.AsyncExecute(Token);
-
-            return new Payment("AHAHAHAHHA", "BIGLIETTO", 30, 2);
+            return await _client.VerifyPaymentAsync(payment);
         }
 
         #endregion

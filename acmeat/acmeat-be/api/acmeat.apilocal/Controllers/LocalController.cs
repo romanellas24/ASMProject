@@ -85,7 +85,7 @@ namespace acmeat.api.local
 
 
 
-            if (timeOnly.Hour > deadLineHour)
+            if (timeOnly.Hour < deadLineHour)
             {
                 _logger.LogInformation($"Cannot update the local availability its too late...");
                 server.local.client.GeneralResponse response = new server.local.client.GeneralResponse();
@@ -102,7 +102,7 @@ namespace acmeat.api.local
             {
                 Description = "Daily Menu-"+dailyUpdate.LocalUrl+"-"+DateTime.Now,
                 LocalId = local.Id,
-                Price = dailyUpdate.dishes.Select(dish => dish.Price).Aggregate((price1,price2) => price1 + price2),
+                Price = (int)dailyUpdate.dishes.Select(dish => dish.Price).Aggregate((price1,price2) => price1 + price2),
                 Type = "Carne",
                 Id = dailyUpdate.dishes.First().MenuId
                 

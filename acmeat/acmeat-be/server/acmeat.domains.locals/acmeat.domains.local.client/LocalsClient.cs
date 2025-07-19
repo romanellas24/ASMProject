@@ -72,11 +72,11 @@ namespace acmeat.server.local.client
 
         private Dictionary<string, string> map = new Dictionary<string, string>()
         {
-            {"braciebasilico.romanellas.cloud","468965f7f8b123e992f92d60c77a8866b9196ebcc769e9223f5705f550784487"},
-            {"osteriamareebosco.romanellas.cloud","522726a3c54729c462fb20e2fd83c271c12d33dc0eb3ceb75919aed1c4a8c209"},
-            {"ilvicolettosegreto.romanellas.cloud","07dab70e031d47001f7ebc0cee7759e0c1e7aa21e2e9f52ecae485ab29ddd599"},
-            {"laforchettaribelle.romanellas.cloud","99bb7268a02d722247f955d0b7abb0d889b00b292861599c33241cfba069e769"},
-            {"cantinafiordisale.romanellaas.cloud","3bd31909ecbf4ebd6f974d45a921f91dcdc893848e8012c5a6c35d4cbdf1ffb6"},
+            {"braciebasilico.romanellas.cloud","faada5c4c44618391ba87f576b9cda71226df61c491d2ee2698404fb40ab468e"},
+            {"osteriamareebosco.romanellas.cloud","3f30792c3a91198e2952d44abb2106875f70ab2f8e859f643ab693b03c5ba124"},
+            {"ilvicolettosegreto.romanellas.cloud","80ea206cec6c038a4bacc2797c798da8cf57a1b41de51fc3bbccbf56026e7cdc"},
+            {"laforchettaribelle.romanellas.cloud","678b022f5e3b77d2186051260ee99350f590f8055de6de1f32baf4c4289367df"},
+            {"cantinafiordisale.romanellas.cloud","7785e546b41261118f29138b548dcc5630ba7108c939bb884836a44a7d699307"},
         };
         private readonly HttpClientHandler _httpClientHandler;
 
@@ -186,14 +186,13 @@ namespace acmeat.server.local.client
 
         }
 
-        //check if the order can be placed at specific  local 
-        //IMPORTANT -> REQUEST COULD GO TIMEOUT 10S IN DEV AND 180S WHEN DEPLOYED
-        public async Task<GeneralResponse> CheckOrderAvailability(string deliveryTime, List<DishInfo> dishes, string localUrl)
+     
+        public async Task<GeneralResponse> CheckOrderAvailability(int orderId,string deliveryTime, List<DishInfo> dishes, string localUrl)
         {
             Console.WriteLine($"Checking Availability to local with: {localUrl}");
             await AuthenticateToLocal(localUrl);
 
-            var time = TimeSpan.Parse(deliveryTime);
+  
 
 
 
@@ -203,14 +202,16 @@ namespace acmeat.server.local.client
             new
             {
                 dishes,
-                deliveryTime = DateTime.Today.Add(time).ToUniversalTime().ToString("yyyy-MM-dd HH:mm"),
+                deliveryTime = deliveryTime,
+                id=orderId,
                 companyName = "acmeat"
+                
 
             }
             );
 
             GeneralResponse resposne = new GeneralResponse();
-            if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
+            if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.Accepted)
             {
 
                 resposne.Message = "OK";
@@ -228,154 +229,16 @@ namespace acmeat.server.local.client
         }
 
 
-
-        //check if the order can be placed at specific  local 
-        //IMPORTANT -> REQUEST COULD GO TIMEOUT 10S IN DEV AND 180S WHEN DEPLOYED
-        public async Task<GeneralResponse> CheckOrderAvailabilityServiceWorkerAsync(string deliveryTime, List<DishInfo> dishes, string localUrl, ZeebeClient zeebeClient)
+          public async Task<GeneralResponse> CommunicateOrderCancellation(int orderId, string localUrl)
         {
-            Console.WriteLine($"Checking Availability to local with: {localUrl}");
-            GeneralResponse resposne = new GeneralResponse();
-            
-             var tcs = new TaskCompletionSource<GeneralResponse>();
-
-            var tcs2 = new TaskCompletionSource<GeneralResponse>();
-
-
-             var NotifyOrderNotPlacedWorker = zeebeClient
-               .NewWorker()
-               .JobType("NotifyOrderNotPlaced")
-               .Handler(async (jobClient, job) =>
-               {
-                   var localResponse = new GeneralResponse();
-
-                   try
-                   {
-
-                       await jobClient
-                           .NewCompleteJobCommand(job.Key)
-                           .Send();
-
-                       localResponse.Message = "Order canceled. You can order only between 12-14 and 19-22";
-                       tcs2.TrySetResult(localResponse);
-                   }
-                   catch (Exception ex)
-                   {
-                       localResponse.Message = $"Exception in handler: {ex.Message}";
-                       tcs2.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
-                   }
-
-                  
-               })
-               .MaxJobsActive(1)
-               .Name(Environment.MachineName)
-               .PollInterval(TimeSpan.FromSeconds(1))
-               .Timeout(TimeSpan.FromSeconds(10))
-               .Open();
-
-
-             
-
-
-
-var worker = zeebeClient
-       .NewWorker()
-       .JobType("CheckLocalAvailabilty")
-       .Handler( async(jobClient, job) =>
-       {
-           // TO DECOMMENT
-
-           //  AuthenticateToLocal(localUrl).GetAwaiter().GetResult();
-                string jsonStrng =job.Type;
-           var time = TimeSpan.Parse(deliveryTime);
-           var localResponse = new GeneralResponse();
-
-           
-
-
-           //TO DECOMMENT
-           //  HttpResponseMessage? jsonResponse = _sharedClient.PostAsJsonAsync(new Uri(protocol + localUrl + "/api/order"),
-
-           //  // TO DO: SEND THE REQUEST TO LOCALS
-           //  new
-           //  {
-           //      dishes,
-           //      deliveryTime = DateTime.Today.Add(time).ToUniversalTime().ToString("yyyy-MM-dd HH:mm"),
-           //      companyName = "acmeat"
-
-           //  }
-           //  ).GetAwaiter().GetResult();
-
-           //TO DECOMMENT
-           //  if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
-           //  {
-
-           localResponse.Message = "OK";
-           await jobClient
-            .NewCompleteJobCommand(job.Key)
-            .Send()
-        ;
-           tcs.TrySetResult(localResponse);
-
-           // TO DECOMMENT
-           //  }
-           //  else
-           //  {
-           // resposne.Message = $"Something went wrong checking awailability: {jsonResponse}";
-                // FOR EVERY RESPONSE DIFFERENT FROM OK
-                //            jobClient.NewThrowErrorCommand(job.Key)
-           //   .ErrorCode("500")
-           //   .ErrorMessage($"{resposne.Message}")
-           //   .Send()
-           //   .GetAwaiter()
-           //   .GetResult();
-           //  }
-
-       })
-       .MaxJobsActive(1)
-       .Name(Environment.MachineName)
-       .PollInterval(TimeSpan.FromSeconds(1))
-       .Timeout(TimeSpan.FromSeconds(10))
-       .Open();
-
-            // signal.WaitOne(10000);
-
-
-            // }
-            // ;
-
-
-
-
-            //IF BUSINESS RULES ARE BROKEN DON'T CREATE THE ORDER
-
-          var  taskCompleted = await Task.WhenAny(tcs.Task, tcs2.Task);
-            resposne = await taskCompleted;
-
-
-
-
-                return resposne;
-            
-
-            
-
-
-
-
-        }
-
-
-
-
-        
-
-        public async Task<GeneralResponse> CommunicateOrderCancellation(int orderId, string localUrl)
-        {
-            Console.WriteLine($"Order cacellation: {orderId}");
+            Console.WriteLine($"Deleting Order to local with: {localUrl}");
             await AuthenticateToLocal(localUrl);
 
+  
 
-            var jsonResponse = await _sharedClient.DeleteAsync(new Uri(protocol + localUrl + "/api/order/" + orderId)
+
+
+            HttpResponseMessage? jsonResponse = await _sharedClient.DeleteAsync(new Uri(protocol + localUrl + "/api/order/" + orderId + "?company=acmeat")
 
             );
 
@@ -388,10 +251,25 @@ var worker = zeebeClient
             }
             else
             {
-                resposne.Message = $"Something went wrong cancelling order: {jsonResponse}";
+                resposne.Message = $"Something went wrong with deleting the order: {jsonResponse}";
             }
 
             return resposne;
+
+
+
+        }
+
+
+
+
+
+        public async Task<GeneralResponse> catchTimeout()
+        {
+            await Task.Delay(10000);
+            return new GeneralResponse { Message = "TIMEOUT" };
         }
     }
+
+
 }

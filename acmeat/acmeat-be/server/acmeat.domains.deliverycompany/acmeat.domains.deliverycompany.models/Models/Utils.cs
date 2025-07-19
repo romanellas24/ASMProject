@@ -18,7 +18,7 @@ public static class Utils{
     }
 
     public static db.deliveryCompany.DeliveryCompany ConvertServerElementIntoDbELement(DeliveryCompany deliverycompany){
-        db.deliveryCompany.DeliveryCompany deliverycompanyDB = new db.deliveryCompany.DeliveryCompany(deliverycompany.Id, deliverycompany.Address, deliverycompany.Price, deliverycompany.Available);
+        db.deliveryCompany.DeliveryCompany deliverycompanyDB = new db.deliveryCompany.DeliveryCompany(deliverycompany.Id, deliverycompany.Address, deliverycompany.Price, deliverycompany.Available,deliverycompany.Name);
 
         deliverycompanyDB.Id = deliverycompany.Id;
 

@@ -35,6 +35,7 @@ message DeliveryCompany{
  
   int32 Price =3;
   bool Available =4;
+  string Name=5;
 
 
 }

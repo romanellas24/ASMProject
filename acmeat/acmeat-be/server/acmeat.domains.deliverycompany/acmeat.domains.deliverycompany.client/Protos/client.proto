@@ -38,8 +38,9 @@ message DeliveryCompany{
      int32 Id =1;
      string Address =2;
     
-     int32 Price =3;
+     float Price =3;
      bool Available =4;
+     string Name =5;
 
    
 }

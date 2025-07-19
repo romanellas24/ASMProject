@@ -9,12 +9,13 @@ public class DeliveryCompany
     {
     }
 
-    public DeliveryCompany(int Id, string Address, int Price, bool Available)
+    public DeliveryCompany(int Id, string Address, int Price, bool Available, string Name)
     {
         this.Id = Id;
         this.Address = Address;
         this.Price = Price;
         this.Available = Available;
+        this.Name = Name;
     }
 
     public int Id { get; set; }
@@ -24,4 +25,7 @@ public class DeliveryCompany
     public int Price { get; set; }
     [Column("DISPONIBILE")]
     public bool Available { get; set; }
+
+    [Column("NOME")]
+    public string Name{ get; set; }
 }

@@ -26,6 +26,8 @@ builder.Services.AddOptions<DbConnectionOptions>().BindConfiguration(nameof(DbCo
 
 builder.Services.AddOptions<WaitingTimeLocalResponseOptions>().BindConfiguration(nameof(WaitingTimeLocalResponseOptions));
 
+builder.Services.AddOptions<ZeebeClientOptions>().BindConfiguration(nameof(ZeebeClientOptions));
+
 // builder.Services.AddScoped<MySqlContext>();
 
 builder.Services.AddScoped<OrderReader>();
@@ -40,6 +42,7 @@ builder.Services.AddOptions<UserClientOptions>().BindConfiguration(nameof(UserCl
 builder.Services.AddScoped<DishClient>();
 builder.Services.AddOptions<DishClientOptions>().BindConfiguration(nameof(DishClientOptions));
 builder.Services.AddScoped<WaitingTimeLocalResponseOptions>();
+builder.Services.AddScoped<ZeebeClientOptions>();
 
 builder.Services.AddEndpointsApiExplorer();
 

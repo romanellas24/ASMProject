@@ -9,7 +9,7 @@ public class Dish
     {
     }
 
-    public Dish(int Id, string Name, string Description, int Price, int MenuId)
+    public Dish(int Id, string Name, string Description, float Price, int MenuId)
     {
         this.Id = Id;
         this.Name = Name;
@@ -26,7 +26,7 @@ public class Dish
 
 
     [Column("PREZZO")]
-    public int Price { get; set; }
+    public float Price { get; set; }
 
     [Column("MENU_ID")]
     public int MenuId { get; set; }
