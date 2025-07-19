@@ -1,6 +1,10 @@
 
 package wsdl.cloud.romanellas.joliebank;
 
+import xsd.cloud.romanellas.joliebank.AccountInfo;
+import xsd.cloud.romanellas.joliebank.ObjectFactory;
+import xsd.cloud.romanellas.joliebank.TransactionInfo;
+
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -10,9 +14,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
-import cloud.romanellas.joliebank.AccountInfo;
-import cloud.romanellas.joliebank.ObjectFactory;
-import cloud.romanellas.joliebank.TransactionInfo;
 
 
 /**
