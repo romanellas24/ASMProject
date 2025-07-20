@@ -21,12 +21,8 @@ public class CreateTokenService {
                 .jobType("jolie-check-account-exists")
                 .handler((jobClient, job) -> {
                     try {
-                        System.out.println("called jolie-check-account-exists");
-                        System.out.println("B - Creating service");
                         BANKGATEWAY2Service service = new BANKGATEWAY2Service();
-                        System.out.println("C - Getting port");
                         BANKGATEWAY2 port = service.getBANKGATEWAY2ServicePort();
-                        System.out.println("D - Calling remote method");
 
                         Map<String, Object> vars = job.getVariablesAsMap();
                         int account = (int) vars.get("account");

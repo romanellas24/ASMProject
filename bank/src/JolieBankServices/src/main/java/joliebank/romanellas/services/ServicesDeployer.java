@@ -18,13 +18,6 @@ public class ServicesDeployer {
                 .usePlaintext()
                 .build();
 
-        System.setProperty("xml.catalog.className", "org.apache.xml.resolver.CatalogManager");
-        System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
-        System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
-        System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
-        System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
-        System.setProperty("com.sun.xml.ws.util.StreamPrinter.charset", "UTF-8");
-
 
         CreateTokenService createTokenService = new CreateTokenService(client);
         PayTokenService payTokenService = new PayTokenService(client);
