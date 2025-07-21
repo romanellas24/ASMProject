@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -8,7 +6,7 @@ using System.Threading.Tasks;
 using acmeat.server.order.client;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
-using Telerik.JustMock;
+
 //PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.deliverycompany.client
 {
@@ -21,26 +19,19 @@ namespace acmeat.server.deliverycompany.client
         private GrpcDeliveryCompany.GrpcDeliveryCompanyClient _client;
         private readonly DeliveryCompanyClientOptions _options;
 
-
-        // API's for azure maps
-        private readonly string AZURE_MAPS_URL = "https://atlas.microsoft.com/geocode?api-version=2025-01-01&addressLine=";
-
-        private readonly string XMSCLIENTID = "46fad49a-d535-4e30-84ed-21e2139c70ec";
-        private readonly string SUBSCRIPTIONKEY = "BBUY6Nr3vvNNyTb79dK3LVXPVNmHlviTlm8qE1MfX2suFFsWPNoSJQQJ99BFACYeBjFnlIanAAAgAZMP3cFB";
-
         private readonly static HttpClient _sharedClient = new HttpClient()
         {
             BaseAddress = new Uri("https://braciebasilico.romanellas.cloud")
         };
         private const string protocol = "https://";
 
-        private Dictionary<string, string> map = new Dictionary<string, string>()
-        {
-            {"cimangiamo.romanellas.cloud","468965f7f8b123e992f92d60c77a8866b9196ebcc769e9223f5705f550784487"},
-            {"famechimica.romanellas.cloud","522726a3c54729c462fb20e2fd83c271c12d33dc0eb3ceb75919aed1c4a8c209"},
-            {"panzafly.romanellas.cloud","07dab70e031d47001f7ebc0cee7759e0c1e7aa21e2e9f52ecae485ab29ddd599"},
-            {"toctocgnam.romanellas.cloud","99bb7268a02d722247f955d0b7abb0d889b00b292861599c33241cfba069e769"}
-        };
+        // private Dictionary<string, string> map = new Dictionary<string, string>()
+        // {
+        //     {"cimangiamo.romanellas.cloud","468965f7f8b123e992f92d60c77a8866b9196ebcc769e9223f5705f550784487"},
+        //     {"famechimica.romanellas.cloud","522726a3c54729c462fb20e2fd83c271c12d33dc0eb3ceb75919aed1c4a8c209"},
+        //     {"panzafly.romanellas.cloud","07dab70e031d47001f7ebc0cee7759e0c1e7aa21e2e9f52ecae485ab29ddd599"},
+        //     {"toctocgnam.romanellas.cloud","99bb7268a02d722247f955d0b7abb0d889b00b292861599c33241cfba069e769"}
+        // };
 
         public class AvailabilityPayload
         {

@@ -1,12 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+
 using acmeat.server.order.client;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.IdentityModel.Tokens;
-using Telerik.JustMock;
+
 
 namespace acmeat.api.order
 {
@@ -61,25 +56,6 @@ namespace acmeat.api.order
 
 
 
-        [HttpDelete("{transactionId}")]
-        public async Task<GeneralResponse> DeleteTransaction(string transactionId){
-            Console.WriteLine($"token received: {transactionId}. Deleting transaction");
-
-            GeneralResponse generalResponse = new GeneralResponse();
-
-            HttpResponseMessage? bankTransctiondeletion = await sharedClient.DeleteAsync(sharedClient.BaseAddress + "payments/"+ transactionId);
-            if (bankTransctiondeletion != null && bankTransctiondeletion.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                
-                _logger.LogInformation($"refound started");
-                generalResponse.Message = "OK";
-                return generalResponse;
-            }
-            else
-            {
-                generalResponse.Message = $"an error occured during transaction deletion code:{bankTransctiondeletion?.StatusCode} content: {bankTransctiondeletion?.Content}";
-                return generalResponse;
-            }
-        }
+      
     }
 }

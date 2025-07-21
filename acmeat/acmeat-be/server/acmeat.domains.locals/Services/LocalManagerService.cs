@@ -31,13 +31,6 @@ public class GrpcLocalManagerService : server.local.manager.GrpcLocal.GrpcLocalB
         _localReader = localReader;
     }
 
-    public override Task<server.local.manager.HelloReplyClient> SayHello(server.local.manager.HelloRequestClient request, ServerCallContext context)
-    {
-        return Task.FromResult(new server.local.manager.HelloReplyClient
-        {
-            Message = "Hello " + request.Name
-        });
-    }
 
     public override Task<server.local.manager.Local> GetLocalById(Id id, ServerCallContext context)
     {

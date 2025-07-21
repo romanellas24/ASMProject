@@ -85,7 +85,7 @@ namespace acmeat.api.local
 
 
 
-            if (timeOnly.Hour < deadLineHour)
+            if (timeOnly.Hour > deadLineHour)
             {
                 _logger.LogInformation($"Cannot update the local availability its too late...");
                 server.local.client.GeneralResponse response = new server.local.client.GeneralResponse();
@@ -144,14 +144,14 @@ namespace acmeat.api.local
 
         }
 
-        [HttpPost]
-        public async Task<server.local.client.GeneralResponse> CheckLocalAvailability(LocalAvailabilty localAvailabilty)
-        {
-            _logger.LogInformation($"Checking Local availability: {localAvailabilty.localUrl} ");
+        // [HttpPost]
+        // public async Task<server.local.client.GeneralResponse> CheckLocalAvailability(LocalAvailabilty localAvailabilty)
+        // {
+        //     _logger.LogInformation($"Checking Local availability: {localAvailabilty.localUrl} ");
 
-            return await _localClient.CheckOrderAvailability(localAvailabilty.deliveryTime,localAvailabilty.dishes,localAvailabilty.localUrl);
+        //     return await _localClient.CheckOrderAvailability(localAvailabilty.id,localAvailabilty.deliveryTime,localAvailabilty.dishes,localAvailabilty.localUrl);
 
-        }
+        // }
 
 
         [HttpPatch]

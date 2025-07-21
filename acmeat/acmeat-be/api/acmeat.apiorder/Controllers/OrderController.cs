@@ -35,7 +35,6 @@ namespace acmeat.api.order
         public async Task<HttpResponseMessage> GetPaymentForm(int OrderId)
         {
             Console.WriteLine($"order id: {OrderId}");
-            //TO DO: MAKE REQUEST TO FAKE BANK
             using HttpResponseMessage response = await sharedClient.GetAsync("paymentOrder/" + OrderId);
             return response;
 
@@ -46,7 +45,7 @@ namespace acmeat.api.order
         public async Task<OrderInfo> GetOrderById(int Id)
         {
             _logger.LogInformation($"Getting order with id: {Id}");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+            
 
             var order = await _orderClient.GetOrderById(Id);
             return new OrderInfo(order);
@@ -57,7 +56,7 @@ namespace acmeat.api.order
         public async Task<List<OrderInfo>> GetOrders()
         {
             _logger.LogInformation($"Getting orders ");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+            
 
             var orders = await _orderClient.GetOrderList();
             return orders.Orders.Select(x => new OrderInfo(x)).ToList();
@@ -68,7 +67,7 @@ namespace acmeat.api.order
         public async Task<List<OrderInfo>> GetOrdersByUserId(int userId)
         {
             _logger.LogInformation($"Getting orders ");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+            
 
             var orders = await _orderClient.GetOrdersByUserId(userId);
             return orders.Orders.Select(x => new OrderInfo(x)).ToList();
@@ -80,8 +79,7 @@ namespace acmeat.api.order
         public async Task<List<OrderInfo>> GetOrdersToPay(int userId)
         {
             _logger.LogInformation($"Getting orders ");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
-
+ 
             var orders = await _orderClient.GetOrdersToPay(userId);
             return orders.Orders.Select(x => new OrderInfo(x)).ToList();
 

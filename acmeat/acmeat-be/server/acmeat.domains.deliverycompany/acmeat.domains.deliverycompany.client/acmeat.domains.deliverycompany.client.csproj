@@ -24,7 +24,7 @@
        </PackageReference>
      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
-     <PackageReference Include="JustMock" Version="2024.4.1203.350" />
+     <!-- <PackageReference Include="JustMock" Version="2024.4.1203.350" /> -->
      
     
   </ItemGroup>

@@ -7,41 +7,17 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Zeebe.Client;
-using acmeat.db.order;
+
 using acmeat.server.order.client;
-using Azure.Core;
-using Grpc.Core;
+
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Azure;
+
 //PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.local.client
 {
 
-    //    public class DishInfo
-    // {
-    //     public int Id { get; set; }
-    //     public int Quantity { get; set; }
-
-    //     public DishInfo()
-    //     {
-
-    //     }
-
-
-    //     public DishInfo(int Id, int Quantity)
-    //     {
-
-    //         this.Id = Id;
-    //         this.Quantity = Quantity;
-
-    //     }
-
-
-
-    // }
 
     public class AuthLocal
     {

@@ -1,3 +1,7 @@
+echo "Creating acmeat namespace"
+microk8s kubectl create namespace acmeat
+
+
 echo "Applying DB..."
 microk8s kubectl apply -R -f "../../../acmeat-db/db/*.yaml"
 

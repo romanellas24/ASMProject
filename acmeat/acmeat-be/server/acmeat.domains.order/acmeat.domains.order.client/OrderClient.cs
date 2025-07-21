@@ -3,32 +3,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
-using Telerik.JustMock;
 //PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.order.client
 {
 
-    //     public class Payment{
-
-    //     public Payment(
-    //         string IBAN,
-    //         string Causal,
-    //         int Price,
-    //         int TransactionId
-    //     ){
-    //         this.IBAN = IBAN;
-    //         this.Causal =Causal;
-    //         this.Price = Price;
-    //         this.TransactionId = TransactionId;
-    //     }
-
-
-
-    //     public string IBAN {get;set;}
-    //     public string Causal {get;set;}
-    //     public int Price {get;set;}
-    //     public int TransactionId{get;set;}
-    // }
 
     public class OrderClient
     {
@@ -37,15 +15,6 @@ namespace acmeat.server.order.client
         private GrpcChannel _channel;
         private GrpcOrder.GrpcOrderClient _client;
         private readonly OrderClientOptions _options;
-
-        private static HttpClient sharedClient = new()
-        {
-            BaseAddress = new Uri("https://jsonplaceholder.typicode.com"),
-        };
-        public interface ITaskAsync
-        {
-            Task<int> AsyncExecute(string value);
-        }
 
 
         public OrderClient(IOptions<OrderClientOptions> options

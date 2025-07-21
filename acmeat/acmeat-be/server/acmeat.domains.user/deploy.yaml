@@ -4,7 +4,7 @@ kind: Deployment
 
 metadata:
   name: usermanager
-  namespace: default
+  namespace: acmeat
   labels:
     app: usermanager
 

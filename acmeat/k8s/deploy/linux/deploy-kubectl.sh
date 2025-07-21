@@ -1,3 +1,6 @@
+echo "Creating acmeat namespace"
+kubectl create namespace acmeat
+
 echo "Applying DB..."
 kubectl apply -R -f "../../../acmeat-db/db/*.yaml"
 

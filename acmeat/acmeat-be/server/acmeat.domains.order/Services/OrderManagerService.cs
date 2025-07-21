@@ -6,7 +6,6 @@ using acmeat.server.order.datawriter;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-// using acmeat.server.local.client;
 using System.Globalization;
 using Zeebe.Client;
 using NLog.Extensions.Logging;
@@ -22,7 +21,7 @@ using Zeebe.Client.Api.Worker;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using acmeat.server.order;
+using acmeat.db.order;
 
 namespace acmeat.domains.order.Services;
 
@@ -47,7 +46,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     // "ConnectionString":"127.0.0.1:26500"
 
 
-    private static readonly string BPMNDiagramPath = "./Services/Resources/OrderFlowDiagram - Ver1.3b.bpmn";
+    private static readonly string BPMNDiagramPath = "Services/Resources/OrderFlowDiagram - Ver1.3b.bpmn";
     private string? BpmnProcessId = "";
     private long? ProcessInstanceKey = 0;
 
@@ -81,6 +80,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 .Build();
 
 
+        ProcessOrderWorker();
         CheckLocalAvailabiltyWorker();
         CheckDeliveryCompanyAvailabilityWorker();
         CommunicateOrderToDeliveryCompany();
@@ -148,30 +148,15 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
         BpmnProcessId = await DeployProcess(BPMNDiagramPath);
         // time to deploy the BPMN diagram
-        await Task.Delay(5000);
+        // await Task.Delay(5000);
 
         _logger.LogInformation($"BPMN process id: {BpmnProcessId}");
 
 
-        ProcessInstanceKey = await StartProcessInstance(BpmnProcessId);
+        ProcessInstanceKey = await StartProcessInstance(BpmnProcessId, order);
 
 
-
-
-        //  https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskcompletionsource-1
-        // FOR EVERY DIFFERENT WORKER USE A NEW TASKCOMPLETION
-        var tcs = new TaskCompletionSource<server.order.manager.GeneralResponse>();
-        order.DeliveryTime = NormalizeTime(order.DeliveryTime);
-           
-
-
-        ProcessOrderWorker(order, tcs);
-
-        generalResponse = await tcs.Task;
-
-
-
-
+        generalResponse.Message="OK";
 
 
 
@@ -262,21 +247,21 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                .Handler(async (jobClient, job) =>
                {
                    var localResponse = new server.order.manager.GeneralResponse();
-                 
+
 
 
                    try
                    {
-                      DateTime deliveryTime = DateTime.Parse(order.DeliveryTime);
-                      DateTime now = DateTime.Now;
+                       DateTime deliveryTime = DateTime.Parse(order.DeliveryTime);
+                       DateTime now = DateTime.Now;
 
 
 
                        if ((now - deliveryTime).Hours > -1)
                        {
-                         localResponse.Message = "Cannot delete the order, you can delete it only one hour before the delivery time";
+                           localResponse.Message = "Cannot delete the order, you can delete it only one hour before the delivery time";
                            _logger.LogInformation($"{localResponse.Message}");
-                          
+
                            await jobClient
                            .NewCompleteJobCommand(job.Key)
                            .Variables(JsonConvert.SerializeObject(new { IsRespectingRules = false }))
@@ -401,70 +386,80 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
             .Send();
 
         var bpmnProcessId = deployRespone.Processes[0].BpmnProcessId;
+        _logger.LogInformation($"Process deployed with id {bpmnProcessId}");
         return bpmnProcessId;
     }
 
 
     //CAMUNDA UTILITIES
 
-    private async Task<long> StartProcessInstance(string bpmnProcessId)
+    private async Task<long> StartProcessInstance(string bpmnProcessId, server.order.manager.Order order)
     {
         var processInstanceResponse = await _zeebeClient
                         .NewCreateProcessInstanceCommand()
                         .BpmnProcessId(bpmnProcessId)
                         .LatestVersion()
+                        .Variables(JsonConvert.SerializeObject(order))
                         .Send();
 
-        _logger.LogInformation("Process Instance has been started!");
+        order.DeliveryTime = NormalizeTime(order.DeliveryTime);
         var processInstanceKey = processInstanceResponse.ProcessInstanceKey;
+        _logger.LogInformation($"Process Instance has been started with id {processInstanceKey}!");
         return processInstanceKey;
     }
 
-    private IJobWorker? ProcessOrderWorker(server.order.manager.Order order, TaskCompletionSource<server.order.manager.GeneralResponse> tcs)
+    private void ProcessOrderWorker()
     {
-        return _zeebeClient
+         _zeebeClient
               .NewWorker()
               .JobType("ProcessOrder")
               .Handler(async (jobClient, job) =>
               {
                   var localResponse = new server.order.manager.GeneralResponse();
-                  
+
                   try
                   {
-                     DateTime time = DateTime.Parse(order.DeliveryTime);
-                      
-                    //   if ((time.Hour < 12 && time.Hour > 14) || (time.Hour < 19 && time.Hour > 22))
-                      //   {
-                      //       await _zeebeClient
-                      //       .NewThrowErrorCommand(job.Key)
-                      //       .ErrorCode("500")
-                      //       .ErrorMessage("You can place orders between 12-14 and 19-22")
-                      //       .Send();
-                      //       localResponse.Message = "You can place orders between 12-14 and 19-22";
+                      var variablesJson = job.Variables;
+                      var orderFromJob = JsonConvert.DeserializeObject<server.order.manager.Order>(variablesJson);
 
-                      //   }
-                      //   else
-                      //   {
-                      //TO AVOID PROBLEMS WITH DATE
+                      _logger.LogInformation($"Processing order with ID: {orderFromJob.Id}");
+                      DateTime time = DateTime.Parse(orderFromJob.DeliveryTime);
 
+                      bool isLunchTime = time.Hour > 12 && time.Hour < 14;
+                      bool isDinnerTime = time.Hour > 19 && time.Hour < 22;
 
+                      if (!isLunchTime && !isDinnerTime)
+                      {
+                          await _zeebeClient
+                          .NewThrowErrorCommand(job.Key)
+                          .ErrorCode("500")
+                          .ErrorMessage("You can place orders between 12-14 and 19-22")
+                          .Send();
+                          localResponse.Message = "You can place orders between 12-14 and 19-22";
+                          _logger.LogInformation(localResponse.Message);
+                      }
+                      else
+                      {
+                          //TO AVOID PROBLEMS WITH DATE
 
+                          orderFromJob.DeliveryTime = NormalizeTime(orderFromJob.DeliveryTime);
+                          _logger.LogInformation($"Starting creating Order... with Id {orderFromJob.Id}");
                           await _orderDataWriter.SendAsync(
                             new CreateNewOrderCommand(
-                                ConvertGrpcToServerModel(order)
+                                ConvertGrpcToServerModel(orderFromJob)
                                 )
                             );
+                          _logger.LogInformation($"Order created with Id {orderFromJob.Id}");
 
 
                           localResponse.Message = "OK";
-                                                await jobClient
-                          .NewCompleteJobCommand(job.Key)
-                          .Variables(JsonConvert.SerializeObject(order))
-                          .Send();
+                          await jobClient
+    .NewCompleteJobCommand(job.Key)
+    .Send();
+                          _logger.LogInformation("Published order");
+                          //   tcs.TrySetResult(localResponse);
 
-                          tcs.TrySetResult(localResponse);
-
-                    //   }
+                      }
 
 
 
@@ -472,13 +467,14 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                   catch (Exception ex)
                   {
                       localResponse.Message = $"Exception in handler: {ex.Message}";
-                    //    await _zeebeClient
-                    //         .NewThrowErrorCommand(job.Key)
-                    //         .ErrorCode("500")
-                    //         .ErrorMessage(localResponse.Message)
-                    //         .Send();
-                            
-                      tcs.TrySetException(ex);
+                      //    await _zeebeClient
+                      //         .NewThrowErrorCommand(job.Key)
+                      //         .ErrorCode("500")
+                      //         .ErrorMessage(localResponse.Message)
+                      //         .Send();
+                      _logger.LogInformation(localResponse.Message);
+
+                      //   tcs.TrySetException(ex);
                   }
 
 
@@ -495,7 +491,6 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     public void CheckLocalAvailabiltyWorker()
     {
 
-        GeneralResponse localResponse = new GeneralResponse();
 
 
         _zeebeClient
@@ -503,46 +498,67 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
               .JobType("CheckLocalAvailabilty")
               .Handler(async (jobClient, job) =>
               {
-
+                  _logger.LogInformation($"Starting CheckAvailability for locals");
                   var variables = job.Variables;
                   JObject root = JObject.Parse(variables);
                   var orderJson = root["Order"].ToString();
                   server.order.manager.Order? order = JsonConvert.DeserializeObject<server.order.manager.Order>(orderJson);
 
-                  DishList dishlist = await _dishClient.GetDishsByMenuId(order.MenuId);
-                  Local local = await _localClient.GetLocalById(order.LocalId);
-                  List<DishInfo> dishInfos = dishlist.Dishs.Select(dish => new DishInfo { Id = dish.Id, Quantity = order.Quantity }).ToList();
-
-
-        
-
-
-
-                  order.DeliveryTime = NormalizeTime(order.DeliveryTime);
-                  var response = await _localClient.CheckOrderAvailability(order.Id,order.DeliveryTime, dishInfos, local.Url);
-
-                  //TO DECOMMENT
-                  if (response.Message == "OK")
+                  if (order != null)
                   {
+                      _logger.LogInformation($"Getting dishes from menu {order.MenuId}");
+
+                      DishList dishlist = await _dishClient.GetDishsByMenuId(order.MenuId);
+
+                      _logger.LogInformation($"Getting local with Id {order.LocalId}");
+
+                      Local local = await _localClient.GetLocalById(order.LocalId);
+                      List<DishInfo> dishInfos = dishlist.Dishs.Select(dish => new DishInfo { Id = dish.Id, Quantity = order.Quantity }).ToList();
 
 
-                      await jobClient
-                           .NewCompleteJobCommand(job.Key)
-                           .Send()
-                       ;
 
 
+
+
+                      order.DeliveryTime = NormalizeTime(order.DeliveryTime);
+
+                      _logger.LogInformation($"Contacting {local.Url} for check its availability");
+                      var response = await _localClient.CheckOrderAvailability(order.Id, order.DeliveryTime, dishInfos, local.Url);
+
+                      //TO DECOMMENT
+                      if (response.Message == "OK")
+                      {
+
+                          _logger.LogInformation($"Local {local.Url} is available");
+                          await jobClient
+                               .NewCompleteJobCommand(job.Key)
+                               .Send()
+                           ;
+                          _logger.LogInformation($"Check Local Availability Job is completed");
+
+
+                      }
+                      else
+                      {
+                          await jobClient.NewThrowErrorCommand(job.Key)
+                  .ErrorCode("500")
+                  .ErrorMessage($"{response.Message}")
+                  .Send();
+                          _logger.LogInformation($"Something went wrong checking awailability: {response.Message}");
+                      }
 
                   }
                   else
                   {
-                      localResponse.Message = $"Something went wrong checking awailability: {response.Message}";
-
+                      _logger.LogInformation($"Failed to retrieve order. Is null");
                       await jobClient.NewThrowErrorCommand(job.Key)
-              .ErrorCode("500")
-              .ErrorMessage($"{localResponse.Message}")
-              .Send();
+                .ErrorCode("500")
+                .ErrorMessage($"order is null")
+                .Send();
+
+
                   }
+
 
               })
               .MaxJobsActive(1)
@@ -567,7 +583,6 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
             .JobType("SendRefund")
             .Handler(async (jobClient, job) =>
             {
-                var local = new server.order.manager.GeneralResponse();
 
                 try
                 {
@@ -576,34 +591,33 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                     // Parsare l'oggetto Order
                     JObject root = JObject.Parse(variables);
                     var paymentJson = root["PaymentInformation"].ToString();
-                    server.order.client.Payment? payment = JsonConvert.DeserializeObject<server.order.client.Payment>(paymentJson);
+                    server.order.manager.Payment? payment = JsonConvert.DeserializeObject<server.order.manager.Payment>(paymentJson);
 
 
                     if (payment != null)
                     {
 
-
+                        _logger.LogInformation($"Payment with transactionId {payment.TransactionId} starting refound");
                         HttpResponseMessage? bankTransctiondeletion = await sharedClient.DeleteAsync(sharedClient.BaseAddress + "payments/" + payment.TransactionId);
                         if (bankTransctiondeletion != null && bankTransctiondeletion.StatusCode == System.Net.HttpStatusCode.OK)
                         {
 
                             _logger.LogInformation($"refound started");
-                            local.Message = "OK";
+
 
                         }
                         else
                         {
-                            local.Message = $"an error occured during transaction deletion code:{bankTransctiondeletion?.StatusCode} content: {bankTransctiondeletion?.Content}";
 
+                            _logger.LogInformation($"an error occured during transaction deletion code:{bankTransctiondeletion?.StatusCode} content: {bankTransctiondeletion?.Content}");
                         }
 
 
 
-                        _logger.LogInformation(local.Message);
                         await jobClient
                            .NewCompleteJobCommand(job.Key)
                            .Send();
-
+                        _logger.LogInformation("Send Refund job completed");
 
                         //SEND REFOUND RESPONSE
                         await _zeebeClient
@@ -620,19 +634,24 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                              )
                            )
                         .Send();
+                        _logger.LogInformation("Publishing message ");
                     }
                     else
                     {
-                        throw new Exception("Cannot deserialize order is null");
+                        _logger.LogInformation("Payment information is null!");
+                        throw new Exception("Payment information is null");
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    local.Message = $"Exception in handler: {ex.Message}";
-                    _logger.LogInformation($"{local.Message}");
-                    // await _zeebeClient.NewCancelInstanceCommand((long)ProcessInstanceKey).Send();
-                    //   tcs.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
+
+                    _logger.LogInformation($"Exception in handler: {ex.Message}");
+                    await _zeebeClient
+                    .NewThrowErrorCommand(job.Key)
+                    .ErrorCode("500")
+                    .ErrorMessage(ex.Message)
+                    .Send();
                 }
 
 
@@ -655,7 +674,6 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
              .JobType("CommunicateOrderCancellationLocal")
              .Handler(async (jobClient, job) =>
              {
-                 var local = new server.order.manager.GeneralResponse();
 
                  try
                  {
@@ -670,16 +688,17 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
                      if (order != null)
                      {
-
+                         _logger.LogInformation($"Communicating cancellation to {local1.Url} order with id {order.Id} ");
 
                          var response = await _localClient.CommunicateOrderCancellation(order.Id, local1.Url);
+
+                         _logger.LogInformation($"Local response {response.Message}");
 
                          await jobClient
                              .NewCompleteJobCommand(job.Key)
                              .Send();
+                         _logger.LogInformation($"CommunicateOrderCancellationLocal Finished succesfully");
 
-                         local.Message = "DELETED";
-                         _logger.LogInformation(local.Message);
 
                          await _zeebeClient
                          .NewPublishMessageCommand()
@@ -695,21 +714,23 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                               )
                             )
                          .Send();
-
-                         //   tcs.TrySetResult(local);
+                         _logger.LogInformation($"Publishing the message of LocalOrderCancellationResponse");
                      }
                      else
                      {
+                         _logger.LogInformation("Order is null");
                          throw new Exception("Cannot deserialize order is null");
                      }
 
                  }
                  catch (Exception ex)
                  {
-                     local.Message = $"Exception in handler: {ex.Message}";
-                     _logger.LogInformation($"{local.Message}");
-                    //  await _zeebeClient.NewCancelInstanceCommand((long)ProcessInstanceKey).Send();
-                     //   tcs.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
+                     _logger.LogInformation($"{ex.Message}");
+                     await _zeebeClient
+                     .NewThrowErrorCommand(job.Key)
+                     .ErrorCode("500")
+                     .ErrorMessage(ex.Message)
+                     .Send();
                  }
 
 
@@ -728,7 +749,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
              .JobType("CommunicateOrderCancellationDeliveryCompany")
              .Handler(async (jobClient, job) =>
              {
-                 var local = new server.order.manager.GeneralResponse();
+
 
                  try
                  {
@@ -739,35 +760,38 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                      var DeliveryCompanyAvailabilityResponse = root["DeliveryCompanyAvailabilityResponse"].ToString();
 
                      DeliveryCompanyPayload? payload = JsonConvert.DeserializeObject<DeliveryCompanyPayload>(DeliveryCompanyAvailabilityResponse);
-                 
+
                      if (payload != null)
                      {
 
-
+                         _logger.LogInformation($"Payload {payload} retrieved. Sending order cancellation to delivery company {payload.DeliveryCompanyUrl}.");
                          var response = await _deliveryCompanyClient.SendOrderCancellationToDeliveryCompany(payload.OrderId, payload.DeliveryCompanyUrl);
+                         _logger.LogInformation($"Delivery company resonse: {response.Message}");
 
                          await jobClient
                              .NewCompleteJobCommand(job.Key)
                              .Send();
 
-                         local.Message = "DELETED";
-                         _logger.LogInformation(local.Message);
+
+                         _logger.LogInformation("Delivery Company order cancellation completed");
 
                          //   tcs.TrySetResult(local);
-                          await _zeebeClient
-                        .NewPublishMessageCommand()
-                        .MessageName("DeliveryCompanyOrderCancellationResponse")
-                        .CorrelationKey(payload.OrderId.ToString())
-                        .Variables(
+                         await _zeebeClient
+                       .NewPublishMessageCommand()
+                       .MessageName("DeliveryCompanyOrderCancellationResponse")
+                       .CorrelationKey(payload.OrderId.ToString())
+                       .Variables(
 
-                             JsonConvert.SerializeObject(
-                                 new
-                            {
-                                DeliveryComapnyResponse = response.Message
-                            }
-                             )
-                           )
-                        .Send();
+                            JsonConvert.SerializeObject(
+                                new
+                                {
+                                    DeliveryComapnyResponse = response.Message
+                                }
+                            )
+                          )
+                       .Send();
+
+                         _logger.LogInformation($"Published message for DeliveryComapny order cancellation");
                      }
                      else
                      {
@@ -777,9 +801,14 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                  }
                  catch (Exception ex)
                  {
-                     local.Message = $"Exception in handler: {ex.Message}";
-                     _logger.LogInformation($"{local.Message}");
-                    //  await _zeebeClient.NewCancelInstanceCommand((long)ProcessInstanceKey).Send();
+
+                     _logger.LogInformation($"{ex.Message}");
+                     await _zeebeClient
+                     .NewThrowErrorCommand(job.Key)
+                     .ErrorCode("500")
+                     .ErrorMessage(ex.Message)
+                     .Send();
+                     //  await _zeebeClient.NewCancelInstanceCommand((long)ProcessInstanceKey).Send();
                      //   tcs.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
                  }
 
@@ -810,20 +839,27 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                      JObject root = JObject.Parse(variables);
                      var orderJson = root["Order"].ToString();
                      server.order.manager.Order? order = JsonConvert.DeserializeObject<server.order.manager.Order>(orderJson);
+
                      if (order != null)
                      {
+
+
+
+                         _logger.LogInformation($"Retrieved order to cancel with id: {order.Id}");
                          await _orderDataWriter.SendAsync(
                          new DeleteNewOrderCommand(
                              order.Id
                          )
                          );
 
+                         _logger.LogInformation($"Cancelling order with id: {order.Id} has been sucesfully");
+
                          await jobClient
                              .NewCompleteJobCommand(job.Key)
                              .Send();
 
-                         local.Message = "DELETED";
-                         _logger.LogInformation(local.Message);
+
+                         _logger.LogInformation($" Order cancellatio has finished succesfully!");
 
                          //   tcs.TrySetResult(local);
                      }
@@ -837,7 +873,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                  {
                      local.Message = $"Exception in handler: {ex.Message}";
                      _logger.LogInformation($"{local.Message}");
-                    //  await _zeebeClient.NewCancelInstanceCommand((long)ProcessInstanceKey).Send();
+                     //  await _zeebeClient.NewCancelInstanceCommand((long)ProcessInstanceKey).Send();
                      //   tcs.TrySetException(ex); // opzionale se vuoi catchare nel codice principale
                  }
 
@@ -859,7 +895,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
               .JobType("AllocateVehicle")
               .Handler(async (jobClient, job) =>
               {
-                  var local = new server.order.manager.GeneralResponse();
+
 
                   try
                   {
@@ -871,6 +907,8 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                       var DeliveryCompanyAvailabilityResponse = root["DeliveryCompanyAvailabilityResponse"].ToString();
 
                       DeliveryCompanyPayload? payload = JsonConvert.DeserializeObject<DeliveryCompanyPayload>(DeliveryCompanyAvailabilityResponse);
+
+                      _logger.LogInformation($"Comunicating to delivery Company {payload.DeliveryCompanyUrl}");
                       var response = await _deliveryCompanyClient.CommunicateOrderToDeliveryCompany(
                         payload.OrderId,
                         new DeliveryCompanyAvailabilityResponse2v
@@ -893,12 +931,29 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                             )
 
                             );
+
+                      _logger.LogInformation($"Delivery company response {response.Message}");
                       if (response.Message == "OK")
                       {
                           await jobClient
                             .NewCompleteJobCommand(job.Key)
                             //   .Variables("{OK}")
                             .Send();
+
+                          _logger.LogInformation($"Comunicate Order To Delivery Company has finished succesfully!");
+
+                          await _zeebeClient
+                            .NewPublishMessageCommand()
+                            .MessageName("AllocateVehicleResponse")
+                            .CorrelationKey(payload.OrderId.ToString())
+                            .Variables(JsonConvert.SerializeObject(new
+                            {
+                                Response = response.Message
+                            }))
+                            .Send();
+
+
+
                       }
                       else
                       {
@@ -906,16 +961,15 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                         .ErrorCode("500")
                         .ErrorMessage(response.Message)
                         .Send();
+                          _logger.LogInformation($"Something went wrong with the Communicating Order to delivery Company. Reason: {response.Message}");
                       }
 
-
-                      local.Message = "DELETED";
-                      _logger.LogInformation(local.Message);
+                      _logger.LogInformation(response.Message);
 
                   }
                   catch (Exception ex)
                   {
-                      local.Message = $"Exception in handler: {ex.Message}";
+                      _logger.LogInformation($"Exception during COmmunicate Order to Delivery Company: {ex.Message}");
                   }
 
 
@@ -925,6 +979,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
               .PollInterval(TimeSpan.FromSeconds(1))
               .Timeout(TimeSpan.FromSeconds(10))
               .Open();
+
 
     }
 
@@ -937,7 +992,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                   .Handler(async (jobClient, job) =>
                   {
                       _logger.LogInformation("Checking availabilty from delivery company");
-                      var local = new server.order.manager.GeneralResponse();
+
                       try
                       {
 
@@ -947,138 +1002,151 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                           var orderJson = root["Order"].ToString();
                           server.order.manager.Order? order = JsonConvert.DeserializeObject<server.order.manager.Order>(orderJson);
 
-                          //FETCH INFOS RELEVANT  TO THE DELIVERY COMPANY AND USER
-                          Local localInfo = await _localClient.GetLocalById(order.LocalId);
-                          User user = await _userClient.GetUserById(order.UserId);
-                          List<DeliveryCompany> deliveryCompanies = (await _deliveryCompanyClient.GetDeliveryCompanyList()).Deliverycompanys.ToList();
-                          List<string> deliveryCompanyUrls = deliveryCompanies.Select(deliveryCompany => deliveryCompany.Name).ToList();
-
-
-                          AvailabilityPayload availabiltyPayload;
-                          List<Task<DeliveryCompanyAvailabilityResponse2v>> deliveryCompanysResponses = new List<Task<DeliveryCompanyAvailabilityResponse2v>>();
-                          List<DeliveryCompanyAvailabilityResponse2v> deliveryCompanyAvailabilityResponses = new List<DeliveryCompanyAvailabilityResponse2v>();
-
-
-                          // PREPAIRING CHECK AVAILABILITY CALLS
-                          foreach (string deliveryCompanyUrl in deliveryCompanyUrls)
+                          if (order != null)
                           {
 
-                              availabiltyPayload = new AvailabilityPayload
-                              (
-                                  localInfo.Address,
-                                  user.Address,
-                                  NormalizeTime(order.DeliveryTime),
-                                  deliveryCompanyUrl
+                              _logger.LogInformation($"Retrieved order with Id: {order?.Id}");
+                              //FETCH INFOS RELEVANT  TO THE DELIVERY COMPANY AND USER
+                              _logger.LogInformation($"Getting local with Id :{order?.LocalId}");
+                              Local localInfo = await _localClient.GetLocalById(order.LocalId);
 
-                              );
+                              _logger.LogInformation($"Getting user with Id: {order.UserId}");
+                              User user = await _userClient.GetUserById(order.UserId);
 
-                              deliveryCompanysResponses.Add(_deliveryCompanyClient.CheckAvailabilityWorker(availabiltyPayload));
-
-
-
-                          }
-
-                          // HERE WAIT THE RESPONSES FOR 15 SECONDS
-                          var allTasks = deliveryCompanysResponses;
-                          var timeoutTask = Task.Delay(15000);
-                          // to decomment
-                          // Wait for every task or exit prematurely due to time out 
-
-                          foreach (var task in allTasks)
-                          {
-                              var finished = await Task.WhenAny(task, timeoutTask);
+                              _logger.LogInformation($"Getting delivery companies");
+                              List<DeliveryCompany> deliveryCompanies = (await _deliveryCompanyClient.GetDeliveryCompanyList()).Deliverycompanys.ToList();
+                              List<string> deliveryCompanyUrls = deliveryCompanies.Select(deliveryCompany => deliveryCompany.Name).ToList();
 
 
-                              try
+                              AvailabilityPayload availabiltyPayload;
+                              List<Task<DeliveryCompanyAvailabilityResponse2v>> deliveryCompanysResponses = new List<Task<DeliveryCompanyAvailabilityResponse2v>>();
+                              List<DeliveryCompanyAvailabilityResponse2v> deliveryCompanyAvailabilityResponses = new List<DeliveryCompanyAvailabilityResponse2v>();
+
+
+                              // PREPAIRING CHECK AVAILABILITY CALLS
+                              _logger.LogInformation("Prepairing to call CheckAvailability for Delivery Company");
+                              foreach (string deliveryCompanyUrl in deliveryCompanyUrls)
                               {
-                                  // Add result if is successfully
-                                  if (finished != timeoutTask)
+
+                                  availabiltyPayload = new AvailabilityPayload
+                                  (
+                                      localInfo.Address,
+                                      user.Address,
+                                      NormalizeTime(order.DeliveryTime),
+                                      deliveryCompanyUrl
+
+                                  );
+
+                                  deliveryCompanysResponses.Add(_deliveryCompanyClient.CheckAvailabilityWorker(availabiltyPayload));
+
+
+
+                              }
+
+                              // HERE WAIT THE RESPONSES FOR 15 SECONDS
+                              var allTasks = deliveryCompanysResponses;
+                              var timeoutTask = Task.Delay(15000);
+                              // to decomment
+                              // Wait for every task or exit prematurely due to time out 
+                              _logger.LogInformation("Start checking availability...");
+                              foreach (var task in allTasks)
+                              {
+                                  var finished = await Task.WhenAny(task, timeoutTask);
+
+
+                                  try
                                   {
-                                      var result = await task;
-                                      deliveryCompanyAvailabilityResponses.Add(result);
+                                      // Add result if is successfully
+                                      if (finished != timeoutTask)
+                                      {
+                                          var result = await task;
+                                          _logger.LogInformation($"Check availability for {result.DeliveryCompanyUrl} is :{result.isVehicleAvailable}");
+                                          deliveryCompanyAvailabilityResponses.Add(result);
+                                      }
                                   }
+                                  catch (Exception ex)
+                                  {
+                                      _logger.LogError(ex.Message);
+                                      //    throw ex; 
+                                  }
+
+
+
                               }
-                              catch (Exception ex)
+
+
+
+                              deliveryCompanyAvailabilityResponses = deliveryCompanyAvailabilityResponses.Where(response => response.distance < 10).ToList();
+
+                              //IF NO DELIVERY COMPANY IS AVAILABLE WE PUBLISH THE MESSAGE
+                              if (deliveryCompanyAvailabilityResponses.Count <= 0)
                               {
-                                  _logger.LogError(ex.Message);
-                                  //    throw ex; 
+                                  _logger.LogInformation("No delivery company available near the user");
+                                  await _zeebeClient
+                              .NewThrowErrorCommand(job.Key)
+                              .ErrorCode("500")
+                              .ErrorMessage("No delivery company available near the user")
+                              .Send();
+
+                                  //OTHERWISE WE SELECT THE CHEAPEST ONE AND WE PUBLISH IT
+                              }
+                              else
+                              {
+                                  _logger.LogInformation($"Selecting the delivery company....");
+                                  DeliveryCompanyAvailabilityResponse2v? del = deliveryCompanyAvailabilityResponses.Find(
+                                     deliveryC =>
+                                      deliveryC.price == deliveryCompanyAvailabilityResponses.Min(
+                                         del => del.price
+                                         ));
+                                  var Payload = new
+                                  {
+                                      LocalAddress = localInfo.Address,
+                                      UserAddress = user.Address,
+                                      DeliveryTime = NormalizeTime(order.DeliveryTime),
+                                      DeliveryCompanyUrl = del?.DeliveryCompanyUrl,
+                                      OrderId = order.Id,
+                                      Vehicle = del?.vehicleId,
+                                      TimeMinutes = del?.time,
+                                      IsVehicleAvailable = del?.isVehicleAvailable,
+                                      Price = del?.price,
+                                      Distance = del?.distance
+
+                                  };
+                                  // CHECK DELIVERY COMPANY AVAILABILTY TASK OK 
+                                  await jobClient
+                                   .NewCompleteJobCommand(job.Key)
+                                   .Send();
+
+
+                                  _logger.LogInformation($"Check availabiltiy is OK. Selected {del.DeliveryCompanyUrl} with price minimum: {del.price}");
+                                  await _zeebeClient
+                                 .NewPublishMessageCommand()
+                                 .MessageName("DeliveryCompanyAvailabilityResponse")
+                                 .CorrelationKey(order.Id.ToString())
+                                 .Variables(JsonConvert.SerializeObject(Payload))
+                                 .Send();
+
+                                  _logger.LogInformation($"using the following vehicle: {Payload.Vehicle}");
+
                               }
 
-
-
                           }
-
-                          // CHECK DELIVERY COMPANY AVAILABILTY TASK OK 
-                          local.Message = "OK";
-                          await jobClient
-                           .NewCompleteJobCommand(job.Key)
-                           .Send();
-
-                          deliveryCompanyAvailabilityResponses = deliveryCompanyAvailabilityResponses.Where(response => response.distance < 10).ToList();
-
-                          //IF NO DELIVERY COMPANY IS AVAILABLE WE PUBLISH THE MESSAGE
-                          if (deliveryCompanyAvailabilityResponses.Count <= 0)
-                          {
-                              local.Message = "No delivery companies available near the user";
-                              await _zeebeClient
-                          .NewPublishMessageCommand()
-                          .MessageName("DeliveryCompanyAvailabilityResponse")
-                          .CorrelationKey(order.Id.ToString())
-                          .Variables(JsonConvert.SerializeObject(new DeliveryCompanyAvailabilityResponse2v
-                          {
-                              isVehicleAvailable = false
-                          }))
-                          .Send();
-                          }
-                          //OTHERWISE WE SELECT THE CHEAPEST ONE AND WE PUBLISH IT
                           else
                           {
-
-                              DeliveryCompanyAvailabilityResponse2v? del = deliveryCompanyAvailabilityResponses.Find(
-                                 deliveryC =>
-                                  deliveryC.price == deliveryCompanyAvailabilityResponses.Min(
-                                     del => del.price
-                                     ));
-                              var Payload = new
-                              {
-                                  LocalAddress = localInfo.Address,
-                                  UserAddress = user.Address,
-                                  DeliveryTime = NormalizeTime(order.DeliveryTime),
-                                  DeliveryCompanyUrl = del?.DeliveryCompanyUrl,
-                                  OrderId = order.Id,
-                                  Vehicle = del?.vehicleId,
-                                  TimeMinutes = del?.time,
-                                  IsVehicleAvailable = del?.isVehicleAvailable,
-                                  Price = del?.price,
-                                  Distance = del?.distance
-
-                              };
-
-
                               await _zeebeClient
-                             .NewPublishMessageCommand()
-                             .MessageName("DeliveryCompanyAvailabilityResponse")
-                             .CorrelationKey(order.Id.ToString())
-                             .Variables(JsonConvert.SerializeObject(Payload))
-                             .Send();
-
+                          .NewThrowErrorCommand(job.Key)
+                          .ErrorCode("500")
+                          .ErrorMessage("Error is Null!")
+                          .Send();
                           }
-
-
-
-
 
                       }
                       catch (Exception ex)
                       {
 
-                          local.Message = ex.Message;
-                          _logger.LogInformation($"{local.Message}");
+
+                          _logger.LogInformation($"An Exception Occurred: {ex.Message}");
                       }
-
-
-
-
 
                   })
                   .MaxJobsActive(1)
@@ -1102,6 +1170,8 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         try
         {
             // SIMULATING MESSAGE FROM LOCAL
+
+            _logger.LogInformation($"Order id :{localResponse.OrderId} Reason:{localResponse.Reason}");
             await _zeebeClient
 .NewPublishMessageCommand()
 .MessageName("LocalAvailabilityResponse")
@@ -1121,6 +1191,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         catch (Exception ex)
         {
             resposne.Message = "An error occured: " + ex.Message;
+            _logger.LogError(ex.Message);
         }
 
         return resposne;
@@ -1138,17 +1209,17 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
                   try
                   {
+                      _logger.LogInformation("Starting verify Payment job...");
 
                       HttpClient sharedClient = new()
                       {
                           BaseAddress = new Uri("https://joliebank.romanellas.cloud/"),
                       };
+                      _logger.LogInformation($"Contacing Bank at {sharedClient.BaseAddress + "payments/" + payment.TransactionId}");
 
                       BankPaymentVerification? bankPaymentVerification = await sharedClient.GetFromJsonAsync<BankPaymentVerification>(sharedClient.BaseAddress + "payments/" + payment.TransactionId);
                       if (bankPaymentVerification != null && bankPaymentVerification.status == "Paid")
                       {
-
-
                           _logger.LogInformation($"Payment confirmed, updating order {payment.OrderId}");
 
                           //UPDATE
@@ -1156,16 +1227,19 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                           orderToUpdate.PurchaseTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                           orderToUpdate.TransactionId = payment.TransactionId;
 
+                          _logger.LogInformation($"Updating order with Id: {orderToUpdate.Id}");
+
                           await _orderDataWriter.SendAsync(
                            new UpdateNewOrderCommand(
                       orderToUpdate
                 )
             );
+                          _logger.LogInformation("Order updated");
 
-
-                                                      await jobClient
-                          .NewCompleteJobCommand(job.Key)
-                          .Send();
+                          await jobClient
+.NewCompleteJobCommand(job.Key)
+.Send();
+                          _logger.LogInformation("Verify Payment Job completed");
 
                           await _zeebeClient
                                 .NewPublishMessageCommand()
@@ -1174,11 +1248,9 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                                 .Variables(JsonConvert.SerializeObject(new
                                 {
                                     DeliveryTimeFeel = ConvertToFeelFormat(orderToUpdate.DeliveryTime)
-
-
-
                                 }))
                                 .Send();
+                          _logger.LogInformation("OrderPayed Message sent...");
                       }
                       else
                       {
@@ -1189,17 +1261,9 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                           .ErrorMessage(localResponse.Message)
                           .Send();
 
+                          _logger.LogInformation($"An error occurred during the token validation. Status{bankPaymentVerification.status}, code :{bankPaymentVerification.code}");
+
                       }
-
-                      //TO AVOID PROBLEMS WITH DATE
-
-
-
-
-
-
-
-
 
 
 
@@ -1210,6 +1274,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                   catch (Exception ex)
                   {
                       localResponse.Message = $"Exception in handler: {ex.Message}";
+                      _logger.LogInformation($"An Exception occurred: {ex.Message}");
                       tcs.TrySetException(ex);
                   }
 
@@ -1256,7 +1321,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
     {
 
         DateTime dt = DateTime.ParseExact(input, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-        string feelDateTime = dt.ToString("s")+"Z"; // "2025-07-18T21:45:00"
+        string feelDateTime = dt.ToString("s") + "Z"; // "2025-07-18T21:45:00"
         return feelDateTime;
     }
 
