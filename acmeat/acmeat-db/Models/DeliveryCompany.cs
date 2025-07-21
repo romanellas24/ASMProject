@@ -9,7 +9,7 @@ public class DeliveryCompany
     {
     }
 
-    public DeliveryCompany(int Id, string Address, int Price, bool Available, string Name)
+    public DeliveryCompany(int Id, string Address, float Price, bool Available, string Name)
     {
         this.Id = Id;
         this.Address = Address;
@@ -22,7 +22,7 @@ public class DeliveryCompany
     [Column("INDIRIZZO")]
     public string Address { get; set; }
     [Column("PREZZO")]
-    public int Price { get; set; }
+    public float Price { get; set; }
     [Column("DISPONIBILE")]
     public bool Available { get; set; }
 

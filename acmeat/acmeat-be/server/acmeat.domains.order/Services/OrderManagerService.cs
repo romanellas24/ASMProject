@@ -395,6 +395,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     private async Task<long> StartProcessInstance(string bpmnProcessId, server.order.manager.Order order)
     {
+         order.DeliveryTime = NormalizeTime(order.DeliveryTime);
         var processInstanceResponse = await _zeebeClient
                         .NewCreateProcessInstanceCommand()
                         .BpmnProcessId(bpmnProcessId)
@@ -402,7 +403,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                         .Variables(JsonConvert.SerializeObject(order))
                         .Send();
 
-        order.DeliveryTime = NormalizeTime(order.DeliveryTime);
+       
         var processInstanceKey = processInstanceResponse.ProcessInstanceKey;
         _logger.LogInformation($"Process Instance has been started with id {processInstanceKey}!");
         return processInstanceKey;
