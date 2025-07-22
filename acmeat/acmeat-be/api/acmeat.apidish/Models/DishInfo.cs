@@ -7,7 +7,7 @@ public class DishInfo
 
     [JsonConstructor]
     public DishInfo(
-            string Name, string Description, int Price, int MenuId)
+            string Name, string Description, float Price, int MenuId)
     {
        this.Id = new Random().Next();
         this.Description = Description;

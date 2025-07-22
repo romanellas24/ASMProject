@@ -11,12 +11,28 @@
         <div class="description">
            {{menu.descritpion}}
         </div>
+
+        <div>
+            <h1>Piatti</h1>
+        </div>
+
+        <div *ngIf="(dishs$| async) as dishList">
+
+            <div *ngIf="dishList != null && dishList.length > 0">
+                <div *ngFor="let dish of dishList;index as i">
+                        <p>Piatto {{i + 1}}: {{dish.name}} </p>
+                        <p>Descrizione: {{dish.description}}</p>
+                </div>
+            </div>
+
+        </div>
           <h1>Prezzo</h1>
         <div>
             {{menu.price | currency}}
         </div>
        
     </div>
+
 
     <div class="col">
         

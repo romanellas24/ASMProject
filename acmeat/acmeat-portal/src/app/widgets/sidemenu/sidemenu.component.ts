@@ -33,7 +33,6 @@ export class SidemenuComponent implements OnInit,OnDestroy {
    
 
   constructor(
-    @Inject(DOCUMENT) private document: Document,
     private eventsService:EventsService,
     private orderSvc: OrderService,
     private localSvc : LocalsService,
@@ -57,8 +56,9 @@ export class SidemenuComponent implements OnInit,OnDestroy {
       this.subscriptionList.push(
       this.orderList$.pipe(
         repeatWhen(()=>this.updatedSource$),
-        tap(() => this.isLoading = true)
+        // tap(() => )
       ).subscribe((orders:OrderInfo[]) =>{
+        this.isLoading = true
         // debugger
         this.orderList = orders
 
@@ -68,8 +68,9 @@ export class SidemenuComponent implements OnInit,OnDestroy {
 
         this.subscriptionList.push(
         this.local$.pipe(
-          tap((local:Local) => this.localList.push(local))
+          tap((local:Local) => this.localList.push(local)),
         ).subscribe()
+
       );
 
 
@@ -81,6 +82,8 @@ export class SidemenuComponent implements OnInit,OnDestroy {
       );
 
       })
+
+               this.isLoading=false
       } ));
 
       
@@ -135,8 +138,10 @@ export class SidemenuComponent implements OnInit,OnDestroy {
      return amIBetween;//  returns false.  if date ignored I expect TRUE
     }
 
-  async deleteOrder(orderId:number){
-    this.isLoading=true
+  async deleteOrder(orderId:number | undefined){
+
+    if(orderId != undefined){
+      this.isLoading=true
     let response :GeneralResponse | undefined= await this.orderSvc.deleteOrderById(orderId).toPromise()
     if(response?.message != "OK"){
       window.alert("There was an error while deleting order " + orderId +" Problem:" +response?.message)
@@ -145,6 +150,9 @@ export class SidemenuComponent implements OnInit,OnDestroy {
     }
     this.updatedSource$.next(true)
     this.isLoading=false
+
+    }
+    
   }
 
   Logout(){
@@ -156,9 +164,7 @@ export class SidemenuComponent implements OnInit,OnDestroy {
     this.router.navigate(["orders"]);
   }
 
-  public goToBank(){
-   this.document.location.href = 'https://joliebank.romanellas.cloud/pay.html';
-  }
+
 
   ngOnDestroy(): void {
    this.subscriptionList.forEach(

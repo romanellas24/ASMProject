@@ -21,6 +21,7 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
   localList$:Observable<Local[]> = new Observable();
   queryUpdated$ :Subject<boolean> = new Subject();
   menList$ : Observable<Menu[]> = new Observable();
+  isLoading : boolean = false ;
   menusList:Menu[] =[]
   localList:Local[] =[]
   menuType:string = ""
@@ -45,6 +46,7 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
+     
 
      this.city= this.activeRoute.snapshot.url[1]?.path;
 
@@ -53,8 +55,10 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
      this.subscriptions.push(
     this.queryUpdated$
     .subscribe(() =>{
+     
       // debugger
       this.localList$ = this.localSvc.getLocalsByAddress(this.city).pipe(
+         tap(() => this.isLoading = true),
          shareReplay(1),
          take(1),
          distinctUntilChanged(),
@@ -86,6 +90,7 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
 
 
       ),
+      tap(() => this.isLoading =false),
       map((menus:Menu[] ) => {
         // debugger
 
@@ -97,10 +102,12 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
         // }else{
           this.menusList = this.menusList.concat([...menus])
           this.menusList = [...new Set(this.menusList)]
+          // this.isLoading = false;
           return menus
         // }
       })
     )
+    // this.isLoading = false;
     }
 
     ))

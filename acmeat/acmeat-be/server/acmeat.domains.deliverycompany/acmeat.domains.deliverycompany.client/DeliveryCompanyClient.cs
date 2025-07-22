@@ -2,10 +2,12 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 using acmeat.server.order.client;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 //PUBLISH NEW VERSIONS ONCE CONFIGURATION IS WORKING
 namespace acmeat.server.deliverycompany.client
@@ -227,8 +229,16 @@ namespace acmeat.server.deliverycompany.client
          public async Task<GeneralResponse> SendOrderCancellationToDeliveryCompany(int orderId,string DeliveryCompanyUrl)
         {
            GeneralResponse generalResponse = new GeneralResponse();
+            var hash = new
+            {
+                hash = "6eed64279a4d6d745ab873466bcdcac28573acb423605d25d1b5b9ff95ce0b3b"
+            };
+            var request = new HttpRequestMessage(HttpMethod.Delete, protocol + DeliveryCompanyUrl + "/api/order/" + orderId+ "?company=acmeat" );
+            request.Content = new StringContent(JsonConvert.SerializeObject(hash), Encoding.UTF8, "application/json");
+           
+
             HttpResponseMessage? deliveryCompanyResponse =
-             await _sharedClient.DeleteAsync(protocol + DeliveryCompanyUrl + "/api/order/" + orderId+ "?company=acmeat" );
+             await _sharedClient.SendAsync(request);
 
             if (deliveryCompanyResponse.StatusCode == HttpStatusCode.OK)
             {

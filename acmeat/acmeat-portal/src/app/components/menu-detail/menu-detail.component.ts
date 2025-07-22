@@ -3,7 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { Menu, OrderInfo, UserInfo } from 'src/app/entities/entities';
+import { Dish, Menu, OrderInfo, UserInfo } from 'src/app/entities/entities';
+import { DishService } from 'src/app/services/dish.service';
 import { MenuService } from 'src/app/services/menu.service';
 import { OrderService } from 'src/app/services/order.service';
 import { UserService } from 'src/app/services/user.service';
@@ -26,11 +27,13 @@ export class MenuDetailComponent implements OnInit {
 
   isAuthenticated$ :Observable<boolean> = new Observable();
   menu$: Observable<Menu> = new Observable()
+  dishs$: Observable<Dish[]> = new Observable();
   constructor(
     private activatedRoute: ActivatedRoute,
     private menuSvc: MenuService,
     private orderSvc: OrderService,
     private userSvc : UserService,
+    private dishSvc :DishService,
     private fb: FormBuilder,
     private router: Router
   ) { }
@@ -40,6 +43,7 @@ export class MenuDetailComponent implements OnInit {
     this.isAuthenticated$ = this.userSvc.isAuthenticated$
     let menuId: number = +this.activatedRoute.snapshot.url[3]?.path;
     this.menu$ = this.menuSvc.getMenuDetailById(menuId);
+    this.dishs$ = this.dishSvc.getDishsByMenuId(menuId);
   }
 
   async submitOrder(menu: Menu) {
@@ -53,12 +57,13 @@ export class MenuDetailComponent implements OnInit {
       throw "USER IS NOT DEFINED!!!"
 
     let order: OrderInfo = {
-      id: 0,
+
       deliveryTime: deliveryTime,
       purchaseTime: "",
-      transactionId: 0,
+      transactionId: "",
       userId: Number(user?.id),
       menuId: menu.id,
+      deliveryCompanyId:0,
       price: menu.price * quantity,
       localId: menu.localId,
       quantity: quantity

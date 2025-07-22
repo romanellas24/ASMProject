@@ -1,3 +1,6 @@
+
+import { Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { end } from '@popperjs/core';
 import { Observable, Subscription, tap } from 'rxjs';
@@ -21,6 +24,7 @@ export class OrderListComponent implements OnInit {
   timeLeft$: Observable<string> = new Observable();
 
   constructor(
+     @Inject(DOCUMENT) private document: Document,
     private userSvc: UserService,
     private orderSvc: OrderService,
     private localSvc: LocalsService
@@ -56,20 +60,35 @@ export class OrderListComponent implements OnInit {
   }
 
 
-  async deleteOrder(orderId: number) {
-    let response: GeneralResponse | undefined = await this.orderSvc.deleteOrderById(orderId).toPromise()
+  async deleteOrder(orderId: number | undefined) {
+    if(orderId != undefined){
+
+         let response: GeneralResponse | undefined = await this.orderSvc.deleteOrderById(orderId).toPromise()
     if (response?.message != "OK") {
       window.alert("There was an error while deleting order " + orderId + " Problem:" + response?.message)
     }
+    }
+ 
   }
 
+  isPast(order: OrderInfo):boolean{
+     let deliveryTime :Date = new Date(order.deliveryTime);
+    let now: Date = new Date()
+    // debugger
+    
+    if(deliveryTime < now){
+      return true;
+    }
 
+    return false
+  }
 
   getCountdown(order: OrderInfo) {
 
     
     let firstDate = new Date();
     let secondDate = new Date();
+
 
     secondDate.setHours(Number.parseInt(order.deliveryTime.split(':')[0]))
     secondDate.setMinutes(Number.parseInt(order.deliveryTime.split(':')[1]))
@@ -100,6 +119,10 @@ export class OrderListComponent implements OnInit {
     endDate.setSeconds(remSeconds);
     return endDate;
 
+  }
+
+   public goToBank(){
+   this.document.location.href = 'https://joliebank.romanellas.cloud/pay.html';
   }
 
 }

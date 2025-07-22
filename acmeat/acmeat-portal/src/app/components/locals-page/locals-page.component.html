@@ -8,6 +8,8 @@
     <!-- <div class="col-3">
         <app-filter></app-filter>
     </div> -->
+
+
     <div *ngIf="(localList$ | async) as localList" class="local-list">
         <div *ngIf="(menList$ | async) as menuList">
              <!-- <div *ngFor="let local of localList; index as i"> -->
@@ -35,6 +37,12 @@
 
         </div>
         </div>
+            <div *ngIf="isLoading">
+        <div  class="col text-center">
+           <div class="spinner-border text-warning" role="status">
+  
+    </div>
+    </div>
        
         
 

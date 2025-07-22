@@ -219,7 +219,7 @@ namespace acmeat.server.local.client
             );
 
             GeneralResponse resposne = new GeneralResponse();
-            if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.OK)
+            if (jsonResponse != null && jsonResponse.StatusCode == HttpStatusCode.Accepted)
             {
 
                 resposne.Message = "OK";

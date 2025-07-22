@@ -75,6 +75,7 @@ public class Order
         order.Id = this.Id;
         order.UserId = this.UserId;
         order.DeliveryTime = this.DeliveryTime;
+        order.DeliveryCompanyId = this.DeliveryCompanyId;
         order.PurchaseTime = this.PurchaseTime;
         order.TransactionId = this.TransactionId;
         order.Price = this.Price;

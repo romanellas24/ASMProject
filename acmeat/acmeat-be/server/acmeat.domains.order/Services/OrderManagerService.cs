@@ -156,7 +156,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         ProcessInstanceKey = await StartProcessInstance(BpmnProcessId, order);
 
 
-        generalResponse.Message="OK";
+        generalResponse.Message = "OK";
 
 
 
@@ -395,7 +395,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     private async Task<long> StartProcessInstance(string bpmnProcessId, server.order.manager.Order order)
     {
-         order.DeliveryTime = NormalizeTime(order.DeliveryTime);
+        order.DeliveryTime = NormalizeTime(order.DeliveryTime);
         var processInstanceResponse = await _zeebeClient
                         .NewCreateProcessInstanceCommand()
                         .BpmnProcessId(bpmnProcessId)
@@ -403,7 +403,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                         .Variables(JsonConvert.SerializeObject(order))
                         .Send();
 
-       
+
         var processInstanceKey = processInstanceResponse.ProcessInstanceKey;
         _logger.LogInformation($"Process Instance has been started with id {processInstanceKey}!");
         return processInstanceKey;
@@ -411,80 +411,80 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     private void ProcessOrderWorker()
     {
-         _zeebeClient
-              .NewWorker()
-              .JobType("ProcessOrder")
-              .Handler(async (jobClient, job) =>
-              {
-                  var localResponse = new server.order.manager.GeneralResponse();
+        _zeebeClient
+             .NewWorker()
+             .JobType("ProcessOrder")
+             .Handler(async (jobClient, job) =>
+             {
+                 var localResponse = new server.order.manager.GeneralResponse();
 
-                  try
-                  {
-                      var variablesJson = job.Variables;
-                      var orderFromJob = JsonConvert.DeserializeObject<server.order.manager.Order>(variablesJson);
+                 try
+                 {
+                     var variablesJson = job.Variables;
+                     var orderFromJob = JsonConvert.DeserializeObject<server.order.manager.Order>(variablesJson);
 
-                      _logger.LogInformation($"Processing order with ID: {orderFromJob.Id}");
-                      DateTime time = DateTime.Parse(orderFromJob.DeliveryTime);
+                     _logger.LogInformation($"Processing order with ID: {orderFromJob.Id}");
+                     DateTime time = DateTime.Parse(orderFromJob.DeliveryTime);
 
-                      bool isLunchTime = time.Hour > 12 && time.Hour < 14;
-                      bool isDinnerTime = time.Hour > 19 && time.Hour < 22;
+                     bool isLunchTime = time.Hour >= 12 && time.Hour <= 14;
+                     bool isDinnerTime = time.Hour >= 19 && time.Hour <= 21;
 
-                      if (!isLunchTime && !isDinnerTime)
-                      {
-                          await _zeebeClient
-                          .NewThrowErrorCommand(job.Key)
-                          .ErrorCode("500")
-                          .ErrorMessage("You can place orders between 12-14 and 19-22")
-                          .Send();
-                          localResponse.Message = "You can place orders between 12-14 and 19-22";
-                          _logger.LogInformation(localResponse.Message);
-                      }
-                      else
-                      {
-                          //TO AVOID PROBLEMS WITH DATE
+                     if (!isLunchTime && !isDinnerTime)
+                     {
+                         await _zeebeClient
+                         .NewThrowErrorCommand(job.Key)
+                         .ErrorCode("500")
+                         .ErrorMessage("You can place orders between 12-14 and 19-22")
+                         .Send();
+                         localResponse.Message = "You can place orders between 12-14 and 19-22";
+                         _logger.LogInformation(localResponse.Message);
+                     }
+                     else
+                     {
+                         //TO AVOID PROBLEMS WITH DATE
 
-                          orderFromJob.DeliveryTime = NormalizeTime(orderFromJob.DeliveryTime);
-                          _logger.LogInformation($"Starting creating Order... with Id {orderFromJob.Id}");
-                          await _orderDataWriter.SendAsync(
-                            new CreateNewOrderCommand(
-                                ConvertGrpcToServerModel(orderFromJob)
-                                )
-                            );
-                          _logger.LogInformation($"Order created with Id {orderFromJob.Id}");
-
-
-                          localResponse.Message = "OK";
-                          await jobClient
-    .NewCompleteJobCommand(job.Key)
-    .Send();
-                          _logger.LogInformation("Published order");
-                          //   tcs.TrySetResult(localResponse);
-
-                      }
+                         orderFromJob.DeliveryTime = NormalizeTime(orderFromJob.DeliveryTime);
+                         _logger.LogInformation($"Starting creating Order... with Id {orderFromJob.Id}");
+                         await _orderDataWriter.SendAsync(
+                           new CreateNewOrderCommand(
+                               ConvertGrpcToServerModel(orderFromJob)
+                               )
+                           );
+                         _logger.LogInformation($"Order created with Id {orderFromJob.Id}");
 
 
+                         localResponse.Message = "OK";
+                         await jobClient
+   .NewCompleteJobCommand(job.Key)
+   .Send();
+                         _logger.LogInformation("Published order");
+                         //   tcs.TrySetResult(localResponse);
 
-                  }
-                  catch (Exception ex)
-                  {
-                      localResponse.Message = $"Exception in handler: {ex.Message}";
-                      //    await _zeebeClient
-                      //         .NewThrowErrorCommand(job.Key)
-                      //         .ErrorCode("500")
-                      //         .ErrorMessage(localResponse.Message)
-                      //         .Send();
-                      _logger.LogInformation(localResponse.Message);
-
-                      //   tcs.TrySetException(ex);
-                  }
+                     }
 
 
-              })
-              .MaxJobsActive(1)
-              .Name(Environment.MachineName)
-              .PollInterval(TimeSpan.FromSeconds(1))
-              .Timeout(TimeSpan.FromSeconds(10))
-              .Open();
+
+                 }
+                 catch (Exception ex)
+                 {
+                     localResponse.Message = $"Exception in handler: {ex.Message}";
+                     //    await _zeebeClient
+                     //         .NewThrowErrorCommand(job.Key)
+                     //         .ErrorCode("500")
+                     //         .ErrorMessage(localResponse.Message)
+                     //         .Send();
+                     _logger.LogInformation(localResponse.Message);
+
+                     //   tcs.TrySetException(ex);
+                 }
+
+
+             })
+             .MaxJobsActive(1)
+             .Name(Environment.MachineName)
+             .PollInterval(TimeSpan.FromSeconds(1))
+             .Timeout(TimeSpan.FromSeconds(10))
+             .Open();
 
     }
 
@@ -987,7 +987,7 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     public void CheckDeliveryCompanyAvailabilityWorker()
     {
-        _zeebeClient
+        _ = _zeebeClient
                   .NewWorker()
                   .JobType("CheckDeliveryCompanyAvailability")
                   .Handler(async (jobClient, job) =>
@@ -1126,6 +1126,30 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
                                  .CorrelationKey(order.Id.ToString())
                                  .Variables(JsonConvert.SerializeObject(Payload))
                                  .Send();
+
+                                  if (del != null)
+                                  {
+                                      DeliveryCompany? deliveryCompany = deliveryCompanies
+                                  .Find(deliveryCompany =>
+                                   deliveryCompany.Name
+                                   .Equals(del.DeliveryCompanyUrl));
+
+                                      if (deliveryCompany != null)
+                                      {
+                                          order.DeliveryCompanyId = deliveryCompany.Id;
+                                          _logger.LogInformation($"Updating Order with id {order.Id}. Adding deliveryCompany id {deliveryCompany.Id}");
+                                          await _orderDataWriter.SendAsync(
+                                             new UpdateNewOrderCommand(
+                                                ConvertGrpcToServerModel(order)
+                                            )
+                                        );
+
+                                          _logger.LogInformation("Update to order finished");
+
+                                      }
+
+                                  }
+
 
                                   _logger.LogInformation($"using the following vehicle: {Payload.Vehicle}");
 

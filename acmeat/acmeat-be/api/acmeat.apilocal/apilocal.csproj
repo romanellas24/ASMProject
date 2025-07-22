@@ -16,7 +16,7 @@
     <PackageReference Include="Acmeat.Server.Menu.ClientTest" Version="1.0.3" />
     <PackageReference Include="Acmeat.Server.Dish.ClientTest" Version="1.0.2" />
     <PackageReference Include="Acmeat.Db.ClientTest" Version="1.1.4" />
-    <PackageReference Include="Acmeat.Server.Local.ClientTest" Version="1.0.8" />
+    <PackageReference Include="Acmeat.Server.Local.ClientTest" Version="1.0.9" />
     
   </ItemGroup>
 
