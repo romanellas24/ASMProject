@@ -7,7 +7,6 @@ option csharp_namespace = "acmeat.server.deliverycompany.client";
 package deliverycompany;
 
 service GrpcDeliveryCompany {
-  rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
   rpc GetDeliveryCompanyById(Id)returns(DeliveryCompany);
   rpc GetDeliveryCompanys(Id) returns (DeliveryCompanyList);
   rpc CreateDeliveryCompany(DeliveryCompany) returns(GeneralResponse);
@@ -17,13 +16,6 @@ service GrpcDeliveryCompany {
 
 }
 
-message HelloRequestClient {
-  string name = 1;
-}
-
-message HelloReplyClient {
-  string message = 1;
-}
 
 message Id{
   int32 id = 1;
@@ -38,8 +30,9 @@ message DeliveryCompany{
      int32 Id =1;
      string Address =2;
     
-     int32 Price =3;
+     float Price =3;
      bool Available =4;
+     string Name =5;
 
    
 }

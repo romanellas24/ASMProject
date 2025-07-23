@@ -5,7 +5,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>Acmeat.Server.Order.ClientTest</PackageId>
-    <Version>1.0.6</Version>
+    <Version>1.0.8</Version>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -25,7 +25,7 @@
        </PackageReference>
      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 
-      <PackageReference Include="JustMock" Version="2024.4.1203.350" />
+      <!-- <PackageReference Include="JustMock" Version="2024.4.1203.350" /> -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
     
   </ItemGroup>

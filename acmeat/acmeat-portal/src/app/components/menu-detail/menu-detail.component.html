@@ -11,6 +11,21 @@
         <div class="description">
            {{menu.descritpion}}
         </div>
+
+        <div>
+            <h1>Piatti</h1>
+        </div>
+
+        <div *ngIf="(dishs$| async) as dishList">
+
+            <div *ngIf="dishList != null && dishList.length > 0">
+                <div *ngFor="let dish of dishList;index as i">
+                        <p>Piatto {{i + 1}}: {{dish.name}} </p>
+                        <p>Descrizione: {{dish.description}}</p>
+                </div>
+            </div>
+
+        </div>
           <h1>Prezzo</h1>
         <div>
             {{menu.price | currency}}
@@ -18,7 +33,9 @@
        
     </div>
 
+
     <div class="col">
+        
         <form action="" [formGroup]="form">
             <div class="row justify-content-center">
             <label for="quantity">Quantità</label>
@@ -26,7 +43,7 @@
         </div>
 
         <div class="row justify-content-center">
-            <label for="deliveryTime">Orario consegna</label>
+            <label for="deliveryTime">Orario consegna (puoi scegliere un orario tra le 12-14 o 19-21)</label>
             <input formControlName="deliveryTime" type="time" id="deliveryTime">
         </div>
 
@@ -35,8 +52,15 @@
 
         
         <div class="row justify-content-center">
-             <button (click)="submitOrder(menu)" class="login-btn login-btn-black">Aggiungi al carrello</button>
-
+            <div class="col">
+                  <button *ngIf="(isAuthenticated$ | async)" (click)="submitOrder(menu)" class="login-btn login-btn-black">Aggiungi al carrello</button>
+                  <h4 class="mt-3" *ngIf="!(isAuthenticated$ | async)"> Non puoi effettuare ordini se prima non effettui il login </h4>  
+                    <button *ngIf="!(isAuthenticated$ | async)" routerLink="/login" class="login-btn login-btn-yellow">Login</button>
+                </div>
+                  <div *ngIf="isLoading" class="col text-start">
+           <div class="spinner-border text-warning" role="status">
+  
+    </div>
         </div>
        
     </div>

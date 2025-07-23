@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: minimal-ingress
-  namespace: default
+  namespace: acmeat
   annotations:
     kubernetes.io/ingress.class: public
 spec:
@@ -16,7 +16,7 @@ spec:
           service:
             name: acmeat-portal-service
             port:
-              number: 4200
+              number: 4201
 
       - path: /Bank
         pathType: Prefix
@@ -44,6 +44,14 @@ spec:
         backend:
           service:
             name: apilocal-service
+            port:
+              number: 8080
+      
+      - path: /Dish
+        pathType: Prefix
+        backend:
+          service:
+            name: apidish-service
             port:
               number: 8080
       - path: /Menu

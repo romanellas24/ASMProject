@@ -4,7 +4,7 @@ kind: Deployment
 
 metadata:
   name: apilocal
-  namespace: default
+  namespace: acmeat
   labels:
     app: apilocal
 

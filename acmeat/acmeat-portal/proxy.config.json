@@ -1,6 +1,36 @@
 {
-    "*": {
-      "target": "http://acmeat.com",
+    "/Order/api": {
+      "target": "https://acmeat.romanellas.cloud",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/Menu/api": {
+      "target": "https://acmeat.romanellas.cloud",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/Local/api": {
+      "target": "https://acmeat.romanellas.cloud",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/DeliveryCompany/api": {
+      "target": "https://acmeat.romanellas.cloud",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+     "/User/api": {
+      "target": "https://acmeat.romanellas.cloud",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
+    },
+    "/Dish/api": {
+      "target": "https://acmeat.romanellas.cloud",
       "changeOrigin": true,
       "secure": false,
        "logLevel": "debug"

@@ -21,10 +21,11 @@ export interface Local {
 
 export interface OrderInfo {
   userId: number;
-  id: number;
+  id?: number;
   deliveryTime: string;
   purchaseTime: string;
-  transactionId: number;
+  transactionId: string;
+  deliveryCompanyId:number;
   price: number;
   menuId: number;
   quantity: number;
@@ -47,4 +48,12 @@ export enum MenuType{
 export enum TimeType{
   DINNER = "Cena",
   LUNCH = "Pranzo"
+}
+
+export interface Dish {
+  id: number
+  description: string
+  name: string
+  price: number
+  menuId: number
 }

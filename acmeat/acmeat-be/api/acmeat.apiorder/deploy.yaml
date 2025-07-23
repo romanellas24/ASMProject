@@ -4,7 +4,7 @@ kind: Deployment
 
 metadata:
   name: apiorder
-  namespace: default
+  namespace: acmeat
   labels:
     app: apiorder
 

@@ -4,7 +4,7 @@ kind: Deployment
 
 metadata:
   name: acmeat-portal
-  namespace: default
+  namespace: acmeat
   labels:
     app: acmeat-portal
 
@@ -34,4 +34,4 @@ spec:
                 cpu: "500m"
 
           ports:
-            - containerPort: 4200
+            - containerPort: 80

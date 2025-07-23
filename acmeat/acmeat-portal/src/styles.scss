@@ -96,11 +96,17 @@
 	border: 0px;
 }
 
-html,body{
-	height: 100%;
+
+html,body,app-root {
+  display: block;
+  min-height: 100vh;
+  min-width: 100%;
 }
 
-app-root {
-  display: block;
-  height: 100%;
+
+app-sidemenu {
+  position: absolute;
+  right:  end;
+  top: 0px;
+  z-index: 2;
 }

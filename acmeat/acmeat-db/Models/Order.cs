@@ -15,7 +15,7 @@ public class Order
                  string DeliveryTime,
                  string PurchaseTime,
                  int Price,
-                 int TransactionId,
+                 string TransactionId,
                  int MenuId,
                  int Quantity
                 )
@@ -47,7 +47,7 @@ public class Order
     [Column("PREZZO")]
     public int Price { get; set; }
     [Column("ID_TRANSAZIONE")]
-    public int TransactionId { get; set; }
+    public string TransactionId { get; set; }
     [Column("ID_MENU")]
     public int MenuId { get; set; }
     [Column("QUANTITÀ")]

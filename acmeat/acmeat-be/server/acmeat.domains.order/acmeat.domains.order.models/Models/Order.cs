@@ -19,7 +19,7 @@ public class Order
                  string DeliveryTime,
                  string PurchaseTime,
                  int Price,
-                 int TransactionId,
+                 string TransactionId,
                  int MenuId,
                  int Quantity
                 )
@@ -64,7 +64,7 @@ public class Order
 
     public int Price { get; set; }
 
-    public int TransactionId { get; set; }
+    public string TransactionId { get; set; }
 
     public int MenuId { get; set; }
 
@@ -75,6 +75,7 @@ public class Order
         order.Id = this.Id;
         order.UserId = this.UserId;
         order.DeliveryTime = this.DeliveryTime;
+        order.DeliveryCompanyId = this.DeliveryCompanyId;
         order.PurchaseTime = this.PurchaseTime;
         order.TransactionId = this.TransactionId;
         order.Price = this.Price;
