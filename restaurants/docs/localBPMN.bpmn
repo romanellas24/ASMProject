@@ -133,11 +133,11 @@
         <zeebe:ioMapping>
           <zeebe:input source="noAuth" target="authentication.type" />
           <zeebe:input source="POST" target="method" />
-          <zeebe:input source="https://acmeat.romanellas.cloud/Order/api/Order/FinishOrde" target="url" />
+          <zeebe:input source="https://acmeat.romanellas.cloud/Order/api/Order/CreateOrder" target="url" />
           <zeebe:input source="=false" target="storeResponse" />
           <zeebe:input source="=20" target="connectionTimeoutInSeconds" />
           <zeebe:input source="=20" target="readTimeoutInSeconds" />
-          <zeebe:input source="={&#10;  orderId: body.id,&#10;  reason: &#34;TIMED_OUT&#34;&#10;}" target="body" />
+          <zeebe:input source="={&#10;  localId: restaurant,&#10;  orderId: body.id,&#10;  reason: &#34;TIMED_OUT&#34;&#10;}" target="body" />
           <zeebe:input source="=false" target="ignoreNullValues" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
@@ -262,11 +262,11 @@
         <zeebe:ioMapping>
           <zeebe:input source="noAuth" target="authentication.type" />
           <zeebe:input source="POST" target="method" />
-          <zeebe:input source="https://acmeat.romanellas.cloud/Order/api/Order/FinishOrder" target="url" />
+          <zeebe:input source="https://acmeat.romanellas.cloud/Order/api/Order/CreateOrder" target="url" />
           <zeebe:input source="=false" target="storeResponse" />
           <zeebe:input source="=20" target="connectionTimeoutInSeconds" />
           <zeebe:input source="=20" target="readTimeoutInSeconds" />
-          <zeebe:input source="={&#10;  orderId: body.id,&#10;  reason: &#34;REJECTED&#34;&#10;}" target="body" />
+          <zeebe:input source="={&#10;  localId: restaurant,&#10;  orderId: body.id,&#10;  reason: &#34;REJECTED&#34;&#10;}" target="body" />
           <zeebe:input source="=false" target="ignoreNullValues" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
@@ -289,11 +289,11 @@
         <zeebe:ioMapping>
           <zeebe:input source="noAuth" target="authentication.type" />
           <zeebe:input source="POST" target="method" />
-          <zeebe:input source="https://acmeat.romanellas.cloud/Order/api/Order/FinishOrder" target="url" />
+          <zeebe:input source="https://acmeat.romanellas.cloud/Order/api/Order/CreateOrder" target="url" />
           <zeebe:input source="=false" target="storeResponse" />
           <zeebe:input source="=20" target="connectionTimeoutInSeconds" />
           <zeebe:input source="=20" target="readTimeoutInSeconds" />
-          <zeebe:input source="={&#10;  orderId: body.id,&#10;  reason: &#34;ACCEPTED&#34;&#10;}" target="body" />
+          <zeebe:input source="={&#10;  localId: restaurant,&#10;  orderId: body.id,&#10;  reason: &#34;ACCEPTED&#34;&#10;}" target="body" />
           <zeebe:input source="=false" target="ignoreNullValues" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
@@ -359,11 +359,11 @@
           <zeebe:ioMapping>
             <zeebe:input source="noAuth" target="authentication.type" />
             <zeebe:input source="POST" target="method" />
-            <zeebe:input source="https://acmeat.romanellas.cloud/Local/api/Local/ApplyDailyUpdate" target="url" />
+            <zeebe:input source="https://acmeat.romanellas.cloud/api/Local/ApplyDailyUpdate" target="url" />
             <zeebe:input source="=false" target="storeResponse" />
             <zeebe:input source="=20" target="connectionTimeoutInSeconds" />
             <zeebe:input source="=20" target="readTimeoutInSeconds" />
-            <zeebe:input source="={&#10;    localUrl: restaurant + &#34;.romanellas.cloud&#34;,&#10;    dishes: for d in menu.dishes return {&#10;        id: d.id,&#10;        description: d.description,&#10;        name: d.name,&#10;        price: d.price,&#10;        menuId: 0&#10;    },&#10;    date: menu.date&#10;}" target="body" />
+            <zeebe:input source="={&#10;    localUrl: localUrl,&#10;    dishes: for d in menu.dishes return {&#10;        id: d.id,&#10;        description: d.description,&#10;        name: d.name,&#10;        price: d.price,&#10;        menuId: number(substring(string(rand()), 1, 10))&#10;    },&#10;    date: date&#10;}" target="body" />
             <zeebe:input source="=false" target="ignoreNullValues" />
           </zeebe:ioMapping>
           <zeebe:taskHeaders>

@@ -23,6 +23,7 @@ public class GatewayConfig {
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("tracking_route_ws", r->r
+                                .order(0)
                         .path("/tracking/notification")
 //                        .filters(f -> f
 //                                .rewritePath("/tracking/(?<segment>.*)", "/${segment}")
@@ -30,6 +31,7 @@ public class GatewayConfig {
                         .uri((secure ? "wss://" : "ws://")+ serviceTracking)
                 )
                 .route("tracking_route_api", r -> r
+                        .order(1)
                         .path("/tracking","/tracking/**")
                         .filters(f -> f
                                 .rewritePath("/tracking/(?<segment>.*)", "/${segment}")
@@ -37,9 +39,9 @@ public class GatewayConfig {
                         .uri((secure ? "https://" : "http://")+ serviceTracking)
                 )
                 .route("allocation_route", r -> r
-                        .path("/allocation", "/allocation/**")
+                        .path("/api", "/api/**")
                         .filters(f -> f
-                                .rewritePath("/allocation(?:/(?<segment>.*))?", "/${segment}")
+                                .rewritePath("/api(?:/(?<segment>.*))?", "/${segment}")
                         )
                         .uri((secure ? "https://" : "http://") + serviceAllocation)
                 )

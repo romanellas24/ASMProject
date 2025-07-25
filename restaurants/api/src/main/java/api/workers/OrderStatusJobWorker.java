@@ -40,13 +40,13 @@ public class OrderStatusJobWorker extends Worker {
         this.orderService = orderService;
     }
 
-    @JobWorker(type = "create_pending_order")
+//    @JobWorker(type = "create_pending_order")
     public void handleCreatePendingOrder(final JobClient client, final ActivatedJob job) {
-
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         log.info("Execution of create order in pending job for process #{}", job.getProcessInstanceKey());
 
@@ -72,13 +72,13 @@ public class OrderStatusJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "set_order_status_timed_out")
+//    @JobWorker(type = "set_order_status_timed_out")
     public void handleSetOrderStatusTimedOut(final JobClient client, final ActivatedJob job) {
-
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Execution of order timeout exception. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
 
@@ -98,13 +98,13 @@ public class OrderStatusJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "set_order_status_rejected")
+//    @JobWorker(type = "set_order_status_rejected")
     public void handleSetOrderStatusRejected(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Order rejected. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
@@ -125,13 +125,13 @@ public class OrderStatusJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "set_order_status_accepted")
+//    @JobWorker(type = "set_order_status_accepted")
     public void handleSetOrderStatusAccepted(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Order accepted. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
@@ -152,13 +152,13 @@ public class OrderStatusJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "set_order_status_completed")
+//    @JobWorker(type = "set_order_status_completed")
     public void handleSetOrderStatusCompleted(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Order completed. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
@@ -179,13 +179,13 @@ public class OrderStatusJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "delete_order_company")
+//    @JobWorker(type = "delete_order_company")
     public void deleteOrder(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final CreateOrderDTO body = objectMapper.convertValue(job.getVariablesAsMap().get("body"), CreateOrderDTO.class);
         final Integer id = body.getId();

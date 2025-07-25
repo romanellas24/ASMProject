@@ -13,6 +13,9 @@ import lombok.ToString;
 @Schema(description = "Request to allocate a vehicle for an order")
 public class RequestAllocateDTO {
 
+    @Schema(description="order in company - 1 in acmeat")
+    private Integer orderId;
+
     @Schema(description = "ID of the vehicle to be allocated", example = "12")
     private Integer vehicle;
 
@@ -27,4 +30,10 @@ public class RequestAllocateDTO {
 
     @Schema(description = "Authentication hash for the request", example = "a1b2c3d4e5f6")
     private String hash;
+
+    @Schema(description = "Restaurant address, in human readable format.")
+    private String localAddress;
+
+    @Schema(description = "Client address")
+    private String userAddress;
 }

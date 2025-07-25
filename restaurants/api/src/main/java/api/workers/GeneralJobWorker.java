@@ -32,13 +32,13 @@ public class GeneralJobWorker extends Worker {
         this.menuService = menuService;
     }
 
-    @JobWorker(type = "is_local_closed")
+//    @JobWorker(type = "is_local_closed")
     public void addBoolIsLocalClosedToVariables(JobClient client, final ActivatedJob job){
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         log.info("check if local is closed today.");
         Boolean isTodayClosed = LocalDate.now().getDayOfWeek() == closingDay;
@@ -59,19 +59,19 @@ public class GeneralJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "prepare_menu_send")
+//    @JobWorker(type = "prepare_menu_send")
     public void prepareMenuSend(JobClient client, final ActivatedJob job){
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         log.info("prepare menu object to send request to acmeat");
         try {
             MenuDTO menu = this.menuService.getMenu(LocalDate.now());
-            String localUrl = "https://" + localName + ".romanellas.cloud";
+//            String localUrl = localName + ".romanellas.cloud";
             client.newCompleteCommand(job.getKey())
-                    .variables(Map.of("menu", menu, "url", localUrl))
+                    .variable("menu", menu)
                     .send()
                     .join();
 

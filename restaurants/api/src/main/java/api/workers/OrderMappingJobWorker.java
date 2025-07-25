@@ -27,13 +27,13 @@ public class OrderMappingJobWorker extends Worker {
     }
 
 
-    @JobWorker(type = "save_order_mapping")
+//    @JobWorker(type = "save_order_mapping")
     public void saveOrderMapping(final JobClient client, final ActivatedJob job){
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final CreateOrderDTO body = objectMapper.convertValue(job.getVariablesAsMap().get("body"), CreateOrderDTO.class);
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);

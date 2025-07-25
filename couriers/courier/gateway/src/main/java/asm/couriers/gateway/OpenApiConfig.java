@@ -18,7 +18,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         Server server = new Server();
-        server.setUrl("https://" + serverNameUrl + ".romanellas.cloud");
+        server.setUrl("https://" + serverNameUrl + ".romanellas.cloud/api");
 
         return new OpenAPI()
                 .servers(List.of(server));

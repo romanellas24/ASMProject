@@ -8,7 +8,7 @@ import asm.couriers.courier_allocation.entity.Vehicle;
 import java.time.LocalDateTime;
 
 public class RequestDTOtoOrderMapper {
-    public static Order convertToOrderDTO(RequestAllocateDTO requestDTO) {
+    public static Order convertToOrder(RequestAllocateDTO requestDTO) {
 
         LocalDateTime expectedDeliveryTime = StringToLocalDateTime.convertStringToLocalDateTime(requestDTO.getExpectedDeliveryTime());
         LocalDateTime startDeliveryTime = expectedDeliveryTime.minusMinutes(requestDTO.getTimeMinutes());
@@ -20,12 +20,14 @@ public class RequestDTOtoOrderMapper {
         order.setEnd_delivery_time(expectedDeliveryTime);
         order.setStart_delivery_time(startDeliveryTime);
         order.setVehicle(vehicle);
+        order.setTo_address(requestDTO.getUserAddress());
+        order.setFrom_address(requestDTO.getLocalAddress());
 
         return order;
     }
 
-    public static Order convertToOrderDTO(RequestAllocateDTO requestDTO, CompanyDTO company) {
-        Order order = convertToOrderDTO(requestDTO);
+    public static Order convertToOrder(RequestAllocateDTO requestDTO, CompanyDTO company) {
+        Order order = RequestDTOtoOrderMapper.convertToOrder(requestDTO);
         order.setCompany(CompanyToDtoMapper.toEntity(company));
 
         return order;

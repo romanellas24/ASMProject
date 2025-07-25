@@ -29,13 +29,13 @@ public class NotificationJobWorker extends Worker {
         this.rabbitService = rabbitService;
     }
 
-    @JobWorker(type = "notify_cook_new_order")
+//    @JobWorker(type = "notify_cook_new_order")
     public void notifyCookNewOrder(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         log.info("Update dashboard to notify cook of new order. Process #{}", job.getProcessInstanceKey());
 
@@ -58,13 +58,13 @@ public class NotificationJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "update_cook_order_timed_out")
+//    @JobWorker(type = "update_cook_order_timed_out")
     public void updateCookOrderTimedOut(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Notify cook of order timed out. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
@@ -87,13 +87,13 @@ public class NotificationJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "notify_cook_order_todo")
+//    @JobWorker(type = "notify_cook_order_todo")
     public void notifyCookOrderTodo(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Notify cook of order todo. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
@@ -116,13 +116,13 @@ public class NotificationJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "notify_order_deleted")
+//    @JobWorker(type = "notify_order_deleted")
     public void notifyCookOrderDeleted(final JobClient client, final ActivatedJob job){
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Notify cook of order deleted. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
@@ -144,13 +144,13 @@ public class NotificationJobWorker extends Worker {
         }
     }
 
-    @JobWorker(type = "notify_cook_can_prepare")
+//    @JobWorker(type = "notify_cook_can_prepare")
     public void notifyCookCanPrepare(final JobClient client, final ActivatedJob job) {
 
-        if (!isJobForThisWorker(job)){
-            ignoreJob(client, job);
-            return;
-        }
+//        if (!isJobForThisWorker(job)){
+//            ignoreJob(client, job);
+//            return;
+//        }
 
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);
         log.info("Notify cook to prepare order. Process: #{}, Order: {}", job.getProcessInstanceKey(), order.getId());
