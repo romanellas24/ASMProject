@@ -1,0 +1,93 @@
+package joliebank.romanellas.services;
+
+import com.example.soapclient.BANKGATEWAY2;
+import com.example.soapclient.BANKGATEWAY2Service;
+import com.google.common.collect.Maps;
+import io.camunda.zeebe.client.ZeebeClient;
+import jakarta.xml.ws.Holder;
+
+import java.util.Map;
+
+public class ReimbursementService {
+
+    private ZeebeClient client;
+
+    public ReimbursementService(ZeebeClient client) {
+        this.client = client;
+    }
+
+    public void reimburseToken() {
+        this.client.newWorker()
+                .jobType("jolie-delete-token")
+                .handler((jobClient, job) -> {
+                    try {
+                        System.out.println("called: jolie-delete-token");
+                        BANKGATEWAY2Service service = new BANKGATEWAY2Service();
+                        BANKGATEWAY2 port = service.getBANKGATEWAY2ServicePort();
+                        Map<String, Object> vars = job.getVariablesAsMap();
+                        String token = (String) vars.get("token");
+
+                        Holder<Integer> codeHolder = new Holder<>();
+                        Holder<String> statusHolder = new Holder<>();
+
+                        port.deletePay(token, codeHolder, statusHolder);
+
+                        Map<String, Object> outVars = Maps.newHashMap();
+                        outVars.put("deletePayCode", codeHolder.value);
+                        outVars.put("deletePayStatus", statusHolder.value);
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore SOAP deletePay: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+    }
+
+    public void makeNotRefundable() {
+        this.client.newWorker()
+                .jobType("jolie-make-token-not-refundable")
+                .handler((jobClient, job) -> {
+                    try {
+                        System.out.println("called: jolie-make-token-not-refundable");
+                        BANKGATEWAY2Service service = new BANKGATEWAY2Service();
+                        BANKGATEWAY2 port = service.getBANKGATEWAY2ServicePort();
+                        Map<String, Object> vars = job.getVariablesAsMap();
+                        String token = (String) vars.get("token");
+
+                        Holder<Integer> statusHolder = new Holder<>();
+                        Holder<String> msgHolder = new Holder<>();
+
+                        port.putNotRefaundable(token, msgHolder, statusHolder);
+
+                        Map<String, Object> outVars = Maps.newHashMap();
+                        outVars.put("makeNotRefundableMsg", msgHolder.value);
+                        outVars.put("makeNotRefundableStatus", statusHolder.value);
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore SOAP deletePay: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+    }
+
+}
