@@ -25,7 +25,7 @@
     <bpmn:endEvent id="Event_0m6aaqp" name="Payment not made">
       <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_0l3215h" name="Delete Payment">
+    <bpmn:serviceTask id="Activity_0l3215h" name="Make token not refundable">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="jolie-make-token-not-refundable" retries="3" />
       </bpmn:extensionElements>
