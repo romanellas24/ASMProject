@@ -4,6 +4,8 @@
     <bpmn:participant id="Participant_1pi2k7g" name="Bank" processRef="Process_0ynyjki" />
     <bpmn:participant id="Participant_12u6dfc" name="ACMEat" />
     <bpmn:messageFlow id="Flow_056ocil" sourceRef="Participant_12u6dfc" targetRef="Event_16hue77" />
+    <bpmn:messageFlow id="Flow_0o95b7x" sourceRef="Event_0m6aaqp" targetRef="Participant_12u6dfc" />
+    <bpmn:messageFlow id="Flow_010ne9k" sourceRef="Event_10vgkuw" targetRef="Participant_12u6dfc" />
   </bpmn:collaboration>
   <bpmn:process id="Process_0ynyjki" isExecutable="true">
     <bpmn:startEvent id="Event_16hue77">
@@ -22,9 +24,6 @@
       <bpmn:outgoing>Flow_1u5w96i</bpmn:outgoing>
       <bpmn:outgoing>Flow_0sxeq74</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_0m6aaqp" name="Payment not made">
-      <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1tjt51v" sourceRef="Event_16hue77" targetRef="Activity_0evkclo" />
     <bpmn:sequenceFlow id="Flow_09i4srb" sourceRef="Activity_0evkclo" targetRef="Gateway_06bffbb" />
     <bpmn:sequenceFlow id="Flow_1u5w96i" sourceRef="Gateway_06bffbb" targetRef="Event_0m6aaqp">
@@ -40,12 +39,23 @@
       <bpmn:incoming>Flow_0sxeq74</bpmn:incoming>
       <bpmn:outgoing>Flow_0f5v5li</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_10vgkuw" name="Payment deleted successfully">
-      <bpmn:incoming>Flow_0f5v5li</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0f5v5li" sourceRef="Activity_0l3215h" targetRef="Event_10vgkuw" />
+    <bpmn:endEvent id="Event_10vgkuw" name="Payment deleted successfully">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-delete-pay-success" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0f5v5li</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1csh4n5" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0m6aaqp" name="Payment not made">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-delete-pay-error" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_13m1426" />
+    </bpmn:endEvent>
   </bpmn:process>
-  <bpmn:message id="Message_3nnq625" name="CheckTokenRequest" />
+  <bpmn:message id="Message_3nnq625" name="DeletePayRequest" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_03j123k">
       <bpmndi:BPMNShape id="Participant_1pi2k7g_di" bpmnElement="Participant_1pi2k7g" isHorizontal="true">
@@ -62,20 +72,20 @@
       <bpmndi:BPMNShape id="Gateway_06bffbb_di" bpmnElement="Gateway_06bffbb" isMarkerVisible="true">
         <dc:Bounds x="447" y="305" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0m6aaqp_di" bpmnElement="Event_0m6aaqp">
-        <dc:Bounds x="644" y="402" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="631" y="445" width="62" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0lg71cp_di" bpmnElement="Activity_0l3215h">
         <dc:Bounds x="612" y="220" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_10vgkuw_di" bpmnElement="Event_10vgkuw">
+      <bpmndi:BPMNShape id="Event_1r2wyha_di" bpmnElement="Event_10vgkuw">
         <dc:Bounds x="832" y="242" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="809" y="285" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hrjonv_di" bpmnElement="Event_0m6aaqp">
+        <dc:Bounds x="892" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="879" y="445" width="62" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1tjt51v_di" bpmnElement="Flow_1tjt51v">
@@ -89,7 +99,7 @@
       <bpmndi:BPMNEdge id="Flow_1u5w96i_di" bpmnElement="Flow_1u5w96i">
         <di:waypoint x="472" y="355" />
         <di:waypoint x="472" y="420" />
-        <di:waypoint x="644" y="420" />
+        <di:waypoint x="892" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sxeq74_di" bpmnElement="Flow_0sxeq74">
         <di:waypoint x="472" y="305" />
@@ -107,6 +117,14 @@
       <bpmndi:BPMNEdge id="Flow_056ocil_di" bpmnElement="Flow_056ocil">
         <di:waypoint x="222" y="139" />
         <di:waypoint x="222" y="312" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o95b7x_di" bpmnElement="Flow_0o95b7x">
+        <di:waypoint x="910" y="402" />
+        <di:waypoint x="910" y="139" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_010ne9k_di" bpmnElement="Flow_010ne9k">
+        <di:waypoint x="850" y="242" />
+        <di:waypoint x="850" y="139" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

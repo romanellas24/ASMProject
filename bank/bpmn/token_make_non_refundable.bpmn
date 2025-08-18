@@ -4,6 +4,8 @@
     <bpmn:participant id="Participant_1pi2k7g" name="Bank" processRef="Process_0pc4ivq" />
     <bpmn:participant id="Participant_12u6dfc" name="ACMEat" />
     <bpmn:messageFlow id="Flow_056ocil" sourceRef="Participant_12u6dfc" targetRef="Event_16hue77" />
+    <bpmn:messageFlow id="Flow_19szbl8" sourceRef="Event_0m6aaqp" targetRef="Participant_12u6dfc" />
+    <bpmn:messageFlow id="Flow_0irjqbv" sourceRef="Event_10vgkuw" targetRef="Participant_12u6dfc" />
   </bpmn:collaboration>
   <bpmn:process id="Process_0pc4ivq" isExecutable="true">
     <bpmn:startEvent id="Event_16hue77">
@@ -22,9 +24,6 @@
       <bpmn:outgoing>Flow_1u5w96i</bpmn:outgoing>
       <bpmn:outgoing>Flow_0sxeq74</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_0m6aaqp" name="Payment not made">
-      <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:serviceTask id="Activity_0l3215h" name="Make token not refundable">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="jolie-make-token-not-refundable" retries="3" />
@@ -32,9 +31,6 @@
       <bpmn:incoming>Flow_0sxeq74</bpmn:incoming>
       <bpmn:outgoing>Flow_0f5v5li</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_10vgkuw" name="Payment deleted successfully">
-      <bpmn:incoming>Flow_0f5v5li</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1tjt51v" sourceRef="Event_16hue77" targetRef="Activity_0evkclo" />
     <bpmn:sequenceFlow id="Flow_09i4srb" sourceRef="Activity_0evkclo" targetRef="Gateway_06bffbb" />
     <bpmn:sequenceFlow id="Flow_1u5w96i" sourceRef="Gateway_06bffbb" targetRef="Event_0m6aaqp">
@@ -44,8 +40,22 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=statusCheckToken = "Paid"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0f5v5li" sourceRef="Activity_0l3215h" targetRef="Event_10vgkuw" />
+    <bpmn:endEvent id="Event_0m6aaqp" name="Payment not made">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-not-refundable-error" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_06jeqjb" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_10vgkuw" name="Payment deleted successfully">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-not-refundable-success" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0f5v5li</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_12jt0rj" />
+    </bpmn:endEvent>
   </bpmn:process>
-  <bpmn:message id="Message_3nnq625" name="CheckTokenRequest" />
+  <bpmn:message id="Message_3nnq625" name="MakeTokenNotRefundableRequest" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_12tkhqd">
       <bpmndi:BPMNShape id="Participant_1pi2k7g_di" bpmnElement="Participant_1pi2k7g" isHorizontal="true">
@@ -62,17 +72,17 @@
       <bpmndi:BPMNShape id="Gateway_06bffbb_di" bpmnElement="Gateway_06bffbb" isMarkerVisible="true">
         <dc:Bounds x="475" y="311" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0m6aaqp_di" bpmnElement="Event_0m6aaqp">
-        <dc:Bounds x="672" y="408" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="659" y="451" width="62" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0lg71cp_di" bpmnElement="Activity_0l3215h">
         <dc:Bounds x="640" y="226" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_10vgkuw_di" bpmnElement="Event_10vgkuw">
+      <bpmndi:BPMNShape id="Event_0n5t6ob_di" bpmnElement="Event_0m6aaqp">
+        <dc:Bounds x="762" y="408" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="749" y="451" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0n88nut_di" bpmnElement="Event_10vgkuw">
         <dc:Bounds x="860" y="248" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="837" y="291" width="83" height="27" />
@@ -89,7 +99,7 @@
       <bpmndi:BPMNEdge id="Flow_1u5w96i_di" bpmnElement="Flow_1u5w96i">
         <di:waypoint x="500" y="361" />
         <di:waypoint x="500" y="426" />
-        <di:waypoint x="672" y="426" />
+        <di:waypoint x="762" y="426" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sxeq74_di" bpmnElement="Flow_0sxeq74">
         <di:waypoint x="500" y="311" />
@@ -107,6 +117,14 @@
       <bpmndi:BPMNEdge id="Flow_056ocil_di" bpmnElement="Flow_056ocil">
         <di:waypoint x="250" y="145" />
         <di:waypoint x="250" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19szbl8_di" bpmnElement="Flow_19szbl8">
+        <di:waypoint x="780" y="408" />
+        <di:waypoint x="780" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0irjqbv_di" bpmnElement="Flow_0irjqbv">
+        <di:waypoint x="878" y="248" />
+        <di:waypoint x="878" y="145" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

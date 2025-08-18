@@ -17,11 +17,15 @@ public class ServicesDeployer {
 
         createTokenService.jolieCheckAccountExists();
         createTokenService.jolieCreateToken();
+        createTokenService.handleResponses();
         payTokenService.jolieCheckToken();
         payTokenService.jolieCheckPayData();
         payTokenService.joliePayData();
+        payTokenService.handleResponses();
+
         reimbursementService.reimburseToken();
         reimbursementService.makeNotRefundable();
+        reimbursementService.handleResponses();
 
         System.out.println("SOAP Workers avviati...");
 

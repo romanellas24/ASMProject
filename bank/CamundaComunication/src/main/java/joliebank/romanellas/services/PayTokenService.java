@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import io.camunda.zeebe.client.ZeebeClient;
 import jakarta.xml.ws.Holder;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PayTokenService {
@@ -158,4 +159,226 @@ public class PayTokenService {
                 })
                 .open();
     }
+
+    public void handleResponses(){
+        client.newWorker()
+                .jobType("jolie-pay-invalid-token")
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "INVALID_TOKEN");
+
+                        client.newPublishMessageCommand()
+                                .messageName("PayTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-pay-invalid-token: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+        client.newWorker()
+                .jobType("jolie-pay-invalid-payment-data")
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "INVALID_PAYMENT_DATA");
+
+                        client.newPublishMessageCommand()
+                                .messageName("PayTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-pay-invalid-payment-data: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+
+        client.newWorker()
+                .jobType("jolie-pay-exception")
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "PAYMENT_EXCEPTION");
+
+                        client.newPublishMessageCommand()
+                                .messageName("PayTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-pay-exception: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+        client.newWorker()
+                .jobType("jolie-pay-success")
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "PAYMENT_SUCCESS");
+
+                        client.newPublishMessageCommand()
+                                .messageName("PayTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-pay-success: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+        client.newWorker()
+                .jobType("jolie-check-token-success")
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "PAYMENT_EXECUTED");
+
+                        client.newPublishMessageCommand()
+                                .messageName("CheckTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-check-token-success: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+
+        client.newWorker()
+                .jobType("jolie-check-token-fail")
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "PAYMENT_NOT_EXECUTED_YET");
+
+                        client.newPublishMessageCommand()
+                                .messageName("CheckTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-check-token-fail: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+    }
+
 }

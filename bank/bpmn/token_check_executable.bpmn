@@ -4,6 +4,8 @@
     <bpmn:participant id="Participant_1pi2k7g" name="Bank" processRef="Process_0wlhlag" />
     <bpmn:participant id="Participant_12u6dfc" name="ACMEat" />
     <bpmn:messageFlow id="Flow_056ocil" sourceRef="Participant_12u6dfc" targetRef="Event_16hue77" />
+    <bpmn:messageFlow id="Flow_1nkge7t" sourceRef="Event_1f513wq" targetRef="Participant_12u6dfc" />
+    <bpmn:messageFlow id="Flow_1g1klfn" sourceRef="Event_0m6aaqp" targetRef="Participant_12u6dfc" />
   </bpmn:collaboration>
   <bpmn:process id="Process_0wlhlag" isExecutable="true">
     <bpmn:startEvent id="Event_16hue77">
@@ -19,23 +21,31 @@
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_06bffbb">
       <bpmn:incoming>Flow_09i4srb</bpmn:incoming>
-      <bpmn:outgoing>Flow_113y1xg</bpmn:outgoing>
       <bpmn:outgoing>Flow_1u5w96i</bpmn:outgoing>
+      <bpmn:outgoing>Flow_113y1xg</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_1f513wq" name="Payment made successfully">
-      <bpmn:incoming>Flow_113y1xg</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:endEvent id="Event_0m6aaqp" name="Payment not made yet">
-      <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1tjt51v" sourceRef="Event_16hue77" targetRef="Activity_0evkclo" />
     <bpmn:sequenceFlow id="Flow_09i4srb" sourceRef="Activity_0evkclo" targetRef="Gateway_06bffbb" />
-    <bpmn:sequenceFlow id="Flow_113y1xg" sourceRef="Gateway_06bffbb" targetRef="Event_1f513wq">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=statusCheckToken = "Paid"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1u5w96i" sourceRef="Gateway_06bffbb" targetRef="Event_0m6aaqp">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=statusCheckToken != "Paid"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_113y1xg" sourceRef="Gateway_06bffbb" targetRef="Event_1f513wq">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=statusCheckToken = "Paid"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1f513wq" name="Payment made successfully">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-check-token-success" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_113y1xg</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_16458m2" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0m6aaqp" name="Payment not made yet">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jolie-check-token-fail" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_18q15fs" />
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmn:message id="Message_3nnq625" name="CheckTokenRequest" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -54,13 +64,13 @@
       <bpmndi:BPMNShape id="Gateway_06bffbb_di" bpmnElement="Gateway_06bffbb" isMarkerVisible="true">
         <dc:Bounds x="475" y="405" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1f513wq_di" bpmnElement="Event_1f513wq">
-        <dc:Bounds x="672" y="342" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0o9day6_di" bpmnElement="Event_1f513wq">
+        <dc:Bounds x="622" y="342" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="653" y="385" width="74" height="27" />
+          <dc:Bounds x="603" y="385" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0m6aaqp_di" bpmnElement="Event_0m6aaqp">
+      <bpmndi:BPMNShape id="Event_0crwigl_di" bpmnElement="Event_0m6aaqp">
         <dc:Bounds x="672" y="482" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="659" y="525" width="62" height="27" />
@@ -74,15 +84,15 @@
         <di:waypoint x="420" y="430" />
         <di:waypoint x="475" y="430" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_113y1xg_di" bpmnElement="Flow_113y1xg">
-        <di:waypoint x="500" y="405" />
-        <di:waypoint x="500" y="360" />
-        <di:waypoint x="672" y="360" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1u5w96i_di" bpmnElement="Flow_1u5w96i">
         <di:waypoint x="500" y="455" />
         <di:waypoint x="500" y="500" />
         <di:waypoint x="672" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_113y1xg_di" bpmnElement="Flow_113y1xg">
+        <di:waypoint x="500" y="405" />
+        <di:waypoint x="500" y="360" />
+        <di:waypoint x="622" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_12u6dfc_di" bpmnElement="Participant_12u6dfc" isHorizontal="true">
         <dc:Bounds x="160" y="80" width="600" height="60" />
@@ -91,6 +101,14 @@
       <bpmndi:BPMNEdge id="Flow_056ocil_di" bpmnElement="Flow_056ocil">
         <di:waypoint x="250" y="140" />
         <di:waypoint x="250" y="412" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nkge7t_di" bpmnElement="Flow_1nkge7t">
+        <di:waypoint x="640" y="342" />
+        <di:waypoint x="640" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1g1klfn_di" bpmnElement="Flow_1g1klfn">
+        <di:waypoint x="690" y="482" />
+        <di:waypoint x="690" y="140" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

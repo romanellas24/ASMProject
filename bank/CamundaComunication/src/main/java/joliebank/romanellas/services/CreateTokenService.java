@@ -5,6 +5,7 @@ import com.example.soapclient.BANKGATEWAY2Service;
 import io.camunda.zeebe.client.ZeebeClient;
 import jakarta.xml.ws.Holder;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CreateTokenService {
@@ -89,4 +90,86 @@ public class CreateTokenService {
                 })
                 .open();
     }
+
+    /*
+    jolie-create-token-success
+    jolie-create-token-error
+
+     */
+
+    public void handleResponses(){
+        client.newWorker()
+                .jobType("jolie-create-token-success")  // Deve matchare il Task Type nel BPMN
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "TOKEN_CREATED");
+
+                        client.newPublishMessageCommand()
+                                .messageName("CreateTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Throwable e) {
+                        System.out.println("Errore: " + e.getClass().getName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-create-token-success: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+        client.newWorker()
+                .jobType("jolie-create-token-error")  // Deve matchare il Task Type nel BPMN
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("result", "DESTINATION_ACCOUNT_DOES_NOT_EXISTS");
+
+                        client.newPublishMessageCommand()
+                                .messageName("CreateTokenResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Throwable e) {
+                        System.out.println("Errore: " + e.getClass().getName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-create-token-error: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+    }
+
+
 }

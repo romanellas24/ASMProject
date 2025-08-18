@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import io.camunda.zeebe.client.ZeebeClient;
 import jakarta.xml.ws.Holder;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ReimbursementService {
@@ -83,6 +84,164 @@ public class ReimbursementService {
                         jobClient.newFailCommand(job.getKey())
                                 .retries(0)
                                 .errorMessage("Errore SOAP deletePay: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+    }
+
+    /**
+     * jolie-delete-pay-success
+     * jolie-delete-pay-error
+     * jolie-not-refundable-success
+     * jolie-not-refundable-error
+     */
+
+    public void handleResponses(){
+        client.newWorker()
+                .jobType("jolie-delete-pay-success")  // Deve matchare il Task Type nel BPMN
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "PAYMENT_DELETED");
+
+                        client.newPublishMessageCommand()
+                                .messageName("DeletePayResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Throwable e) {
+                        System.out.println("Errore: " + e.getClass().getName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-delete-pay-success: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+        client.newWorker()
+                .jobType("jolie-delete-pay-error")  // Deve matchare il Task Type nel BPMN
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "ERROR_DELETING_PAYMENT");
+
+                        client.newPublishMessageCommand()
+                                .messageName("DeletePayResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Throwable e) {
+                        System.out.println("Errore: " + e.getClass().getName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-delete-pay-error: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+
+        client.newWorker()
+                .jobType("jolie-not-refundable-success")  // Deve matchare il Task Type nel BPMN
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "ERROR_DELETING_PAYMENT");
+
+                        client.newPublishMessageCommand()
+                                .messageName("DeletePayResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Throwable e) {
+                        System.out.println("Errore: " + e.getClass().getName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-not-refundable-success: " + e.getMessage())
+                                .send()
+                                .join();
+                    }
+                })
+                .open();
+
+        client.newWorker()
+                .jobType("jolie-not-refundable-error")  // Deve matchare il Task Type nel BPMN
+                .handler((jobClient, job) -> {
+                    try {
+                        Map<String, Object> processVars = job.getVariablesAsMap();
+                        String token = (String) processVars.get("token");
+
+                        Map<String, Object> outputVars = new HashMap<>();
+                        outputVars.put("token", token);
+                        outputVars.put("result", "ERROR_DELETING_PAYMENT");
+
+                        client.newPublishMessageCommand()
+                                .messageName("DeletePayResponseTest")
+                                .correlationKey("start")
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+
+                        // Completa job
+                        jobClient.newCompleteCommand(job.getKey())
+                                .variables(outputVars)
+                                .send()
+                                .join();
+
+                    } catch (Throwable e) {
+                        System.out.println("Errore: " + e.getClass().getName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                        jobClient.newFailCommand(job.getKey())
+                                .retries(0)
+                                .errorMessage("Errore jolie-not-refundable-error: " + e.getMessage())
                                 .send()
                                 .join();
                     }
