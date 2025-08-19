@@ -1,0 +1,82 @@
+Choreo OrderFlow(
+  Acmeat: Role,
+  Local: Role,
+  DeliveryCompany: Role,
+  User: Role,
+  Bank: Role,
+  OrderIsDelivered: Role
+) is
+
+// L'utente crea un ordine e lo invia ad Acmeat. Acmeat verifica che l'ordine sia congruo con le regole di business
+(Utente -> Acmeat: ProcessOrder(Order));
+
+// Acmeat controlla l'ordine e chiede la disponibilità al Locale.
+(Acmeat -> Local: CheckLocalAvailability());
+(Local -> Acmeat: HandleLocalRepsonse(Reason));
+
+if(Reason == "ACCEPTED") then
+  
+  
+  	// Acmeat controlla la disponibilità delle compagnie di spedizione.
+	(Acmeat -> DeliveryCompany: CheckDeliveryCompanyAvailability());
+	(DeliveryCompany -> Acmeat: DeliveryCompanyResponse(isVehicleAvailable));
+	
+	// Allocazione del veicolo.
+	if(isVehicleAvailable)then
+		
+		(Acmeat -> DeliveryCompany:AllocateVehicle());
+		(DeliveryCompany -> Acmeat:AllocateVehicleResponse());
+		
+	else
+	
+		(Acmeat -> Local: CommunicateOrderCancellationLocal());
+		(Local -> Acmeat : LocalOrderCancellationResponse());
+    		(Acmeat:CancelOrder());
+	
+	// Acmeat gestisce l'esito del pagamento e notifica gli altri partecipanti solo in caso di fallimento.
+	(User -> Acmeat : PaymentInfo(PaymentInformation);
+	(Acmeat -> Bank : VerifyBankToken());
+	
+	// L'utente cancella l'ordine
+  	( 
+  		(User -> Acmeat: OrderCancellationMessage());
+    		(Acmeat -> Utente: CancellationConfirmation());
+    		(Acmeat:CheckOrderCancellationRules(IsRespectingRules);
+    		
+    		if (IsRespectingRules) then
+    		// Acmeat comunica alla banca di fare un reso
+		(Acmeat -> Bank: SendRefund());
+		(Bank -> Acmeat:RefundResponse());
+	
+		// Acmeat comunica alla società di consegna di cancellare l'ordine
+		(Acmeat -> DeliveryCompany: CommunicateOrderCancellationDeliveryCompany());
+		(DeliveryCompany -> Acmeat: DeliveryCompanyOrderCancellationResponse());
+	
+		// Acmeat comunica la cancellazione dell'ordine anche al locale
+    		(Acmeat -> Local: CommunicateOrderCancellationLocal());
+    		(Local -> Acmeat : LocalOrderCancellationResponse());
+    	
+    		// Infine si cancella l'ordine
+    		(Acmeat:CancelOrder());
+	else
+		// L'utente non può più cancellare l'ordine 
+    		(DeliveryCompany -> User: OrderFinished());
+  	)
+	+
+  	( 
+  	
+  		// Ordine ricevuto...
+  		(OrderIsDelivered -> Acmeat: OrderTimeout());
+    		(Acmeat: OrderFinished());
+  	);
+	
+	
+    	
+    	
+  
+  
+  
+  else
+  	// Nel caso in cui la prenotazione non è accettata dal locale allora viene annulato l'ordine
+  	(Acmeat:CancelOrder());
+
