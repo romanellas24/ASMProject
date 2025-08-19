@@ -57,3 +57,7 @@ export interface Dish {
   price: number
   menuId: number
 }
+
+export interface BankToken{
+  token:string
+}

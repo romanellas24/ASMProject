@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GeneralResponse, OrderInfo } from '../entities/entities';
+import { BankToken, GeneralResponse, OrderInfo } from '../entities/entities';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -28,5 +28,12 @@ export class OrderService {
 
   public deleteOrderById(orderId:number){
     return this.httpClient.delete<GeneralResponse>(this.baseUrl+"/api/Order/DeleteOrderById/"+orderId);
+  }
+
+  public getPaymentToken(price:number){
+    return this.httpClient.post<BankToken>("/payments",{
+      amount:price,
+      dest_account: 3
+    });
   }
 }
