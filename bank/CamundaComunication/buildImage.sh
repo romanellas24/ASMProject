@@ -1,0 +1,1 @@
+docker build --tag romanellas/joliebank-camunda-workers -f ./Dockerfile . && docker push romanellas/joliebank-camunda-workers

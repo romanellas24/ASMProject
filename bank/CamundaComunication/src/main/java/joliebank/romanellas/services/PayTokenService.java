@@ -49,6 +49,7 @@ public class PayTokenService {
                                 .join();
 
                     } catch (Exception e) {
+                        e.printStackTrace();
                         jobClient.newFailCommand(job.getKey())
                                 .retries(0)
                                 .errorMessage("Errore SOAP jolieCheckToken: " + e.getMessage())
@@ -97,7 +98,7 @@ public class PayTokenService {
                         e.printStackTrace();
                         jobClient.newFailCommand(job.getKey())
                                 .retries(0)
-                                .errorMessage("Errore SOAP jolieCheckToken: " + e.getMessage())
+                                .errorMessage("Errore SOAP: " + e.getMessage())
                                 .send()
                                 .join();
                     }

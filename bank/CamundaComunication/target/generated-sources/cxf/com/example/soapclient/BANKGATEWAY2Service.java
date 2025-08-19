@@ -16,8 +16,8 @@ import jakarta.xml.ws.Service;
  *
  */
 @WebServiceClient(name = "BANK_GATEWAY_2Service",
-                  wsdlLocation = "file:/home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/src/main/resources/service.wsdl",
-                  targetNamespace = "joliebank.romanellas.cloud.wsdl")
+        wsdlLocation = "classpath:/service.wsdl",
+        targetNamespace = "joliebank.romanellas.cloud.wsdl")
 public class BANKGATEWAY2Service extends Service {
 
     public static final URL WSDL_LOCATION;
@@ -27,11 +27,11 @@ public class BANKGATEWAY2Service extends Service {
     static {
         URL url = null;
         try {
-            url = URI.create("file:/home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/src/main/resources/service.wsdl").toURL();
-        } catch (MalformedURLException e) {
+            url = BANKGATEWAY2Service.class.getResource("/service.wsdl");
+        } catch (Exception e) {
             java.util.logging.Logger.getLogger(BANKGATEWAY2Service.class.getName())
                 .log(java.util.logging.Level.INFO,
-                     "Can not initialize the default wsdl from {0}", "file:/home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/src/main/resources/service.wsdl");
+                     "Can not initialize the default wsdl from {0}", url.toString());
         }
         WSDL_LOCATION = url;
     }
