@@ -1,20 +1,21 @@
 
-import { Inject } from '@angular/core';
+import { Inject, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { end } from '@popperjs/core';
 import { Observable, Subscription, tap } from 'rxjs';
-import { GeneralResponse, Local, OrderInfo, UserInfo } from 'src/app/entities/entities';
+import { BankToken, GeneralResponse, Local, OrderInfo, UserInfo } from 'src/app/entities/entities';
 import { LocalsService } from 'src/app/services/locals.service';
 import { OrderService } from 'src/app/services/order.service';
 import { UserService } from 'src/app/services/user.service';
+import { Token } from '@angular/compiler';
 
 @Component({
   selector: 'app-order-list',
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss']
 })
-export class OrderListComponent implements OnInit {
+export class OrderListComponent implements OnInit,OnDestroy {
 
   orderList$: Observable<OrderInfo[]> = new Observable()
   local$: Observable<Local> = new Observable();
@@ -29,6 +30,11 @@ export class OrderListComponent implements OnInit {
     private orderSvc: OrderService,
     private localSvc: LocalsService
   ) { }
+  ngOnDestroy(): void {
+    this.subscriptionList.forEach(
+      (el) => el.unsubscribe()
+    )
+  }
 
   ngOnInit(): void {
 
@@ -121,8 +127,16 @@ export class OrderListComponent implements OnInit {
 
   }
 
-   public goToBank(){
-   this.document.location.href = 'https://joliebank.romanellas.cloud/pay.html';
+   public goToBank(order:OrderInfo){
+    this.subscriptionList.push(
+    this.orderSvc.getPaymentToken(order.price).subscribe(
+      (token:BankToken) =>{
+          let acmeatUrl: string = "https://acmeat.romanellas.cloud";
+          this.document.location.href = `https://joliebank.romanellas.cloud/pay.html?token=${token.token}&callback=${acmeatUrl}`;
+      }
+    )
+  );
+   
+  
   }
-
 }

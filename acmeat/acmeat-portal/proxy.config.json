@@ -34,5 +34,11 @@
       "changeOrigin": true,
       "secure": false,
        "logLevel": "debug"
+    },
+    "/payments":{
+       "target": "https://joliebank.romanellas.cloud",
+      "changeOrigin": true,
+      "secure": false,
+       "logLevel": "debug"
     }
   }

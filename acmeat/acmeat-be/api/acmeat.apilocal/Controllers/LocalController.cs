@@ -85,26 +85,27 @@ namespace acmeat.api.local
 
 
 
-            if (timeOnly.Hour > deadLineHour)
-            {
-                _logger.LogInformation($"Cannot update the local availability its too late...");
-                server.local.client.GeneralResponse response = new server.local.client.GeneralResponse();
-                response.Message = "Cannot update the local availability its too late...";
-                return response;
-            }
-            else
-            {
+            // if (timeOnly.Hour > deadLineHour)
+            // {
+                // _logger.LogInformation($"Cannot update the local availability its too late...");
+                // server.local.client.GeneralResponse response = new server.local.client.GeneralResponse();
+                // response.Message = "Cannot update the local availability its too late...";
+                // return response;
+            // }
+            // else
+            // {
 
 
              _logger.LogInformation($"Getting Local with Url : {dailyUpdate.LocalUrl}");
             Local local = await _localClient.GetLocalByUrl(dailyUpdate.LocalUrl);
+            int menuId = new Random().Next();
             Menu menu = new Menu()
             {
                 Description = "Daily Menu-"+dailyUpdate.LocalUrl+"-"+DateTime.Now,
                 LocalId = local.Id,
                 Price = (int)dailyUpdate.dishes.Select(dish => dish.Price).Aggregate((price1,price2) => price1 + price2),
                 Type = "Carne",
-                Id = dailyUpdate.dishes.First().MenuId
+                Id = menuId
                 
             };
 
@@ -124,7 +125,7 @@ namespace acmeat.api.local
             dailyUpdate.dishes.ForEach(
                 async dish =>
                 {
-                  
+                    dish.MenuId = menuId;
                     dishManagerResponse = await _dishClient.CreateDish(dish);
 
 
@@ -137,7 +138,7 @@ namespace acmeat.api.local
 
             return new server.local.client.GeneralResponse() { Message = "OK" };
                
-            }
+            // }
 
 
 

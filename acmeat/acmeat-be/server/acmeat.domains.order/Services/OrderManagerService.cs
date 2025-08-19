@@ -127,7 +127,11 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     public override Task<server.order.manager.OrderList> GetOrdersToPay(server.order.manager.Id id, ServerCallContext context)
     {
-        List<server.order.Order> orders = _orderReader.GetOrderByUserId(id.Id_).Where(order => order.TransactionId == "").ToList();
+        DateTime now = DateTime.Now;
+        List<server.order.Order> orders = _orderReader.GetOrderByUserId(id.Id_)
+        .Where(order => order.TransactionId == "")
+        .Where(order => order.DeliveryTime == "" || DateTime.Parse(order.DeliveryTime) > now) 
+        .ToList();
         server.order.manager.OrderList orderList = new server.order.manager.OrderList();
 
         orderList.Orders.AddRange(ConvertServerListToGrpc(orders));
