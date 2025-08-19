@@ -27,7 +27,7 @@ public class CheckTokenDispatcher {
         client.newPublishMessageCommand()
                 .messageName("CheckTokenRequest")
                 .correlationKey("start")
-                .variables("{\"token\": \"ad5afb86b4e0d6668c98aa379755dd16de2a924e72ff69c5cbcd3dd3b70c11bdfc6c6bcb1e2e7408636e62f58c4225a4\"}")
+                .variables("{\"token\": \"3cb5fdf51e06328474880abeb4df83105ed9b3d95099ff880a086d66016b12b16b738860657675f285b15bab5d12ead4\"}")
                 .send()
                 .join();
         System.out.println("TOKEN NON PAGATO");

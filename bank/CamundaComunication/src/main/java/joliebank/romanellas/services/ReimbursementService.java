@@ -21,6 +21,7 @@ public class ReimbursementService {
         this.client.newWorker()
                 .jobType("jolie-delete-token")
                 .handler((jobClient, job) -> {
+                    System.out.println("Called: jolie-delete-token");
                     try {
                         System.out.println("called: jolie-delete-token");
                         BANKGATEWAY2Service service = new BANKGATEWAY2Service();
@@ -102,6 +103,7 @@ public class ReimbursementService {
         client.newWorker()
                 .jobType("jolie-delete-pay-success")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
+                    System.out.println("called: jolie-delete-pay-success");
                     try {
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
@@ -139,6 +141,7 @@ public class ReimbursementService {
         client.newWorker()
                 .jobType("jolie-delete-pay-error")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
+                    System.out.println("called: jolie-delete-pay-error");
                     try {
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
@@ -177,16 +180,17 @@ public class ReimbursementService {
         client.newWorker()
                 .jobType("jolie-not-refundable-success")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
+                    System.out.println("Called: jolie-not-refundable-success");
                     try {
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
 
                         Map<String, Object> outputVars = new HashMap<>();
                         outputVars.put("token", token);
-                        outputVars.put("result", "ERROR_DELETING_PAYMENT");
+                        outputVars.put("result", "SUCCESS_MAKING_NOT_REFUNDABLE");
 
                         client.newPublishMessageCommand()
-                                .messageName("DeletePayResponseTest")
+                                .messageName("MakeTokenNotRefundableResponseTest")
                                 .correlationKey("start")
                                 .variables(outputVars)
                                 .send()
@@ -214,16 +218,17 @@ public class ReimbursementService {
         client.newWorker()
                 .jobType("jolie-not-refundable-error")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
+                    System.out.println("Called: jolie-not-refundable-error");
                     try {
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
 
                         Map<String, Object> outputVars = new HashMap<>();
                         outputVars.put("token", token);
-                        outputVars.put("result", "ERROR_DELETING_PAYMENT");
+                        outputVars.put("result", "ERROR_MAKING_NOT_REFUNDABLE");
 
                         client.newPublishMessageCommand()
-                                .messageName("DeletePayResponseTest")
+                                .messageName("MakeTokenNotRefundableResponseTest")
                                 .correlationKey("start")
                                 .variables(outputVars)
                                 .send()

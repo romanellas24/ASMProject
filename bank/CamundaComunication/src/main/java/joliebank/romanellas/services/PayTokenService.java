@@ -133,7 +133,7 @@ public class PayTokenService {
                         Map<String, Object> outVars = Maps.newHashMap();
                         outVars.put("verifyPaymentDataHttpStatusCode", codeHolder.value);
 
-                        if(codeHolder.value != 200){
+                        if (codeHolder.value != 200) {
                             jobClient.newThrowErrorCommand(job.getKey())
                                     .errorCode("PostCheckPaymentError")
                                     .errorMessage("Error paying token: " + token)
@@ -160,11 +160,12 @@ public class PayTokenService {
                 .open();
     }
 
-    public void handleResponses(){
+    public void handleResponses() {
         client.newWorker()
                 .jobType("jolie-pay-invalid-token")
                 .handler((jobClient, job) -> {
                     try {
+                        System.out.println("Called:jolie-pay-invalid-token");
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
 
@@ -201,6 +202,7 @@ public class PayTokenService {
                 .jobType("jolie-pay-invalid-payment-data")
                 .handler((jobClient, job) -> {
                     try {
+                        System.out.println("Called:jolie-pay-invalid-payment-data");
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
 
@@ -238,6 +240,7 @@ public class PayTokenService {
                 .jobType("jolie-pay-exception")
                 .handler((jobClient, job) -> {
                     try {
+                        System.out.println("Called:jolie-pay-exception");
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
 
@@ -274,6 +277,7 @@ public class PayTokenService {
                 .jobType("jolie-pay-success")
                 .handler((jobClient, job) -> {
                     try {
+                        System.out.println("Called: jolie-pay-success");
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
 
@@ -309,6 +313,7 @@ public class PayTokenService {
         client.newWorker()
                 .jobType("jolie-check-token-success")
                 .handler((jobClient, job) -> {
+                    System.out.println("Called:jolie-check-token-success");
                     try {
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
@@ -346,6 +351,7 @@ public class PayTokenService {
         client.newWorker()
                 .jobType("jolie-check-token-fail")
                 .handler((jobClient, job) -> {
+                    System.out.println("Called:jolie-check-token-fail");
                     try {
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");

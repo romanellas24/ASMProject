@@ -102,6 +102,7 @@ public class CreateTokenService {
                 .jobType("jolie-create-token-success")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
                     try {
+                        System.out.println("Called jolie-create-token-success");
                         Map<String, Object> processVars = job.getVariablesAsMap();
                         String token = (String) processVars.get("token");
 
@@ -138,6 +139,7 @@ public class CreateTokenService {
         client.newWorker()
                 .jobType("jolie-create-token-error")  // Deve matchare il Task Type nel BPMN
                 .handler((jobClient, job) -> {
+                    System.out.println("Called: jolie-create-token-error");
                     try {
                         Map<String, Object> processVars = job.getVariablesAsMap();
 

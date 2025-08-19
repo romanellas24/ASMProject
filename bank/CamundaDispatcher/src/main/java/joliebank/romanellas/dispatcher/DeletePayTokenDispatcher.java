@@ -19,7 +19,7 @@ public class DeletePayTokenDispatcher {
         client.newPublishMessageCommand()
                 .messageName("DeletePayRequest")
                 .correlationKey("start")
-                .variables("{\"token\": \"fbd3e02b380f364bc909b9918219b89ec635f682e2f90a15255538134ed18b10bb934cea7cd8930473733454b9f711b1\"}")
+                .variables("{\"token\": \"af5b0ab7c015ba7e36e961f8f0141f96768256a3ee94505199f887a22b44fee4c87bd9de6553f4fc3e67835b68ef04d2\"}")
                 .send()
                 .join();
         System.out.println("TOKEN PAGATO");

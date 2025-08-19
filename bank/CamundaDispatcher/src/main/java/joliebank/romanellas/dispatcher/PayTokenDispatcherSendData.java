@@ -14,7 +14,7 @@ public class PayTokenDispatcherSendData {
                 .build();
 
         // The token value must match the process variable used in the running instance
-        String token = "7d6f9932c0be8af9377c7def68bebdb522c24730c7a6ba73ce1aea0bf5324851e23c02743986f87421c227ac28bf904e"; // Replace this with actual token value
+        String token = "af5b0ab7c015ba7e36e961f8f0141f96768256a3ee94505199f887a22b44fee4c87bd9de6553f4fc3e67835b68ef04d2"; // Replace this with actual token value
         Map<String, Object> variables = Map.of(
                 "token", token,
                 "pan", "5353530123456789",
