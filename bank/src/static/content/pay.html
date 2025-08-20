@@ -646,6 +646,8 @@
     <script>
         let params = new URLSearchParams(document.location.search);
         let token = params.get("token");
+        let orderId = params.get("orderId");
+        let callback = params.get("callback");
         let amount = 0.0;
         let beneficiary = "-";
         console.log(token);
@@ -727,8 +729,13 @@
                     }),
                 });
                 const json = await response.json();
-                console.log(json);
-                alert("Pagato!")
+                if(json.code === 200) {
+                    alert("Pagato!");
+                    window.location.href = `${callback}/orderId=${orderId}`;
+                } else {
+                    alert("ERRORE");
+                }
+
             } catch (error) {
                 console.error(error.message);
             }
