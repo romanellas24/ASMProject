@@ -19,8 +19,6 @@ public class CamundaDispatcher {
                 .variables(Map.of("token", String.valueOf(token)))
                 .send()
                 .join();
-
-        System.out.println("Avviato token: " + token);
     }
 
     public void insertPaymentData(PaymentRequest req) {

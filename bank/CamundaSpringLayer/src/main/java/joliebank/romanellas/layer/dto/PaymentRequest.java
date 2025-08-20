@@ -9,5 +9,5 @@ public record PaymentRequest(
         @NotBlank String card_holder_first_name,
         @NotBlank String card_holder_last_name,
         @NotNull @Min(1) @Max(12) Integer expire_month,
-        @NotNull @Min(2000) Integer expire_year
+        @NotNull @Min(0) @Max(3000) Integer expire_year
 ) {}

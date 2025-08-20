@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import joliebank.romanellas.layer.dto.PaymentRequest;
 import joliebank.romanellas.layer.dto.PaymentResponse;
-import joliebank.romanellas.layer.model.Payment;
 import joliebank.romanellas.layer.util.CamundaDispatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,6 @@ public class PaymentService {
 
         this.dispatcher.startPaymentProcess(req.token());
         String jsonResponse = this.getPaymentByToken(req.token());
-        System.out.println(jsonResponse);
 
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> map = mapper.readValue(jsonResponse, new TypeReference<>() {});
@@ -60,12 +58,24 @@ public class PaymentService {
             );
         }
 
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {}
+
+        jsonResponse = this.getPaymentByToken(req.token());
+        map = mapper.readValue(jsonResponse, new TypeReference<>() {});
+        status = (String) map.get("status");
+
+        if(status.equals("Paid"))
+            return new PaymentResponse(
+                    200,
+                    "Ok."
+            );
 
         return new PaymentResponse(
-                200,
-                "Ok."
+                400,
+                "Errore"
         );
-
     }
 }
 
