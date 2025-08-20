@@ -28,12 +28,33 @@ http {
         }
 
 	    location /payments {
-                proxy_pass http://joliebank-gateway-service.default.svc.cluster.local:9005;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection 'upgrade';
-                proxy_set_header Host $host;
-                proxy_cache_bypass $http_upgrade;
+            # --- CORS preflight ---
+            if ($request_method = 'OPTIONS') {
+                add_header 'Access-Control-Allow-Origin' '*' always;
+                add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+                add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With, Origin, Accept' always;
+                add_header 'Access-Control-Max-Age' 86400 always;
+                add_header 'Content-Length' 0;
+                add_header 'Content-Type' 'text/plain; charset=utf-8';
+                return 204;
+            }
+
+            # --- CORS for actual requests ---
+            add_header 'Access-Control-Allow-Origin' '*' always;
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+            add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With, Origin, Accept' always;
+            add_header 'Access-Control-Expose-Headers' 'Content-Length, Content-Range' always;
+
+            # (optional) if upstream also sets ACAO and you want to avoid duplicates:
+            # proxy_hide_header Access-Control-Allow-Origin;
+
+            # your existing reverse-proxy bits
+            proxy_pass http://joliebank-gateway-service.default.svc.cluster.local:9005;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
         }
 
 	    location / {
