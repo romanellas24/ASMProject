@@ -28,27 +28,27 @@ http {
         }
 
 	    location /payments {
-            # --- CORS preflight ---
+            proxy_hide_header Access-Control-Allow-Origin;
+            proxy_hide_header Access-Control-Allow-Credentials;
+            proxy_hide_header Access-Control-Allow-Headers;
+            proxy_hide_header Access-Control-Allow-Methods;
+
+            # Preflight
             if ($request_method = 'OPTIONS') {
-                add_header 'Access-Control-Allow-Origin' '*' always;
-                add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
-                add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With, Origin, Accept' always;
-                add_header 'Access-Control-Max-Age' 86400 always;
-                add_header 'Content-Length' 0;
-                add_header 'Content-Type' 'text/plain; charset=utf-8';
+                add_header Access-Control-Allow-Origin * always;
+                add_header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS" always;
+                add_header Access-Control-Allow-Headers "Authorization, Content-Type, X-Requested-With, Origin, Accept" always;
+                add_header Access-Control-Max-Age 86400 always;
+                add_header Vary Origin always;
                 return 204;
             }
 
-            # --- CORS for actual requests ---
-            add_header 'Access-Control-Allow-Origin' '*' always;
-            add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
-            add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With, Origin, Accept' always;
-            add_header 'Access-Control-Expose-Headers' 'Content-Length, Content-Range' always;
+            # Risposte "normali"
+            add_header Access-Control-Allow-Origin * always;
+            add_header Access-Control-Allow-Credentials "true" always;        # usa SOLO se ti servono cookie/cred.
+            add_header Access-Control-Expose-Headers "Content-Length, Content-Range" always;
+            add_header Vary Origin always;
 
-            # (optional) if upstream also sets ACAO and you want to avoid duplicates:
-            # proxy_hide_header Access-Control-Allow-Origin;
-
-            # your existing reverse-proxy bits
             proxy_pass http://joliebank-gateway-service.default.svc.cluster.local:9005;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
