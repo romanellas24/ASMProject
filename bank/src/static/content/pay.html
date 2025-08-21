@@ -713,7 +713,7 @@
             customHeaders.append("Content-Type", "application/json");
 
             pan = pan.replaceAll(' ', "");
-            const url = "payments/" + token;
+            const url = "https://soap.joliebank.romanellas.cloud/payments/" + token;
             try {
                 const response = await fetch(url, {
                     method: "PUT",
