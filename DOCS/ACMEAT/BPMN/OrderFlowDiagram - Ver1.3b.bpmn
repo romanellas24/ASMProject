@@ -40,7 +40,6 @@
         <bpmn:flowNodeRef>Activity_0og1rzl</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_03w8cge</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0lx5ecl</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_11jkg04</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1gna6xi</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_149sbb8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_13jnen0</bpmn:flowNodeRef>
@@ -63,6 +62,8 @@
         <bpmn:flowNodeRef>Event_1te7w1f</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0v0jpgg</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1x9apqm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_11jkg04</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1iqq2w9</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0ry0sih" />
       </bpmn:lane>
     </bpmn:laneSet>
@@ -153,9 +154,6 @@
       <bpmn:incoming>Flow_0wil4mc</bpmn:incoming>
       <bpmn:outgoing>Flow_0wt2hfr</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:endEvent id="Event_11jkg04" name="OrderNotPlaced">
-      <bpmn:incoming>Flow_1sd1213</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:receiveTask id="Activity_1gna6xi" name="Handle Local Response" messageRef="Message_1paptgk">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -272,7 +270,7 @@
     <bpmn:sequenceFlow id="Flow_0wil4mc" sourceRef="Activity_0og1rzl" targetRef="Activity_0lx5ecl" />
     <bpmn:sequenceFlow id="Flow_0490ixy" sourceRef="Event_1jtydtg" targetRef="Event_03w8cge" />
     <bpmn:sequenceFlow id="Flow_0wt2hfr" sourceRef="Activity_0lx5ecl" targetRef="Activity_1gna6xi" />
-    <bpmn:sequenceFlow id="Flow_1sd1213" sourceRef="Event_15kituy" targetRef="Event_11jkg04" />
+    <bpmn:sequenceFlow id="Flow_1sd1213" sourceRef="Event_15kituy" targetRef="Activity_1iqq2w9" />
     <bpmn:sequenceFlow id="Flow_0k7ejly" sourceRef="Activity_1gna6xi" targetRef="Gateway_149sbb8" />
     <bpmn:sequenceFlow id="Flow_0196ead" name="Local Available" sourceRef="Gateway_149sbb8" targetRef="Activity_1y00q5x">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=LocalAvailabilityResponse.Reason = "ACCEPTED"</bpmn:conditionExpression>
@@ -355,6 +353,20 @@
       <bpmn:incoming>Flow_1behozf</bpmn:incoming>
       <bpmn:outgoing>Flow_1uywuw3</bpmn:outgoing>
     </bpmn:sendTask>
+    <bpmn:endEvent id="Event_11jkg04" name="OrderNotPlaced">
+      <bpmn:incoming>Flow_0uu76fs</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1iqq2w9" name="Cancel Order">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="CancelOrder" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=Order" target="Order" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1sd1213</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uu76fs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0uu76fs" sourceRef="Activity_1iqq2w9" targetRef="Event_11jkg04" />
   </bpmn:process>
   <bpmn:process id="Process_jdl0il5" isExecutable="false" />
   <bpmn:process id="Process_p5kbtyb" isExecutable="false" />
@@ -517,12 +529,6 @@
         <dc:Bounds x="440" y="770" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_11jkg04_di" bpmnElement="Event_11jkg04">
-        <dc:Bounds x="472" y="962" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="454" y="1005" width="79" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1gna6xi_di" bpmnElement="Activity_1gna6xi">
         <dc:Bounds x="580" y="770" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -606,6 +612,16 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0pljcb3" bpmnElement="Activity_1x9apqm">
         <dc:Bounds x="2800" y="660" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11jkg04_di" bpmnElement="Event_11jkg04">
+        <dc:Bounds x="672" y="1002" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="654" y="1045" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dgaf6i" bpmnElement="Activity_1iqq2w9">
+        <dc:Bounds x="520" y="980" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1lbfofm_di" bpmnElement="Event_1lbfofm">
@@ -698,7 +714,8 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1sd1213_di" bpmnElement="Flow_1sd1213">
         <di:waypoint x="490" y="868" />
-        <di:waypoint x="490" y="962" />
+        <di:waypoint x="490" y="1020" />
+        <di:waypoint x="520" y="1020" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0k7ejly_di" bpmnElement="Flow_0k7ejly">
         <di:waypoint x="680" y="810" />
@@ -798,6 +815,10 @@
       <bpmndi:BPMNEdge id="Flow_1mv3qzx_di" bpmnElement="Flow_1mv3qzx">
         <di:waypoint x="3478" y="700" />
         <di:waypoint x="3572" y="700" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uu76fs_di" bpmnElement="Flow_0uu76fs">
+        <di:waypoint x="620" y="1020" />
+        <di:waypoint x="672" y="1020" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_1mebunm_di" bpmnElement="Participant_1mebunm" isHorizontal="true">
         <dc:Bounds x="470" y="370" width="3020" height="60" />
