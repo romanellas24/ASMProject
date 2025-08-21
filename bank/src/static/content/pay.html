@@ -731,7 +731,7 @@
                 const json = await response.json();
                 if(json.code === 200) {
                     alert("Pagato!");
-                    window.location.href = `${callback}/orderId=${orderId}`;
+                    window.location.href = `${callback}?orderId=${orderId}`;
                 } else {
                     alert("ERRORE");
                 }
