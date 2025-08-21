@@ -21,7 +21,6 @@ To build the acmeat.domains.user.client use the following procedure:
 
 2. Run `dotnet pack` this will give you a nuget package that contains the updated client
 
-3. Go inside "bin/Release" folder and then run this command: 
-<code> dotnet nuget push your-package-name.nupkg --api-key [api-key] --source https://api.nuget.org/v3/index.json<code>
+3. Go inside "bin/Release" folder and then run this command `dotnet nuget push your-package-name.nupkg --api-key [api-key] --source https://api.nuget.org/v3/index.json`
 
 

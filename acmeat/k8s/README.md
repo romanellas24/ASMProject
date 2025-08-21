@@ -4,24 +4,24 @@
 
 2. To apply deployments:
 
-<code> ./deploy-kubectl.sh</code>
+` ./deploy-kubectl.sh`
 
 or (if you have microk8s):
 
-<code> ./deploy-kubectl.sh</code>
+` ./deploy-kubectl.sh`
 
 or if you are on windows:
 
-<code> deploy-kubectl.bat</code>
+` deploy-kubectl.bat`
 
 
 3. To apply services:
 
-<code>kubectl apply -f service.yaml<code>
+`kubectl apply -f service.yaml`
 
 or (if you have microk8s)
 
-<code>microk8s kubectl apply -f deployment.yaml<code>
+`microk8s kubectl apply -f deployment.yaml`
 
 ## Port forward
 
@@ -31,10 +31,10 @@ If you want just to start up the api's in local and use the backend services ava
 
 2. To port-forward with kubectl, open the "kubectl" folder and launch the following command:
 
-<code>./start-server.sh<code>
+`./start-server.sh`
 
 3. To port-forward with microk8s, open the "microk8s" folder and then launch the following command:
 
-<code>./start-server-microk8s.sh</code>
+`./start-server-microk8s.sh`
 
 or if you are on windows, open the win folder and then start manually each (.bat) file inside the directory

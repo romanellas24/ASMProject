@@ -20,18 +20,18 @@ To get more help on the dotnet-cli use `dotnet help` or go check out the [dotnet
 ## Build With docker
 Open a terminal in the "acmeat.apidish/" folder and then run the following commands:
 
-<code>docker build -t your-image-name .</code>
+`docker build -t your-image-name .`
 
 In this way you will be able to build the backend microservice in production configuration.
 Ater that use:
 
-<code> docker push you-image-name </code>
+` docker push you-image-name `
 
 ## Deploy on Kubernetes
 To deploy on kubernetes just apply these two yaml files:
 
-<code> kubectl apply -f deploy.yaml -f service.yaml </code>
+` kubectl apply -f deploy.yaml -f service.yaml `
 
 or with microk8s:
 
-<code> microk8s kubectl apply -f deploy.yaml -f service.yaml </code>
+` microk8s kubectl apply -f deploy.yaml -f service.yaml `

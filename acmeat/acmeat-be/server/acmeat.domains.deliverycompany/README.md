@@ -20,21 +20,21 @@ To get more help on the dotnet-cli use `dotnet help` or go check out the [dotnet
 ## Build With docker
 Open a terminal in the "acmeat.domains.deliverycompany/" folder and then run the following commands:
 
-<code>docker build -t your-image-name .</code>
+`docker build -t your-image-name .`
 
 In this way you will be able to build the backend microservice in production configuration.
 Ater that use:
 
-<code> docker push you-image-name </code>
+` docker push you-image-name `
 
 ## Deploy on Kubernetes
 To deploy on kubernetes just apply these two yaml files:
 
-<code> kubectl apply -f deploy.yaml -f service.yaml </code>
+` kubectl apply -f deploy.yaml -f service.yaml `
 
 or with microk8s:
 
-<code> microk8s kubectl apply -f deploy.yaml -f service.yaml </code>
+` microk8s kubectl apply -f deploy.yaml -f service.yaml `
 
 
 ## Build the Client
@@ -45,10 +45,10 @@ To build the acmeat.domains.deliverycompany.client use the following procedure:
 2. Run `dotnet pack` this will give you a nuget package that contains the updated client
 
 3. Go inside "bin/Release" folder and then run this command: 
-<code> dotnet nuget push your-package-name.nupkg --api-key [api-key] --source https://api.nuget.org/v3/index.json<code>
+` dotnet nuget push your-package-name.nupkg --api-key [api-key] --source https://api.nuget.org/v3/index.json`
 
 4. After the package has been pushed, remove the "/bin" and "/obj" folder and then run:
 
-<code>dotnet build</code>
+`dotnet build`
 
 This prevents errors during the building phase in the outer scope of acmeat.domains.deliverycompany

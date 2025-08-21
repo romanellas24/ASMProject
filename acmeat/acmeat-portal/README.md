@@ -29,22 +29,22 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Build With docker
 Open a terminal in the "acmeat-portal/" folder and then run the following commands:
 
-<code> ng build --configuration=production</code>
+` ng build --configuration=production`
 
 In this way you will be able to build the front end in production configuration (it includes also the proxy).
 Ater that use:
 
-<code>docker build -t your-image-name .</code>
+`docker build -t your-image-name .`
 
 To build the docker image. Then if the build is successfull push the image to docker-hub with the following command:
 
-<code>docker push your-image-name </code>
+`docker push your-image-name `
 
 ## Deploy on Kubernetes
 To deploy on kubernetes just apply these two yaml files:
 
-<code> kubectl apply -f deploy.yaml -f service.yaml </code>
+` kubectl apply -f deploy.yaml -f service.yaml `
 
 or with microk8s:
 
-<code> microk8s kubectl apply -f deploy.yaml -f service.yaml </code>
+` microk8s kubectl apply -f deploy.yaml -f service.yaml `
