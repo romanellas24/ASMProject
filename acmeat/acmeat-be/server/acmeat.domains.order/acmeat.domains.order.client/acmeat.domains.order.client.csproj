@@ -5,7 +5,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>Acmeat.Server.Order.ClientTest</PackageId>
-    <Version>1.0.8</Version>
+    <Version>1.1.0</Version>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 

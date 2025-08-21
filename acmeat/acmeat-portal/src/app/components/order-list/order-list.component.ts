@@ -132,7 +132,12 @@ export class OrderListComponent implements OnInit,OnDestroy {
     this.orderSvc.getPaymentToken(order.price).subscribe(
       (token:BankToken) =>{
           let acmeatUrl: string = "https://acmeat.romanellas.cloud";
-          this.document.location.href = `https://joliebank.romanellas.cloud/pay.html?token=${token.token}&callback=${acmeatUrl}`;
+          // let acmeatUrl: string = "localhost:4200";
+
+          if(order.id != undefined)
+            sessionStorage.setItem(order.id?.toString(),token.token);
+
+          this.document.location.href = `https://joliebank.romanellas.cloud/pay.html?token=${token.token}&orderId=${order.id}&callback=${acmeatUrl}`;
       }
     )
   );

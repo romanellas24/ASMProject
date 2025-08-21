@@ -16,6 +16,7 @@ service GrpcOrder {
   rpc UpdateOrder(Order) returns (GeneralResponse);
   rpc DeleteOrder(Order) returns (GeneralResponse);
   rpc DeleteOrderById(Order) returns (GeneralResponse);
+  rpc DeleteOrderForced(Order) returns (GeneralResponse);
 
   rpc HandleLocalAvailabilityResponse(LocalResponse) returns (GeneralResponse);
 

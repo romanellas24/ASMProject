@@ -243,6 +243,37 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
 
     }
 
+
+     public override async Task<server.order.manager.GeneralResponse> DeleteOrderForced(server.order.manager.Order order, ServerCallContext context)
+    {
+
+
+        server.order.manager.GeneralResponse generalResponse = new server.order.manager.GeneralResponse();
+        DateTime now = DateTime.Now;
+
+
+        try
+        {
+
+            await _orderDataWriter.SendAsync(
+             new DeleteNewOrderCommand(
+                 order.Id
+                 )
+             );
+            generalResponse.Message = "OK";
+            }
+        catch (Exception ex)
+        {
+            generalResponse.Message = ex.Message;
+        }
+        
+        
+
+        return await Task.FromResult(
+            generalResponse
+        );
+
+    }
     public IJobWorker? CheckOrderCancellationRulesWorker(server.order.manager.Order order, TaskCompletionSource<GeneralResponse> tcs)
     {
         return _zeebeClient

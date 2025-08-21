@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BankToken, GeneralResponse, OrderInfo } from '../entities/entities';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,15 @@ export class OrderService {
     return this.httpClient.delete<GeneralResponse>(this.baseUrl+"/api/Order/DeleteOrderById/"+orderId);
   }
 
+  public verifyPayment(orderId:string, token:string){
+
+    return this.httpClient.patch<GeneralResponse>(this.baseUrl+"/api/Bank/VerifyPayment?transactionId="+token + "&orderId=" + orderId,null
+   
+    )
+  }
+
   public getPaymentToken(price:number){
-    return this.httpClient.post<BankToken>("/payments",{
+    return this.httpClient.post<BankToken>(environment.paymentApiUrl,{
       amount:price,
       dest_account: 3
     });
