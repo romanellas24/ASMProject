@@ -4,7 +4,7 @@ metadata:
   name: joliebank-camunda-layer-service
 spec:
   selector:
-    app: joliebank-camunda-layer-deployment
+    app: joliebank-camunda-layer
   type: ClusterIP
   ports:
     - port: 8080
