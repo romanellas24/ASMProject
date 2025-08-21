@@ -15,9 +15,9 @@ To get more help on the dotnet-cli use `dotnet help` or go check out the [dotnet
 
 
 ## Expand the solution
-If new domains or microservices have to be implemented to expand amceat functionalities, you must follow this procedure:
+If new domains or microservices have to be implemented to expand Acmeat functionalities, you must follow this procedure:
 
-1. Create the microservice in the "acmeat-be/api" if it is an api or in "amceat-be/server" if it is a backend service
+1. Create the microservice in the "acmeat-be/api" if it is an api or in "Acmeat-be/server" if it is a backend service
 
 2. This project uses the DDD design pattern along with CQRS pattern for more info: [DDD-oriented microservices](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice) [CQRS patter](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs)
 
