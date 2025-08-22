@@ -44,7 +44,7 @@ namespace acmeat.api.order
         public async Task<GeneralResponse> VerifyPayment(string transactionId, int orderId)
         {
             Console.WriteLine($"received payment Info for order with id {orderId}");
-            GeneralResponse generalResponse = new GeneralResponse();
+            // GeneralResponse generalResponse = new GeneralResponse();
             //TO DO INSERT THE BANK ENDOPOINT
             return await _orderClient.VerifyPayment(new Payment
             {

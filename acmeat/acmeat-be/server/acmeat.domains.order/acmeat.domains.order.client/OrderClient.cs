@@ -80,6 +80,10 @@ namespace acmeat.server.order.client
         {
             return await _client.DeleteOrderAsync(order);
         }
+         public async Task<GeneralResponse> DeleteOrderForced(Order order)
+        {
+            return await _client.DeleteOrderForcedAsync(order);
+        }
 
 
         public async Task<GeneralResponse> HandleLocalAvailabilityResponse(LocalResponse localResponse)
