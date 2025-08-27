@@ -1,0 +1,49 @@
+@startuml
+title Pagamento Token - Fino all'Edge Gateway
+hide footbox
+autonumber
+
+actor "Utente (Cliente di ACMEat)" as User
+participant "ACMEat" AS AMT
+participant "RestConverter" as RC
+participant "Camunda" as Camunda
+participant "Edge Gateway" as EdgeGW
+
+== Processo già esistente in ACMEat ==
+User -> AMT: Ordina del cibo
+AMT -> User: REST 301: Redirect on joliebank.romanellas.cloud
+== Avvio processo della Banca ==
+User -> RC: REST PUT /payments/{tokenId}/
+activate RC
+RC -> Camunda: Avvia processo pagamento
+activate Camunda
+
+== Check stato (SOAP) ==
+Camunda -> EdgeGW: SOAP CheckTokenStatus(tokenId)
+activate EdgeGW
+EdgeGW --> Camunda: { state: "Paid" | "Not paid" | "Not found" }
+deactivate EdgeGW
+
+alt [state == "Not paid"]
+  Camunda -> EdgeGW: SOAP PayToken(tokenId)
+  activate EdgeGW
+  EdgeGW --> Camunda: { state: "Paid" }
+  deactivate EdgeGW
+else [state == "Paid"]
+  Camunda -> Camunda: Nessuna azione di pagamento
+else [state == "Not found"]
+  Camunda -> Camunda: Impossibile procedere (token assente)
+end
+
+deactivate Camunda
+
+== Verifica finale stato (REST) ==
+RC -> EdgeGW: REST GET /tokens/{tokenId}/status
+activate EdgeGW
+EdgeGW --> RC: { state: "Paid" | "Not paid" | "Not found" }
+deactivate EdgeGW
+
+== Risposta verso l'utente ==
+RC --> User: { state: "Paid" | "Not paid" | "Not found" }
+deactivate RC
+@enduml
