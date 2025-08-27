@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15" version="28.0.6">
+  <diagram name="Pagina-1" id="c-uwUkHPffSPwhgFVyYJ">
+    <mxGraphModel dx="1144" dy="815" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="jGFvi2a09jElZurBwW-i-32" value="Restaurant System" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="230" y="240" width="390" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="jGFvi2a09jElZurBwW-i-1" target="jGFvi2a09jElZurBwW-i-16" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-1" value="External actor (ACMEAT)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
+          <mxGeometry x="140" y="290" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-16" value="Submit Order" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="370" y="297.5" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-18" value="Evaluate Order" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="370" y="380" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-19" value="Accept Order" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="445" y="470" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-20" value="Reject Order" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="295" y="470" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-21" value="Extends" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" parent="1" source="jGFvi2a09jElZurBwW-i-20" target="jGFvi2a09jElZurBwW-i-18" edge="1">
+          <mxGeometry x="-0.0149" width="160" relative="1" as="geometry">
+            <mxPoint x="430" y="620" as="sourcePoint" />
+            <mxPoint x="590" y="620" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-22" value="Extends" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="1" source="jGFvi2a09jElZurBwW-i-19" target="jGFvi2a09jElZurBwW-i-18" edge="1">
+          <mxGeometry x="-0.0149" width="160" relative="1" as="geometry">
+            <mxPoint x="450" y="642" as="sourcePoint" />
+            <mxPoint x="489" y="590" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="jGFvi2a09jElZurBwW-i-23" target="jGFvi2a09jElZurBwW-i-18" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="690" y="450" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="640" y="485" />
+              <mxPoint x="640" y="403" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="jGFvi2a09jElZurBwW-i-23" target="jGFvi2a09jElZurBwW-i-25" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="485" />
+              <mxPoint x="630" y="563" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="jGFvi2a09jElZurBwW-i-23" target="jGFvi2a09jElZurBwW-i-30" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="485" />
+              <mxPoint x="650" y="633" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-23" value="Cook" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
+          <mxGeometry x="690" y="455" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-25" value="Prepare Order" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="370" y="540" width="100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="jGFvi2a09jElZurBwW-i-30" value="Change menu" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="370" y="610" width="100" height="45" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

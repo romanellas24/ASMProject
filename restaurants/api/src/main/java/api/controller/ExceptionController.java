@@ -20,13 +20,6 @@ public class ExceptionController {
         return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AcmeNotificationException.class)
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public ResponseEntity<ExceptionDTO> acmeNotificationException(AcmeNotificationException acmeNotificationException) {
-        ExceptionDTO exceptionDTO = new ExceptionDTO(acmeNotificationException.getMessage(), 503);
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.SERVICE_UNAVAILABLE);
-    }
-
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionDTO> notFoundException(NotFoundException notFoundException) {

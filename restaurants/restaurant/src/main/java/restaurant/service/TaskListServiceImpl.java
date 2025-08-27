@@ -76,14 +76,6 @@ public class TaskListServiceImpl implements TaskListService {
     private List<TaskDecisionOrderDTO> getTasksByForm(String formIdOrderPrepare) {
         try {
             TaskList tasks = this.getOpenTasks();
-            List<TaskDecisionOrderDTO> list = tasks
-                    .getItems()
-                    .stream()
-                    .filter(
-                            task -> isCookTask(task) /* && task.getFormId() != null && task.getFormId().equals(formIdOrderPrepare)*/
-                    )
-                    .map(this::convertToCookTaskNotification)
-                    .toList();
 
             return tasks
                     .getItems()
@@ -154,7 +146,5 @@ public class TaskListServiceImpl implements TaskListService {
             task.getOrderData() != null && id.equals(task.getOrderData().getId())
         );
     }
-
-
 
 }

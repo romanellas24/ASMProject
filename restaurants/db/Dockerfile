@@ -1,9 +1,5 @@
 FROM mysql:9.3
 
-# ENV MYSQL_DATABASE="restaurant"
-# ENV MYSQL_USER="restaurateur"
-# ENV MYSQL_PASSWORD="0EMr6Cp5Tp85lThOT1y4NxsmQSW5TlhNu14X85DCOfIWxMoSFftuSDqqbWS9NXiW"
-# ENV MYSQL_ROOT_PASSWORD="hItkV9Tc6zJP9c66wq39i810WPFzZ9xfGuKkSvYCMGdaRi9QCDVQZfM3rXbfYqRX"
 COPY ./init.sql /docker-entrypoint-initdb.d/
 
 EXPOSE 3306

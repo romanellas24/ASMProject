@@ -6,11 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO standard per risposte di successo dell'API.
- */
-@Data // Genera automaticamente getter, setter, toString(), equals(), hashCode()
-@NoArgsConstructor // Genera un costruttore senza argomenti
+@Data
+@NoArgsConstructor
 public class ApiSuccessResponse {
 
     private String message;

@@ -1,19 +1,16 @@
 package api.workers;
 
-import api.dto.CreateOrderDTO;
 import api.dto.MenuDTO;
 import api.service.MenuService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Map;
 
 @Component
 @Slf4j
@@ -32,13 +29,7 @@ public class GeneralJobWorker extends Worker {
         this.menuService = menuService;
     }
 
-//    @JobWorker(type = "is_local_closed")
     public void addBoolIsLocalClosedToVariables(JobClient client, final ActivatedJob job){
-
-//        if (!isJobForThisWorker(job)){
-//            ignoreJob(client, job);
-//            return;
-//        }
 
         log.info("check if local is closed today.");
         Boolean isTodayClosed = LocalDate.now().getDayOfWeek() == closingDay;
@@ -59,17 +50,11 @@ public class GeneralJobWorker extends Worker {
         }
     }
 
-//    @JobWorker(type = "prepare_menu_send")
     public void prepareMenuSend(JobClient client, final ActivatedJob job){
-//        if (!isJobForThisWorker(job)){
-//            ignoreJob(client, job);
-//            return;
-//        }
 
         log.info("prepare menu object to send request to acmeat");
         try {
             MenuDTO menu = this.menuService.getMenu(LocalDate.now());
-//            String localUrl = localName + ".romanellas.cloud";
             client.newCompleteCommand(job.getKey())
                     .variable("menu", menu)
                     .send()

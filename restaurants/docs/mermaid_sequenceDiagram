@@ -1,0 +1,51 @@
+sequenceDiagram
+    Acmeat->>+gateway:create order
+    gateway->>+API: routes to
+    par start elaborating order
+        API->>Camunda:starts process
+        activate Camunda
+    and notify syntax order is ok
+        API-->>gateway: elaborating order...
+        deactivate API
+        gateway-->>-Acmeat:elaborating order...
+    end
+    Camunda->>API:create order pending
+    activate API
+    API-->>Camunda: order created
+    deactivate API
+    Camunda->>WS: prepare notification
+    activate WS
+    WS->>Cook: notify
+    
+    activate Cook
+    Cook->>WS:send decision
+    deactivate Cook
+    WS-->>Camunda: send decision
+    deactivate WS
+
+    
+    alt order rejected
+        Camunda->>+API: set order to rejected
+        API-->>-Camunda:return
+        Camunda->>Acmeat: notify client order rejected
+    else
+        Camunda->>+API: set order to accepted
+        API-->>-Camunda:return
+                par notify client order accepted
+        Camunda->>Acmeat: notify client order accepted
+        and notify cook order to be prepared
+            Camunda->>WS: add order to dashboard
+        end
+        activate WS
+        
+        WS->>Cook: update dashboard
+        deactivate WS
+        Camunda->>WS: cook can start to prepare
+        activate WS
+        WS->>+Cook: order can start
+        
+        Cook-->>-WS: order prepared
+        WS-->>Camunda: order prepared
+        deactivate WS
+    end
+    deactivate Camunda

@@ -99,38 +99,6 @@ EOF
 
 done
 
-# generate super gateway
-# cat <<EOF > super-gateway-ingress.yaml
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: super-gateway-ingress
-#   namespace: ingress-nginx
-#   annotations:
-#     nginx.ingress.kubernetes.io/rewrite-target: /\$2
-#     nginx.ingress.kubernetes.io/service-upstream: "true"
-# spec:
-#   ingressClassName: nginx
-#   rules:
-#   - host: gateway.local #PER TEST - cambiare con ip server pubblico
-#     http:
-#       paths:
-# EOF
-
-# for NAME in "${NAMES[@]}"; do
-#   cat <<EOF >> super-gateway-ingress.yaml
-#       - path: /${NAME}(/|$)(.*)
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: ${NAME}/gateway-restaurant
-#             port:
-#               number: 8080
-
-# EOF
-# done
-
-# echo "File super-gateway-ingress.yaml generato con successo."
 
 # aggregate all envs in one file for test
 SUMMARY_FILE="./all-envs-summary.env"

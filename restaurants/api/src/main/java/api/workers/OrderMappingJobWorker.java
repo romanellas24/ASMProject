@@ -4,13 +4,10 @@ import api.dto.CreateOrderDTO;
 import api.dto.OrderDTO;
 import api.dto.OrderMappingDTO;
 import api.service.OrderService;
-import api.utils.OrderStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,14 +23,8 @@ public class OrderMappingJobWorker extends Worker {
         this.orderService = orderService;
     }
 
-
-//    @JobWorker(type = "save_order_mapping")
     public void saveOrderMapping(final JobClient client, final ActivatedJob job){
 
-//        if (!isJobForThisWorker(job)){
-//            ignoreJob(client, job);
-//            return;
-//        }
 
         final CreateOrderDTO body = objectMapper.convertValue(job.getVariablesAsMap().get("body"), CreateOrderDTO.class);
         final OrderDTO order = objectMapper.convertValue(job.getVariablesAsMap().get("order"), OrderDTO.class);

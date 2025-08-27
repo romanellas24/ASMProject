@@ -13,7 +13,7 @@ import lombok.*;
 public class OrderMapping {
 
     @Id
-    @Column(name = "local_order_id") // Questa colonna sarà riempita da @MapsId
+    @Column(name = "local_order_id")
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)

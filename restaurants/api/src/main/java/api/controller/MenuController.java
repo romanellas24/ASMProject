@@ -70,9 +70,6 @@ public class MenuController {
     public UpdateMenuResponseDTO updateMenu(@RequestBody List<Integer> dishIds){
         LocalDate date = MenuUpdateDate.get();
         menuService.updateMenu(date, dishIds);
-        if (date == LocalDate.now().plusDays(1)) {
-            menuService.notifyMenuChanges(date);
-        }
         return new UpdateMenuResponseDTO(date);
     }
 }

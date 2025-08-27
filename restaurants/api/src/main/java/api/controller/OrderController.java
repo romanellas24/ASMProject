@@ -208,25 +208,4 @@ public class OrderController {
         return ResponseEntity.accepted().body(new ApiSuccessResponse("Valid order data. Elaborating..."));
 
     }
-
-    private DeleteOrderResponseDTO deleteOrderCompany(Integer id, String companyName) throws Exception {
-
-        companyName = companyName.toLowerCase();
-        log.info("deletion of  order {} of company {}", id, companyName);
-        OrderMappingDTO mapping = orderService.getMapping(companyName, id);
-
-        Boolean deleted = orderService.deleteOrder(mapping);
-
-        return new DeleteOrderResponseDTO(mapping.getOrderId(), mapping.getCompanyId(), deleted,mapping.getCompanyName());
-    }
-
-    private DeleteOrderResponseDTO deleteOrderRest(Integer id) throws Exception {
-        if (!orderService.existsOrder(id)) {
-            throw new NotFoundException("Order not found.");
-        }
-
-        Boolean deleted = orderService.deleteOrder(id);
-
-        return new DeleteOrderResponseDTO(id, null, deleted, null);
-    }
 }

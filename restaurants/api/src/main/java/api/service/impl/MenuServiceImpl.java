@@ -5,10 +5,8 @@ import api.dao.DishDAO;
 import api.dto.MenuDTO;
 import api.entity.DailyMenu;
 import api.entity.DailyMenuId;
-import api.exception.AcmeNotificationException;
 import api.exception.InvalidDishId;
 import api.service.MenuService;
-import api.utils.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +22,6 @@ public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private DishDAO dishDAO;
-
-    @Autowired
-    private HttpClient httpClient;
 
     @Override
     public MenuDTO getMenu(LocalDate date) {
@@ -52,14 +47,6 @@ public class MenuServiceImpl implements MenuService {
             DailyMenu toSave = new DailyMenu(dailyMenuId);
             dailyMenuDAO.save(toSave);
         }
-    }
-
-    @Override
-    public void notifyMenuChanges(LocalDate date) throws AcmeNotificationException {
-        MenuDTO menuDTO = this.getMenu(date);
-
-        //this can throw AcmeNotificationException
-        httpClient.notifyAcmeMenuChanges(menuDTO);
     }
 
     private void checkIdInMenu(Integer id, LocalDate date) throws InvalidDishId {

@@ -1,4 +1,4 @@
-package api.utils; // o dove preferisci
+package api.utils;
 
 public enum EventType {
     ORDER_WAITING,

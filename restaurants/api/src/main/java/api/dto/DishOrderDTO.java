@@ -1,6 +1,5 @@
 package api.dto;
 
-import api.entity.Dish;
 import api.entity.DishOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
