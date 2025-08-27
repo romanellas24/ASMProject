@@ -16,29 +16,32 @@ public class Local
                  string ClosingTime,
                  string Address,
                  string OpeningDays,
-                 bool Available
+                 bool Available,
+                 string Url
                )
     {
         this.Id = Id;
-        this.Name=Name;
+        this.Name = Name;
         this.OpeningTime = OpeningTime;
         this.ClosingTime = ClosingTime;
         this.Address = Address;
         this.OpeningDays = OpeningDays;
         this.Available = Available;
-
+        this.Url = Url;
+ 
 
     }
 
     public Local(db.local.Local local)
     {
         this.Id = local.Id;
-        this.Name=local.Name;
+        this.Name = local.Name;
         this.OpeningTime = local.OpeningTime;
         this.ClosingTime = local.ClosingTime;
         this.Address = local.Address;
         this.OpeningDays = local.OpeningDays;
         this.Available = local.Available;
+        this.Url = local.Url;
 
 
     }
@@ -54,6 +57,7 @@ public class Local
 
     public string OpeningDays { get; set; }
     public bool Available { get; set; }
+    public string Url { get; set; }
 
     public acmeat.db.local.Local Convert()
     {
@@ -65,7 +69,8 @@ public class Local
         local.ClosingTime = this.ClosingTime;
         local.Address = this.Address;
         local.Available = this.Available;
-        
+        local.Url = this.Url;
+
         return local;
     }
 }

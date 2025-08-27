@@ -1,6 +1,7 @@
 
 using acmeat.server.deliverycompany.client;
 using Microsoft.AspNetCore.Mvc;
+using static acmeat.server.deliverycompany.client.DeliveryCompanyClient;
 
 namespace acmeat.api.deliverycompany
 {
@@ -52,6 +53,15 @@ namespace acmeat.api.deliverycompany
             Console.WriteLine($"DeliveryCompany with made with deliverycompanyId: {deliverycompanyInfo.Id}");
             
             return await _deliverycompanyClient.CreateDeliveryCompany(deliverycompanyInfo.Convert());
+
+        }
+
+         [HttpPost]
+        public async Task<GeneralResponse> CheckAvailabilityDeliveryCompany(AvailabilityPayload availabilityPayload)
+        {
+            Console.WriteLine($"DeliveryCompany with made with deliverycompanyId: {availabilityPayload.DeliveryCompanyUrl}");
+
+            return await _deliverycompanyClient.CheckAvailability(availabilityPayload);
 
         }
 

@@ -7,25 +7,22 @@ option csharp_namespace = "acmeat.server.order.client";
 package order;
 
 service GrpcOrder {
-  rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
   rpc GetOrderById(Id)returns(Order);
   rpc GetOrders(Id) returns (OrderList);
   rpc GetOrdersByUserId(Id) returns (OrderList);
   rpc GetOrdersToPay(Id) returns (OrderList);
+  rpc VerifyPayment(Payment) returns(GeneralResponse);
   rpc CreateOrder(Order) returns(GeneralResponse);
   rpc UpdateOrder(Order) returns (GeneralResponse);
   rpc DeleteOrder(Order) returns (GeneralResponse);
   rpc DeleteOrderById(Order) returns (GeneralResponse);
+  rpc DeleteOrderForced(Order) returns (GeneralResponse);
+
+  rpc HandleLocalAvailabilityResponse(LocalResponse) returns (GeneralResponse);
 
 }
 
-message HelloRequestClient {
-  string name = 1;
-}
 
-message HelloReplyClient {
-  string message = 1;
-}
 
 message Id{
   int32 id = 1;
@@ -33,6 +30,11 @@ message Id{
 
 message GeneralResponse{
   string message=1;
+}
+
+message LocalResponse{
+  int32 OrderId = 1;
+  string Reason =2;
 }
 
 message Order{
@@ -48,7 +50,7 @@ message Order{
 
   int32 Price = 7;
 
-  int32 TransactionId =8;
+  string TransactionId =8;
 
   int32 MenuId = 9;
   int32 Quantity = 10;
@@ -56,4 +58,9 @@ message Order{
 
 message OrderList {
   repeated Order orders=1;
+}
+
+message Payment{
+  string TransactionId =1;
+  int32 OrderId =2;
 }

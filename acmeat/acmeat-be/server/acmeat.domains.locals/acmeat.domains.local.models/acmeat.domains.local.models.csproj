@@ -9,9 +9,8 @@
 
   <ItemGroup>
   
-       <PackageReference Include="Acmeat.Db.ClientTest" Version="1.0.7" />
+       <PackageReference Include="Acmeat.Db.ClientTest" Version="1.1.4" />
        
-     
      
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
     

@@ -9,7 +9,7 @@ namespace acmeat.api.order
     public class OrderController : ControllerBase
     {
 
-        
+
         private readonly OrderClient _orderClient;
         private readonly ILogger<OrderController> _logger;
 
@@ -20,22 +20,22 @@ namespace acmeat.api.order
         };
 
 
-         public OrderController(
-            OrderClient orderClient,
-            ILogger<OrderController> logger
+        public OrderController(
+           OrderClient orderClient,
+           ILogger<OrderController> logger
 
-         ){
+        )
+        {
 
             _logger = logger;
             _orderClient = orderClient;
-            
+
         }
 
         [HttpGet("{OrderId}")]
         public async Task<HttpResponseMessage> GetPaymentForm(int OrderId)
         {
             Console.WriteLine($"order id: {OrderId}");
-            //TO DO: MAKE REQUEST TO FAKE BANK
             using HttpResponseMessage response = await sharedClient.GetAsync("paymentOrder/" + OrderId);
             return response;
 
@@ -46,7 +46,7 @@ namespace acmeat.api.order
         public async Task<OrderInfo> GetOrderById(int Id)
         {
             _logger.LogInformation($"Getting order with id: {Id}");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+
 
             var order = await _orderClient.GetOrderById(Id);
             return new OrderInfo(order);
@@ -57,7 +57,7 @@ namespace acmeat.api.order
         public async Task<List<OrderInfo>> GetOrders()
         {
             _logger.LogInformation($"Getting orders ");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+
 
             var orders = await _orderClient.GetOrderList();
             return orders.Orders.Select(x => new OrderInfo(x)).ToList();
@@ -68,7 +68,7 @@ namespace acmeat.api.order
         public async Task<List<OrderInfo>> GetOrdersByUserId(int userId)
         {
             _logger.LogInformation($"Getting orders ");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
+
 
             var orders = await _orderClient.GetOrdersByUserId(userId);
             return orders.Orders.Select(x => new OrderInfo(x)).ToList();
@@ -80,7 +80,6 @@ namespace acmeat.api.order
         public async Task<List<OrderInfo>> GetOrdersToPay(int userId)
         {
             _logger.LogInformation($"Getting orders ");
-            //TO DO AWAIT CLIENT TO COMPLETE THE OPERATION
 
             var orders = await _orderClient.GetOrdersToPay(userId);
             return orders.Orders.Select(x => new OrderInfo(x)).ToList();
@@ -91,22 +90,33 @@ namespace acmeat.api.order
         public async Task<GeneralResponse> CreateOrder(OrderInfo orderInfo)
         {
             Console.WriteLine($"Order with made with userId: {orderInfo.UserId}");
-            
+
             return await _orderClient.CreateOrder(orderInfo.Convert());
 
         }
 
-         [HttpPatch]
+
+        [HttpPost]
+        public async Task<GeneralResponse> FinishOrder(FinishOrder finishOrder)
+        {
+            Console.WriteLine($"Order with Id {finishOrder.OrderId}has finished with reason: {finishOrder.Reason}");
+
+
+            return await _orderClient.HandleLocalAvailabilityResponse(new LocalResponse { OrderId = finishOrder.OrderId, Reason = finishOrder.Reason });
+
+        }
+
+        [HttpPatch]
         public async Task<GeneralResponse> UpdateOrder(OrderInfo orderInfo)
         {
             Console.WriteLine($"Order with Id: {orderInfo.Id} updating...");
-            
+
             return await _orderClient.UpdateOrder(orderInfo.Convert());
 
         }
 
 
-         [HttpDelete("{Id}")]
+        [HttpDelete("{Id}")]
         public async Task<GeneralResponse> DeleteOrderById(int Id)
         {
             Console.WriteLine($"Order with Id: {Id} deleting...");
@@ -114,6 +124,23 @@ namespace acmeat.api.order
             return await _orderClient.DeleteOrder(order);
 
         }
+
+        [HttpDelete("{Id}")]
+        public async Task<GeneralResponse> DeleteOrderForced(int Id)
+        {
+            Console.WriteLine($"Order with Id: {Id} deleting...");
+            Order order = await _orderClient.GetOrderById(Id);
+            return await _orderClient.DeleteOrderForced(order);
+
+        }
+        //  [HttpPost]
+        // public async Task<GeneralResponse> VerifyPayment(PaymentInfo payment)
+        // {
+        //     Console.WriteLine($"received payment Info for order with id {payment.OrderId}");
+        //     //TO DO INSERT THE BANK ENDOPOINT
+        //     return await _orderClient.VerifyPayment(payment.Convert());
+          
+        // }
     }
 
 

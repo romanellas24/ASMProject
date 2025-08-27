@@ -1,0 +1,57 @@
+
+syntax = "proto3";
+
+
+option csharp_namespace = "acmeat.server.dish.client";
+
+package dish;
+
+service GrpcDish {
+  rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
+  rpc GetDishById(Id)returns(Dish);
+  rpc GetDishsByMenuId(Id)returns(DishList);
+  rpc GetDishs(Id) returns (DishList);
+  rpc CreateDish(Dish) returns(GeneralResponse);
+  rpc UpdateDish(Dish) returns (GeneralResponse);
+  rpc UpdateDishs(DishList) returns (GeneralResponse);
+  rpc DeleteDish(Dish) returns (GeneralResponse);
+  rpc DeleteDishById(Dish) returns (GeneralResponse);
+
+}
+
+message HelloRequestClient {
+  string name = 1;
+}
+
+message HelloReplyClient {
+  string message = 1;
+}
+
+message Id{
+  int32 id = 1;
+}
+
+message Date{
+  string date=1;
+}
+
+message GeneralResponse{
+  string message=1;
+}
+
+message Dish{
+  int32 Id=1 ;
+
+   string Description=2 ;
+
+   string Name=3 ;
+
+   float Price=4 ;
+   int32 MenuId=5;
+
+   
+}
+
+message DishList {
+  repeated Dish dishs=1;
+}

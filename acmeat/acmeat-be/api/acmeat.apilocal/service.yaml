@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: apilocal-service
-  namespace: default
+  namespace: acmeat
 spec:
   type: NodePort
   selector:

@@ -9,8 +9,9 @@ public class OrderInfo{
     public OrderInfo(
                     int UserId,
                      string DeliveryTime,
+                     int DeliveryCompanyId,
                      string PurchaseTime,
-                     int TransactionId,
+                     string TransactionId,
                      int Price,
                      int MenuId,
                      int Quantity,
@@ -22,6 +23,7 @@ public class OrderInfo{
         this.DeliveryTime = DeliveryTime;
         this.PurchaseTime = PurchaseTime;
         this.TransactionId = TransactionId;
+        this.DeliveryCompanyId = DeliveryCompanyId;
         this.Price = Price;
         this.MenuId = MenuId;
         this.Quantity = Quantity;
@@ -34,6 +36,7 @@ public class OrderInfo{
         this.Id = order.Id;
         this.UserId = order.UserId;
         this.DeliveryTime = order.DeliveryTime;
+        this.DeliveryCompanyId = order.DeliveryCompanyId;
         this.PurchaseTime = order.PurchaseTime;
         this.TransactionId = order.TransactionId;
         this.Price = order.Price;
@@ -46,8 +49,9 @@ public class OrderInfo{
     public int UserId{get;set;}
     public int Id {get;set;}
     public string DeliveryTime {get;set;}
-    public string PurchaseTime {get;set;}
-    public int TransactionId {get;set;}
+    public int DeliveryCompanyId {get;set;}
+    public string PurchaseTime { get; set; }
+    public string TransactionId {get;set;}
     public int Price {get;set;}
     public int MenuId {get;set;}
     public int Quantity {get;set;}
@@ -61,6 +65,7 @@ public class OrderInfo{
         order.DeliveryTime = this.DeliveryTime;
         order.PurchaseTime = this.PurchaseTime;
         order.TransactionId = this.TransactionId;
+        order.DeliveryCompanyId = this.DeliveryCompanyId;
         order.Price = this.Price;
         order.MenuId = this.MenuId;
         order.Quantity = this.Quantity;

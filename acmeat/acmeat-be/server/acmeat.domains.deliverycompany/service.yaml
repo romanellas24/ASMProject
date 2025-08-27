@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: deliverycompanymanager-service
-  namespace: default
+  namespace: acmeat
 spec:
   type: ClusterIP
   selector:

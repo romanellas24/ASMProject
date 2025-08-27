@@ -6,7 +6,7 @@ public class DeliveryCompanyInfo
 
     [JsonConstructor]
     public DeliveryCompanyInfo(
-                string Address, int Price, bool Available)
+                string Address, float Price, bool Available)
     {
         this.Id = new Random().Next();
      this.Address = Address;
@@ -29,7 +29,7 @@ public class DeliveryCompanyInfo
     public int Id { get; set; }
     public string Address { get; set; }
     
-    public int Price { get; set; }
+    public float Price { get; set; }
     public bool Available { get; set; }
     public acmeat.server.deliverycompany.client.DeliveryCompany Convert()
     {
