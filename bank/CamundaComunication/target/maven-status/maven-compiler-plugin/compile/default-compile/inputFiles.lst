@@ -3,6 +3,7 @@
 /home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/src/main/java/joliebank/romanellas/services/PayTokenService.java
 /home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/src/main/java/joliebank/romanellas/services/ReimbursementService.java
 /home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/src/main/java/joliebank/romanellas/services/ServicesDeployer.java
+/home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/src/main/java/joliebank/romanellas/utils/HttpSendCallback.java
 /home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/target/generated-sources/cxf/com/example/soapclient/AccountInfo.java
 /home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/target/generated-sources/cxf/com/example/soapclient/BANKGATEWAY2.java
 /home/romanellas/WebstormProjects/ASMProject/bank/CamundaComunication/target/generated-sources/cxf/com/example/soapclient/BANKGATEWAY2Service.java

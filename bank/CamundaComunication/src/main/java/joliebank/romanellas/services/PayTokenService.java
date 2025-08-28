@@ -5,6 +5,7 @@ import com.example.soapclient.BANKGATEWAY2Service;
 import com.google.common.collect.Maps;
 import io.camunda.zeebe.client.ZeebeClient;
 import jakarta.xml.ws.Holder;
+import joliebank.romanellas.utils.HttpSendCallback;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +13,11 @@ import java.util.Map;
 public class PayTokenService {
 
     private ZeebeClient client;
+    private HttpSendCallback httpClient;
 
     public PayTokenService(ZeebeClient client) {
         this.client = client;
+        this.httpClient = new HttpSendCallback();
     }
 
     public void jolieCheckToken() {
@@ -174,6 +177,8 @@ public class PayTokenService {
                         outputVars.put("token", token);
                         outputVars.put("result", "INVALID_TOKEN");
 
+                        httpClient.sendCallback(token, (String) outputVars.get("result"));
+
                         client.newPublishMessageCommand()
                                 .messageName("PayTokenResponseTest")
                                 .correlationKey("start")
@@ -210,6 +215,8 @@ public class PayTokenService {
                         Map<String, Object> outputVars = new HashMap<>();
                         outputVars.put("token", token);
                         outputVars.put("result", "INVALID_PAYMENT_DATA");
+
+                        httpClient.sendCallback(token, (String) outputVars.get("result"));
 
                         client.newPublishMessageCommand()
                                 .messageName("PayTokenResponseTest")
@@ -249,6 +256,8 @@ public class PayTokenService {
                         outputVars.put("token", token);
                         outputVars.put("result", "PAYMENT_EXCEPTION");
 
+                        httpClient.sendCallback(token, (String) outputVars.get("result"));
+
                         client.newPublishMessageCommand()
                                 .messageName("PayTokenResponseTest")
                                 .correlationKey("start")
@@ -285,6 +294,8 @@ public class PayTokenService {
                         Map<String, Object> outputVars = new HashMap<>();
                         outputVars.put("token", token);
                         outputVars.put("result", "PAYMENT_SUCCESS");
+
+                        httpClient.sendCallback(token, (String) outputVars.get("result"));
 
                         client.newPublishMessageCommand()
                                 .messageName("PayTokenResponseTest")
