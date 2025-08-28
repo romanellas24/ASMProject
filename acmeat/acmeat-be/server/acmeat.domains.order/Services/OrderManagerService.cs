@@ -219,22 +219,22 @@ public class GrpcOrderManagerService : server.order.manager.GrpcOrder.GrpcOrderB
         var completed = await tcs.Task;
 
         //IF EVERYTHING IS OK WE DELETE THE ORDER
-        if (completed.Message == "OK")
-        {
-            try
-            {
+        // if (completed.Message == "OK")
+        // {
+        //     try
+        //     {
 
-                await _orderDataWriter.SendAsync(
-                 new DeleteNewOrderCommand(
-                     order.Id
-                     )
-                 );
-            }
-            catch (Exception ex)
-            {
-                generalResponse.Message = ex.Message;
-            }
-        }
+        //         await _orderDataWriter.SendAsync(
+        //          new DeleteNewOrderCommand(
+        //              order.Id
+        //              )
+        //          );
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         generalResponse.Message = ex.Message;
+        //     }
+        // }
         generalResponse.Message = completed.Message;
 
         return await Task.FromResult(
