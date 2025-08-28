@@ -53,6 +53,7 @@ namespace acmeat.server.local.client
             {"ilvicolettosegreto.romanellas.cloud","80ea206cec6c038a4bacc2797c798da8cf57a1b41de51fc3bbccbf56026e7cdc"},
             {"laforchettaribelle.romanellas.cloud","678b022f5e3b77d2186051260ee99350f590f8055de6de1f32baf4c4289367df"},
             {"cantinafiordisale.romanellas.cloud","7785e546b41261118f29138b548dcc5630ba7108c939bb884836a44a7d699307"},
+            {"saporedipasta.romanellas.cloud","8323de8f982e8bbf5dd0159e3268308d49eeec18f6d398bad03958726eeca374"}
         };
         private readonly HttpClientHandler _httpClientHandler;
 

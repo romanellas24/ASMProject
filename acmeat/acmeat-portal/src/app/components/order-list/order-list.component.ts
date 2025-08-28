@@ -18,6 +18,7 @@ import { Token } from '@angular/compiler';
 export class OrderListComponent implements OnInit,OnDestroy {
 
   orderList$: Observable<OrderInfo[]> = new Observable()
+  ordersToPay$: Observable<OrderInfo[]> = new Observable()
   local$: Observable<Local> = new Observable();
   subscriptionList: Subscription[] = [];
   localList: Local[] = []
@@ -42,9 +43,9 @@ export class OrderListComponent implements OnInit,OnDestroy {
       let user: UserInfo | undefined = this.userSvc.getUserInfo();
 
       if (user != undefined) {
-
         this.orderList$ = this.orderSvc.getOrdersByUserId(user.id)
-        this.orderList$.subscribe((orders: OrderInfo[]) => {
+        this.ordersToPay$ = this.orderSvc.getOrdersToPay(user.id)
+        this.ordersToPay$.subscribe((orders: OrderInfo[]) => {
 
 
           orders.forEach(order => {
@@ -72,6 +73,8 @@ export class OrderListComponent implements OnInit,OnDestroy {
          let response: GeneralResponse | undefined = await this.orderSvc.deleteOrderById(orderId).toPromise()
     if (response?.message != "OK") {
       window.alert("There was an error while deleting order " + orderId + " Problem:" + response?.message)
+    }else{
+      window.alert("Order with id " + orderId +"has been deleted successfully");
     }
     }
  
