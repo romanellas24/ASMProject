@@ -25,9 +25,6 @@ public class GatewayConfig {
                 .route("tracking_route_ws", r->r
                                 .order(0)
                         .path("/tracking/notification")
-//                        .filters(f -> f
-//                                .rewritePath("/tracking/(?<segment>.*)", "/${segment}")
-//                        )
                         .uri((secure ? "wss://" : "ws://")+ serviceTracking)
                 )
                 .route("tracking_route_api", r -> r

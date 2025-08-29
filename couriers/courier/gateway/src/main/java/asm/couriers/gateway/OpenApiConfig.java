@@ -11,7 +11,6 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    // Inietta il valore dal file application.properties
     @Value("${local.server.name}")
     private String serverNameUrl;
 

@@ -1,0 +1,31 @@
+sequenceDiagram
+Acmeat->>gateway:save order
+activate Acmeat
+activate gateway
+gateway->>allocate: route request
+activate allocate
+allocate->>zeebe: start process
+activate zeebe
+zeebe->>allocate: check vehicle availability
+activate allocate
+allocate -->>zeebe: return
+deactivate allocate
+alt vehicle is not available
+    zeebe-->>allocate: return error
+    allocate-->> gateway: return error
+    gateway-->>Acmeat: return error
+else 
+    zeebe->>allocate:save order
+    activate allocate
+    allocate-->>zeebe: order saved
+    deactivate allocate
+    zeebe -->>allocate :return order info
+    deactivate zeebe
+    allocate -->> gateway: return order info
+    deactivate allocate
+    gateway-->>Acmeat: return order info
+    deactivate gateway
+    deactivate Acmeat
+end
+
+

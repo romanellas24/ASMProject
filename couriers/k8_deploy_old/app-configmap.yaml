@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: app-config
-data:
-  ws-url: "ws://127.0.0.1:8080/tracking" #"ws://courier-tracking:8080"
-  mysql-server: mysql-courier.default.svc.cluster.local
