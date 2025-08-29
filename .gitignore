@@ -1,2 +1,4 @@
 .idea
 /bank/src/database/my_volume/
+*.class
+

@@ -1,0 +1,28 @@
+@startuml
+skinparam componentStyle rectangle
+actor "Browser/Client" as Client
+
+package "JolieBank" {
+  [Edge Gateway] <<gateway>>
+  [Static Content Service] <<service>>
+  [API Gateway] <<gateway>>
+  [Account Service] <<service>>
+  [Payment Service] <<service>>
+  [MySQL Database] <<database>>
+
+  Client --> [Edge Gateway] : HTTPS
+
+  ' Routing dall'edge
+  [Edge Gateway] --> [Static Content Service] : GET /*
+  [Edge Gateway] --> [API Gateway] : /account, /payments, /soap
+
+  ' Contratti interni
+  [API Gateway] --> [Account Service] : REST /accounts (XML-RPC)
+  [API Gateway] --> [Payment Service] : REST /payments (XML-RPC)
+
+  ' Persistenza
+  [Account Service] --> [MySQL Database] : JDBC
+  [Payment Service] --> [MySQL Database] : JDBC
+}
+
+@enduml

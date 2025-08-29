@@ -5,6 +5,7 @@ include "../accounts/BankAccountsI.iol"
 include "console.iol"
 include "string_utils.iol"
 include "database.iol"
+include "json_utils.iol"
 
 include "../locations.ol"
 
@@ -18,11 +19,12 @@ inputPort BANK_GATEWAY {
 
 inputPort BANK_GATEWAY_2 {
     Location: "socket://localhost:9001"
-    //Location: "local"
-    //Protocol: sodep
     Protocol: soap {
-        .wsdl = "./wsdl.xml";
+        .wsdl = "./wsdl.xml"
 	    .wsdl.port = "BankGatewayInterface"
+	    .namespace = "joliebank.romanellas.cloud"
+	    .debug = true
+	    .compression = false
     }
     Interfaces: BankGatewayInterface
 }
@@ -31,6 +33,7 @@ outputPort BankPaymentsPort {
     Location: LOCATIONS_API_PAYMENTS
     Protocol: xmlrpc { 
         .compression = false
+        .debug = true
     }
     Interfaces: BankPaymentsI
 }
@@ -39,6 +42,7 @@ outputPort BankAccountsPort {
     Location: LOCATIONS_API_ACCOUNTS
     Protocol: xmlrpc { 
         .compression = false
+        .debug = true
     }
     Interfaces: BankAccountsI
 }
@@ -66,6 +70,12 @@ main {
         response << internalRes.param
     }]
 
+    [ checkPaymentData( request )( response ) {
+        internalReq.param << request;
+        checkPaymentData@BankPaymentsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
     [deletePay(request)(response) {
         internalReq.param << request;
         deletePay@BankPaymentsPort(internalReq)(internalRes);
@@ -87,6 +97,36 @@ main {
     [putDeposit(request)(response) {
         internalReq.param << request;
         putDeposit@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [getAccount(request)(response) {
+        internalReq.param << request;
+        getAccount@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [getTransactions(request)(response) {
+        internalReq.param << request;
+        getTransactions@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [putNotRefaundable(request)(response) {
+        internalReq.param << request;
+        putNotRefaundable@BankPaymentsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [postCreateCard(request)(response) {
+        internalReq.param << request;
+        postCreateCard@BankAccountsPort(internalReq)(internalRes);
+        response << internalRes.param
+    }]
+
+    [getAccountExists(request)(response){
+        internalReq.param << request;
+        getAccountExists@BankAccountsPort(internalReq)(internalRes);
         response << internalRes.param
     }]
 

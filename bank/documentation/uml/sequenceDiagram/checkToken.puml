@@ -1,0 +1,59 @@
+@startuml
+title Verifica Token - Flusso richiesta/risposta
+hide footbox
+
+actor "Utente (Acmeat)" as User
+participant "Edge Gateway" as EdgeGW
+participant "API Gateway (REST)" as APIGW
+participant "Payment Service" as PaySvc
+database "DB" as DB
+
+== Invio richiesta ==
+User -> EdgeGW: GET /tokens/{tokenId}/status
+activate EdgeGW
+
+EdgeGW -> APIGW: GET /tokens/{tokenId}/status
+activate APIGW
+
+APIGW -> PaySvc: GET /tokens/{tokenId}/status
+activate PaySvc
+
+== Lettura stato token ==
+PaySvc -> DB: MySql Query
+activate DB
+DB --> PaySvc: Mysql ResultSet
+deactivate DB
+
+== Invio della risposta ==
+
+alt [token trovato e pagato]
+    PaySvc --> APIGW: { state: "Paid" }
+    deactivate PaySvc
+
+    APIGW --> EdgeGW: { state: "Paid" }
+    deactivate APIGW
+
+    EdgeGW --> User: { state: "Paid" }
+    deactivate EdgeGW
+
+else [token trovato ma non pagato]
+    PaySvc --> APIGW: { state: "Not paid" }
+    deactivate PaySvc
+
+    APIGW --> EdgeGW: { state: "Not paid" }
+    deactivate APIGW
+
+    EdgeGW --> User: { state: "Not paid" }
+    deactivate EdgeGW
+
+else [token non trovato]
+    PaySvc --> APIGW: { state: "Not found" }
+    deactivate PaySvc
+
+    APIGW --> EdgeGW: { state: "Not found" }
+    deactivate APIGW
+
+    EdgeGW --> User: { state: "Not found" }
+    deactivate EdgeGW
+end
+@enduml

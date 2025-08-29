@@ -1,0 +1,781 @@
+{
+  "basePath": "\/",
+  "paths": {
+    "/account/{acc_id}/createCard": {
+      "post": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "postCreateCard",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/CreateCardResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "acc_id",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cvv": {
+                  "type": "integer"
+                },
+                "expire_month": {
+                  "type": "integer"
+                },
+                "expire_year": {
+                  "type": "integer"
+                },
+                "pan": {
+                  "type": "string"
+                }
+              }
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/account/deposit/": {
+      "put": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "putDeposit",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/DepositResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer"
+                },
+                "account": {
+                  "type": "integer"
+                }
+              }
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/payments/{token}": {
+      "get": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "getCheckPay",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/GetCheckPayResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      },
+      "delete": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "deletePay",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/RefundResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      },
+      "put": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "putPay",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/PutPayResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "type": "string",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cvv": {
+                  "type": "integer"
+                },
+                "expire_month": {
+                  "type": "integer"
+                },
+                "card_holder_first_name": {
+                  "type": "string"
+                },
+                "expire_year": {
+                  "type": "integer"
+                },
+                "pan": {
+                  "type": "string"
+                },
+                "card_holder_last_name": {
+                  "type": "string"
+                }
+              }
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/account": {
+      "get": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "getAccount",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/AccountResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/payments/{token}/notRefound": {
+      "put": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "putNotRefaundable",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/NotRefoundResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/account/{acc_id}/transactions": {
+      "get": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "getTransactions",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/TransactionsResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "acc_id",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/account/": {
+      "post": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "postAccount",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/PostAccountResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "owner": {
+                  "type": "string"
+                }
+              }
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/account/withdraw/": {
+      "put": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "putWithdraw",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/WithdrawResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer"
+                },
+                "account": {
+                  "type": "integer"
+                }
+              }
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    },
+    "/payments/": {
+      "post": {
+        "produces": [
+          "application\/json"
+        ],
+        "description": "",
+        "operationId": "postPay",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#\/definitions\/PostPayResponse"
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "resource not found"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "format": "double",
+                  "type": "number"
+                },
+                "dest_account": {
+                  "type": "integer"
+                }
+              }
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ],
+        "tags": [
+          "BankGatewayInterface"
+        ],
+        "consumes": [
+          "application\/json"
+        ]
+      }
+    }
+  },
+  "host": "joliebank.romanellas.cloud\/api",
+  "definitions": {
+    "PostPayRequest": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "format": "double",
+          "type": "number"
+        },
+        "dest_account": {
+          "type": "integer"
+        }
+      }
+    },
+    "NotRefoundResponse": {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        }
+      }
+    },
+    "PutPayRequest": {
+      "type": "object",
+      "properties": {
+        "cvv": {
+          "type": "integer"
+        },
+        "expire_month": {
+          "type": "integer"
+        },
+        "card_holder_first_name": {
+          "type": "string"
+        },
+        "expire_year": {
+          "type": "integer"
+        },
+        "pan": {
+          "type": "string"
+        },
+        "card_holder_last_name": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "GetCheckPayResponse": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "format": "double",
+          "type": "number"
+        },
+        "code": {
+          "type": "integer"
+        },
+        "beneficiary": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "DepositResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "PostAccountResponse": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "integer"
+        }
+      }
+    },
+    "PostAccountRequest": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "TransactionInfo": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "format": "double",
+          "type": "number"
+        },
+        "dest_account": {
+          "type": "integer"
+        },
+        "payment_request_time": {
+          "type": "string"
+        },
+        "src_owner": {
+          "type": "string"
+        },
+        "src_account": {
+          "type": "integer"
+        },
+        "deletable": {
+          "type": "integer"
+        },
+        "transaction_on": {
+          "type": "string"
+        },
+        "dest_owner": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "RefundResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "AccountInfo": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "account_id": {
+          "type": "integer"
+        },
+        "balance": {
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "AccountRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer"
+        }
+      }
+    },
+    "PostPayResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "TransactionsResponse": {
+      "type": "object",
+      "properties": {
+        "array": {
+          "minItems": 0,
+          "type": "array",
+          "items": {
+            "$ref": "#\/definitions\/TransactionInfo"
+          }
+        }
+      }
+    },
+    "DepositRequest": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer"
+        },
+        "account": {
+          "type": "integer"
+        }
+      }
+    },
+    "GetCheckPayRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "TransactionsRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer"
+        },
+        "acc_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "RefundRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "CreateCardResponse": {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        }
+      }
+    },
+    "WithdrawResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "AccountResponse": {
+      "type": "object",
+      "properties": {
+        "array": {
+          "minItems": 0,
+          "type": "array",
+          "items": {
+            "$ref": "#\/definitions\/AccountInfo"
+          }
+        }
+      }
+    },
+    "WithdrawRequest": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer"
+        },
+        "account": {
+          "type": "integer"
+        }
+      }
+    },
+    "NotRefoundRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "CreateCardRequest": {
+      "type": "object",
+      "properties": {
+        "cvv": {
+          "type": "integer"
+        },
+        "expire_month": {
+          "type": "integer"
+        },
+        "expire_year": {
+          "type": "integer"
+        },
+        "pan": {
+          "type": "string"
+        },
+        "acc_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "PutPayResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "swagger": "2.0",
+  "info": {
+    "description": "",
+    "title": "BANK_GATEWAY API",
+    "version": ""
+  },
+  "tags": [
+    {
+      "name": "BankGatewayInterface",
+      "description": "BankGatewayInterface"
+    }
+  ]
+}

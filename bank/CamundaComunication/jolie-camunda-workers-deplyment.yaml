@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joliebank-camunda-workers-deployment
+  labels:
+    app: joliebank-camunda-workers
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: joliebank-camunda-workers
+  template:
+    metadata:
+      labels:
+        app: joliebank-camunda-workers
+    spec:
+      containers:
+        - name: joliebank-camunda-workers-container
+          image: docker.io/romanellas/joliebank-camunda-workers
+          imagePullPolicy: Always

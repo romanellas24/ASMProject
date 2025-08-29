@@ -7,12 +7,18 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
   namespace: default
 spec:
-  tls:
-    - hosts:
-        - joliebank.romanellas.cloud
-      secretName: joliebank-tls
   rules:
     - host: joliebank.romanellas.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: joliebank-gw-http-service
+                port:
+                  number: 8000
+    - host: soap.joliebank.romanellas.cloud
       http:
         paths:
           - path: /

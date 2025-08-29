@@ -7,6 +7,7 @@ include "string_utils.iol"
 include "database.iol"
 
 include "../locations.ol"
+include "../shared.ol"
 
 execution{ concurrent }
 
@@ -103,6 +104,20 @@ define checkPaymentData
             println@Console(checkPaymentDataScope.SQLException.Error)();
             println@Console("---------------------------------")()
         );
+
+        println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("token:" + token)();
+            println@Console("pan:" + pan)();
+            println@Console("cvv:" + cvv)();
+            println@Console("fullname:" + fullname)();
+            println@Console("expire_month:" + expire_month)();
+            println@Console("expire_year:" + expire_year)();
+            println@Console("Throwed:")();
+            println@Console(checkPaymentDataScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+
         queryRequest = sql_cmd;
         queryRequest.token = token;
         queryRequest.pan = pan;
@@ -138,7 +153,7 @@ define registerPayment
     }
 }
 
-//Requires: token, result, beneficiary, amount
+//Requires: token, result, beneficiary, amount, toDelete
 /*
 result = 0 => "Not payed"
 result = 1 => "Payed"
@@ -146,12 +161,16 @@ result = -1 => "Not exists"
 */
 define checkToken
 {
+    adding = "";
+    if(toDelete){
+        adding = "AND deletable = 1 "
+    }
     scope ( checkTokenScope ) {
         sql_cmd = "SELECT tbl_tokens.token, COUNT(tbl_token_transactions.token) AS cnt, tbl_account.owner AS beneficiary, tbl_tokens.amount " +
                    "FROM tbl_tokens " +
                     "LEFT JOIN tbl_token_transactions ON (tbl_tokens.token = tbl_token_transactions.token) " +
                     "INNER JOIN tbl_account ON (tbl_tokens.dest_account = tbl_account.id) " +
-                    "WHERE tbl_tokens.token = :token " + 
+                    "WHERE tbl_tokens.token = :token " + adding + 
                     "GROUP BY tbl_tokens.token";                    
         install ( SQLException =>
             println@Console("---------------------------------")();
@@ -181,13 +200,34 @@ define checkToken
 define deleteTransaction
 {
     scope ( deleteTransactionScope ) {
-        sql_cmd = "DELETE FROM tbl_token_transactions WHERE token = :token";
+        sql_cmd = "DELETE FROM tbl_token_transactions WHERE token = :token AND deletable = 1";
         install ( SQLException =>
             println@Console("---------------------------------")();
             println@Console("Failed Query: ")();
             println@Console(sql_cmd)();
             println@Console("token:" + token)();
             println@Console(deleteTransactionScope.SQLException.Error)();
+            println@Console("---------------------------------")()
+        );
+        queryRequest = sql_cmd;
+        queryRequest.token = token;
+        update@Database( queryRequest )( queryReturn )
+    }
+}
+
+//token
+define makeNotRefundable 
+{
+    scope ( makeNotRefundableScope ) {
+        error = 0;
+        sql_cmd = "UPDATE tbl_token_transactions SET deletable = 0 WHERE token = :token";
+        install ( SQLException =>
+            error = 1;
+            println@Console("---------------------------------")();
+            println@Console("Failed Query: ")();
+            println@Console(sql_cmd)();
+            println@Console("token:" + token)();
+            println@Console(makeNotRefundableScope.SQLException.Error)();
             println@Console("---------------------------------")()
         );
         queryRequest = sql_cmd;
@@ -203,12 +243,20 @@ main {
         //Storing params
         amount = request.param.amount;
         dest_account = request.param.dest_account;
-        //Asking for token
-        askForTokenProcedure;
-        //Update the generated token (here variable token is defined and populated)
-        populateTokenProcedure
-        //Returns token
-        response.param.token = token
+        account = dest_account;
+        check_result = 0;
+        checkAccount;
+        if(check_result == 0){
+            response.param.token = ""
+        } else {
+            //Asking for token
+            askForTokenProcedure;
+            //Update the generated token (here variable token is defined and populated)
+            populateTokenProcedure;
+            //Returns token
+            response.param.token = token
+        }
+        
     }]
 
 
@@ -257,11 +305,50 @@ main {
         }
     }]
 
+    [checkPaymentData(request)(response){
+        pan = request.param.pan;
+        cvv = request.param.cvv;
+        expire_month = request.param.expire_month;
+        expire_year = request.param.expire_year;
+        card_holder_first_name = request.param.card_holder_first_name;
+        card_holder_last_name = request.param.card_holder_last_name;
+        token = request.param.token;
+
+        expire_year = expire_year + 2000;
+
+        if(pan == "" || 
+                cvv <= 0 || 
+                expire_month <= 0 || 
+                expire_month > 12 || 
+                expire_year < 2000 || 
+                card_holder_first_name == "" || 
+                card_holder_last_name == "" || 
+                token == "") {
+            response.param.status = "Invalid params (1)";
+            response.param.code = 400
+        } else {
+            fullname = card_holder_first_name + " " + card_holder_last_name;
+            undef(card_holder_first_name);
+            undef(card_holder_last_name);
+            trim@StringUtils(fullname)(fullname);
+            cnt = 0;
+            checkPaymentData;
+            if(cnt != 1){
+                response.param.status = "Invalid params (2)";
+                response.param.code = 400
+            } else {
+                response.param.status = "Ok.";
+                response.param.code = 200
+            }   
+        }
+    }]
+
     
     [ getCheckPay( request )( response ) {
         token = request.param.token;
         response.param.beneficiary = "";
         amount = 0.00;
+        toDelete = false;
         checkToken;
         if(result == -1) {
             response.param.status = "Not found";
@@ -283,6 +370,7 @@ main {
 
     [deletePay(request)(response) {
         token = request.param.token;
+        toDelete = true;
         checkToken;
         if(result == -1) {
             response.param.status = "Not found";
@@ -297,5 +385,17 @@ main {
             response.param.code = 200
         }
     }]
+
+    [putNotRefaundable(request)(response) {
+        token = request.param.token;
+        makeNotRefundable;
+        response.param.status = 200;
+        response.param.msg = "Ok.";
+        if(error){
+            response.param.status = 500;
+            response.param.msg = "Cannot update!"
+        }
+    }]
+
 }
 

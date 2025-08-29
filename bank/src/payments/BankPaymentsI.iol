@@ -10,6 +10,14 @@ type PutPayRequestBe : void {
     .param: PutPayRequest
 }
 
+type CheckPaymentDataRequestBe: void {
+    .param: CheckPaymentDataRequest
+}
+
+type CheckPaymentDataResponseBe: void {
+    .param: CheckPaymentDataResponse
+}
+
 type PutPayResponseBe : void {
     .param: PutPayResponse
 }
@@ -30,11 +38,21 @@ type RefundResponseBe: void {
     .param: RefundResponse
 }
 
+type NotRefoundRequestBe: void {
+    .param: NotRefoundRequest
+}
+
+type NotRefoundResponseBe: void {
+    .param: NotRefoundResponse
+}
+
 interface BankPaymentsI {
     RequestResponse:
         postPay(PostPayRequestBe)(PostPayResponseBe),
         putPay(PutPayRequestBe)(PutPayResponseBe),
+        checkPaymentData(CheckPaymentDataRequestBe)(CheckPaymentDataResponseBe),
         getCheckPay(GetCheckPayRequestBe)(GetCheckPayResponseBe),
-        deletePay(RefundRequestBe)(RefundResponseBe)
+        deletePay(RefundRequestBe)(RefundResponseBe),
+        putNotRefaundable(NotRefoundRequestBe)(NotRefoundResponseBe)
         
 }

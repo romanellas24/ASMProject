@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joliebank-camunda-layer-deployment
+  labels:
+    app: joliebank-camunda-layer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: joliebank-camunda-layer
+  template:
+    metadata:
+      labels:
+        app: joliebank-camunda-layer
+    spec:
+      containers:
+        - name: joliebank-camunda-layer-container
+          image: docker.io/romanellas/joliebank-camunda-layer
+          imagePullPolicy: Always

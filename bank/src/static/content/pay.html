@@ -645,7 +645,9 @@
     </script>
     <script>
         let params = new URLSearchParams(document.location.search);
-        let token = params.get("token"); // is the string "Jonathan"
+        let token = params.get("token");
+        let orderId = params.get("orderId");
+        let callback = params.get("callback");
         let amount = 0.0;
         let beneficiary = "-";
         console.log(token);
@@ -660,7 +662,7 @@
         }
 
         async function getData() {
-            const url = "http://localhost:8000/payments/" + token;
+            const url = "payments/" + token;
             try {
                 const response = await fetch(url);
                 const json = await response.json();
@@ -711,7 +713,7 @@
             customHeaders.append("Content-Type", "application/json");
 
             pan = pan.replaceAll(' ', "");
-            const url = "http://localhost:8000/payments/" + token;
+            const url = "https://soap.joliebank.romanellas.cloud/payments/" + token;
             try {
                 const response = await fetch(url, {
                     method: "PUT",
@@ -727,8 +729,13 @@
                     }),
                 });
                 const json = await response.json();
-                console.log(json);
-                alert("Pagato!")
+                if(json.code === 200) {
+                    alert("Pagato!");
+                    window.location.href = `${callback}?orderId=${orderId}`;
+                } else {
+                    alert("ERRORE");
+                }
+
             } catch (error) {
                 console.error(error.message);
             }

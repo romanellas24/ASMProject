@@ -1,0 +1,51 @@
+@startuml
+title Creazione Token - Flusso richiesta/risposta
+
+actor "Utente (Acmeat)" as User
+participant "Edge Gateway" as EdgeGW
+participant "API Gateway (REST)" as APIGW
+participant "Payment Service" as PaySvc
+database "DB" as DB
+
+== Invio richiesta ==
+User -> EdgeGW: HTTP POST /payments
+activate EdgeGW
+
+EdgeGW -> APIGW: Forward HTTP POST /payments
+activate APIGW
+
+APIGW -> PaySvc: REST POST /payments/
+activate PaySvc
+
+== Verifica conto ==
+PaySvc -> DB: MySQL Query
+activate DB
+DB --> PaySvc: Dati Conto / Empty Result Set
+deactivate DB
+
+alt Conto esistente
+    PaySvc -> DB: INSERT token ...
+    activate DB
+    DB --> PaySvc: OK (token)
+    deactivate DB
+
+    PaySvc --> APIGW: { token: "..." }
+    deactivate PaySvc
+
+    APIGW --> EdgeGW: { token: "..." }
+    deactivate APIGW
+
+    EdgeGW --> User: { token: "..." }
+    deactivate EdgeGW
+else Conto inesistente
+    PaySvc --> APIGW: { token: <empty string> }
+    deactivate PaySvc
+
+    APIGW --> EdgeGW: { token: <empty string> }
+    deactivate APIGW
+
+    EdgeGW --> User: { token: <empty string> }
+    deactivate EdgeGW
+end
+
+@enduml

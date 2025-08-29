@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Client Test</title>
+</head>
+<body>
+    <h2>WebSocket Client - Test</h2>
+    <div id="output" style="border:1px solid #ccc; padding:10px; height:300px; overflow:auto;"></div>
+    <input type="text" id="messageInput" placeholder="Scrivi un messaggio..." style="width:80%;">
+    <button onclick="sendMessage()">Invia</button>
+
+    <script>
+        const output = document.getElementById('output');
+        const wsUrl = "ws://braciebasilico.romanellas.cloud/ws?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJST0xFX1JFU1RBVVJBTlQiLCJpYXQiOjE3NTExOTI3MTksImV4cCI6MTc1MTE5NjMxOX0.DnALvjQGFAN9Q3p2hrZogcpeydkUiNkd056w6J0UHjRg6VkEOkJcWFao9KlIvmX9EnVax2LHiWkV8iSTWnzs2A";
+
+        const socket = new WebSocket(wsUrl);
+
+        socket.onopen = function() {
+            logMessage('✅ Connessione WebSocket aperta');
+        };
+
+        socket.onmessage = function(event) {
+            logMessage('📥 Messaggio ricevuto: ' + event.data);
+        };
+
+        socket.onerror = function(error) {
+            logMessage('❌ Errore WebSocket: ' + error.message);
+        };
+
+        socket.onclose = function(event) {
+            logMessage('🔌 Connessione chiusa (Codice: ' + event.code + ')');
+        };
+
+        function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(message);
+                logMessage('📤 Messaggio inviato: ' + message);
+            } else {
+                logMessage('⚠️ Connessione non aperta!');
+            }
+        }
+
+        function logMessage(message) {
+            output.innerHTML += message + '<br>';
+            output.scrollTop = output.scrollHeight;
+        }
+    </script>
+</body>
+</html>
+

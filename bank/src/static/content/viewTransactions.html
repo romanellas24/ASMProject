@@ -1,0 +1,155 @@
+<html>
+<head>
+    <title>Accounts</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js"></script>
+    <style>
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+        }
+
+
+        .page-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #e6f7ff;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            margin-left: 10px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+    <script>
+
+        let account = -1;
+
+        window.onload = function () {
+            let params = new URLSearchParams(document.location.search);
+            let acc = params.get("account");
+            if (acc == null)
+                alert("ACCOUNT NON TROVATO");
+            else
+                account = acc;
+            getData();
+        };
+
+        async function getData() {
+            const page = document.getElementById("pageInput").value;
+            const url = `account/${account}/transactions?page=${page}`;
+            try {
+                const response = await fetch(url);
+                const json = await response.json();
+                console.log(json);
+                handleResult(json);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        function truncateString(str, maxLength) {
+            if (str.length > maxLength) {
+                return str.slice(0, maxLength - 1) + '...';
+            }
+            return str;
+        }
+
+        function handleResult(json) {
+            if (json.array == null)
+                return;
+            let tableContent = document.getElementById("tableContent");
+            let html = "";
+            json.array.forEach(element => {
+                let azioniHtml = `<td><a onclick="makeNotRefundable('${element.token}')" href="#">Rendi non rimborsabile</a></td>`;
+                if(element.deletable === 0)
+                    azioniHtml = '<td>-</td>';
+                html = html + `<tr>
+                <td>${truncateString(element.token, 20)}</td>
+                <td>${element.amount}€</td>
+                <td>${element.src_owner} #${element.src_account}</td>
+                <td>${element.dest_owner} #${element.dest_account}</td>
+                <td>${element.payment_request_time}</td>
+                <td>${element.transaction_on}</td>
+                ${azioniHtml}
+                </tr>`;
+            });
+            tableContent.innerHTML = html;
+        }
+
+        async function makeNotRefundable(token) {
+            const customHeaders = new Headers();
+            customHeaders.append("Content-Type", "application/json");
+
+            const url = "payments/" + token + "/notRefound";
+            try {
+                const response = await fetch(url, {
+                    method: "PUT",
+                    headers: customHeaders,
+                    body: JSON.stringify({
+                        token: token
+                    })
+                });
+                const json = await response.json();
+                if(json.status === 200){
+                    getData();
+                } else {
+                    alert("Errore");
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div class="page-selector">
+    <label for="pageInput">Pagina:</label>
+    <input type="number" id="pageInput" min="1" value="1" onchange="getData()">
+</div>
+<table>
+
+    <thead>
+    <tr>
+        <th>Token</th>
+        <th>Valore</th>
+        <th>Provenienza</th>
+        <th>Destinazione</th>
+        <th>Data token</th>
+        <th>Data pagamento</th>
+        <th>Azioni</th>
+    </tr>
+    </thead>
+    <tbody id="tableContent">
+
+    </tbody>
+</table>
+
+</body>
+</html>
