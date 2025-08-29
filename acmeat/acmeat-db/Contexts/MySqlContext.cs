@@ -1,4 +1,5 @@
 using acmeat.db.deliveryCompany;
+using acmeat.db.dish;
 using acmeat.db.local;
 using acmeat.db.menu;
 using acmeat.db.order;
@@ -14,6 +15,7 @@ public class MySqlContext : DbContext
     public DbSet<DeliveryCompany> SOCIETÀ_CONSEGNA { get; set; }
     public DbSet<Menu> MENU { get; set; }
     public DbSet<Local> LOCALE { get; set; }
+     public DbSet<Dish> PIATTO { get; set; }
     
 
 

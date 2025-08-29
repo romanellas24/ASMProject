@@ -1,34 +1,40 @@
+using System.Text.Json.Serialization;
 using acmeat.server.order.client;
 
 namespace acmeat.api.order;
 
-public class PaymentInfo{
-
+public class PaymentInfo
+{
+    [JsonConstructor]
     public PaymentInfo(
-        string IBAN,
-        string Causal,
-        int Price,
-        int TransactionId
-    ){
-        this.IBAN = IBAN;
-        this.Causal =Causal;
-        this.Price = Price;
+       // string IBAN,
+       // string Causal,
+       // int Price,
+       int OrderId,
+       string TransactionId
+   )
+    {
+        // this.IBAN = IBAN;
+        // this.Causal =Causal;
+        // this.Price = Price;
+        this.OrderId = OrderId;
         this.TransactionId = TransactionId;
     }
 
-    public PaymentInfo(
-        Payment payment
-    ){
-        this.IBAN = payment.IBAN;
-        this.Causal =payment.Causal;
-        this.Price = payment.Price;
-        this.TransactionId = payment.TransactionId;
+
+
+
+    // public string IBAN {get;set;}
+    // public string Causal {get;set;}
+    // public int Price {get;set;}
+    public int OrderId { get; set; }
+    public string TransactionId { get; set; }
+    
+    public acmeat.server.order.client.Payment Convert(){
+        acmeat.server.order.client.Payment payment = new acmeat.server.order.client.Payment();
+        payment.OrderId = this.OrderId;
+        payment.TransactionId = this.TransactionId;
+        return payment;
     }
 
-
-
-    public string IBAN {get;set;}
-    public string Causal {get;set;}
-    public int Price {get;set;}
-    public int TransactionId{get;set;}
 }

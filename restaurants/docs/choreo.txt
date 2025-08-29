@@ -1,0 +1,231 @@
+ACTORS: 
+    cl: client (acmeat)
+    gw: gateway
+    api: api microservice
+    ws: websocket microservice
+    zeebe: Zeebe service, Camunda
+    cook: human partecipant
+
+/* CHOREOGRAPHIES */
+
+C_submission =
+    create: cl -> gw ;
+    submit: gw -> api;
+    start_elaborating: api -> zeebe | 
+    (
+        order_elaborating: api -> gw;
+        order_elaborating_cl: gw -> cl
+    )
+
+C_create =
+    create_order_pending: zeebe -> api;
+    order_created: api -> zeebe;
+    prepare_notification: zeebe -> ws;
+    notify_new_order: ws -> cook;
+    send_decision_ws: cook -> ws;
+    send_decision: ws -> zeebe
+
+C_timedout = 
+    set_order_timedout: zeebe -> api;
+    order_timedout: api -> zeebe;
+    send_result_timedout: zeebe -> cl
+
+C_rejected = 
+    set_order_rejected: zeebe -> api;
+    order_rejected: api->zeebe;
+    send_result_rejected: zeebe -> cl
+
+
+C_accepted = 
+    set_order_accepted: zeebe -> api;
+    order_accepted: api -> zeebe;
+    send_result_accepted: zeebe -> cl | 
+    update_dashboard_cook: zeebe -> ws
+
+
+C_delete =
+    delete_req: cl -> gw ;
+    routes_delete: gw -> api;
+    submit_delete: api -> zeebe;
+    delete_order: zeebe -> api;
+    order_deleted: api -> zeebe;
+    notify_delete: zeebe -> ws
+
+C_prepare = 
+    prepare_notification_cook: zeebe -> ws;
+    send_notification_order_start: ws->cook;
+    order_prepared_ws: cook -> ws;
+    order_prepared: ws -> zeebe
+
+
+C_rest =
+    C_submission ;
+    C_create;
+    (
+        (
+            C_accepted ;
+            (
+                C_delete +
+                C_prepare
+            )
+        ) +
+        C_rejected + 
+        C_timedout
+    ) ;
+    1
+
+
+
+
+/* PROJECTIONS */
+/*
+    Note: the rule o(bar)@b is changed in o(b) due to readability.
+    So:
+    proj(o: a -> b ,a)= o(b)
+    proj(o: a -> b ,b)= o@a
+    proj(o: a -> b ,c)= 1
+*/
+
+proj(C_rest, cl) =
+    create@gw ;
+    1;
+    (
+        (
+            send_result_accepted(zeebe) ;
+            (
+                delete_req@gw +
+                1
+            )
+        ) +
+        send_result_rejected(zeebe) + 
+        send_result_timedout(zeebe)
+    ) ;
+    1
+
+
+proj(C_rest, gw) =
+    (create(cl) ; submit@api) ;
+    (order_elaborating(api); order_elaborating_cl@cl);
+    (
+        (
+            1;
+            (
+                delete_req(cl) ; 
+                submit_delete@api
+            ) +
+            1
+        ) +
+        1 + 
+        1
+    ) ;
+    1
+
+
+proj(C_rest, api) =
+    submit(gw);
+    ( start_elaborating@zeebe | order_elaborating@gw);
+    (create_order_pending(zeebe); order_created@zeebe);
+    (
+        (
+            (set_order_accepted(zeebe); order_accepted@zeebe);
+            (
+                (
+                    routes_delete(gw); 
+                    submit_delete@zeebe;
+                    delete_order(zeebe);
+                    order_deleted@zeebe
+                ) +
+                1
+            )
+        ) +
+        (set_order_rejected(zeebe); order_rejected@zeebe) + 
+        (set_order_timedout(zeebe); order_timedout@zeebe)
+    ) ;
+    1
+
+proj(C_rest, ws) =
+    1 ;
+    (
+        prepare_notification(zeebe); 
+        notify_new_order@cook;
+        send_decision(cook);
+        send_decision@zeebe
+    );
+    (
+        (
+            update_dashboard_cook(zeebe);
+            (
+                notify_delete(zeebe) +
+                (
+                    prepare_notification_cook(zeebe);
+                    send_notification_order_start@cook;
+                    order_prepared_ws(cook);
+                    order_prepared@zeebe
+                )
+            )
+        ) +
+        1 + 
+        1
+    ) ;
+    1
+
+proj(C_rest, cook)=
+    1;
+    (notify_new_order(ws); send_decision_ws@ws);
+    (
+        (
+            1;
+            (
+                1 +
+                (
+                    send_notification_order_start(ws);
+                    order_prepared_ws@ws
+                )
+            )
+        ) +
+        1 +
+        1
+    );
+    1
+
+proj(C_rest, zeebe)=
+    start_elaborating(api);
+    (
+        create_order_pending@api;
+        order_created(api);
+        prepare_notification@ws;
+        send_decision(ws);
+    ) ;
+    (
+        (
+            (
+                set_order_accepted@api;
+                order_accepted(api);
+                send_result_accepted@cl | 
+                update_dashboard_cook@ws
+            );
+            (
+                (
+                    submit_delete(api);
+                    delete_order@api;
+                    order_deleted(api);
+                    notify_delete@ws;
+                ) + 
+                (
+                    prepare_notification@ws;
+                    order_prepared(ws)
+                )
+            )
+        ) +
+        (
+            set_order_rejected@api;
+            order_rejected(api);
+            send_result_rejected@cl;
+        ) + 
+        (
+            set_order_timedout@api;
+            order_timedout(api);
+            send_result_timedout@cl;
+        )
+    );
+    1

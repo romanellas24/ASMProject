@@ -27,6 +27,10 @@ public class AvailabilityDTO {
     private Integer vehicleId;
 
     public void setPrice(Double price){
+        if (price == null) {
+            this.price = null;
+            return;
+        }
         this.price = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }

@@ -81,11 +81,28 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.18.3</version>
+            <groupId>io.camunda</groupId>
+            <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+            <version>8.7.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.camunda</groupId>
+            <artifactId>spring-boot-starter-camunda-tasklist</artifactId>
+            <version>8.7.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.0</version>
+        </dependency>
+
+        <!-- support for "Java 8 date time api" -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.17.0</version>
+        </dependency>
     </dependencies>
 
     <build>

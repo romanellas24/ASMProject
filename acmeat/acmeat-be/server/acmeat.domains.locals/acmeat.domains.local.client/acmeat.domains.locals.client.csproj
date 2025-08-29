@@ -5,7 +5,7 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>Acmeat.Server.Local.ClientTest</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.1.0</Version>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -15,9 +15,10 @@
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.32.0" />
        <PackageReference Include="Google.Protobuf" Version="3.30.2" />
-  
+       <PackageReference Include="Acmeat.Db.ClientTest" Version="1.1.4" />
        <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
-        <PackageReference Include="Acmeat.Db.ClientTest" Version="1.0.6" />
+        <PackageReference Include="zb-client" Version="2.9.0" />
+       <!-- /home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-db/acmeat.db.client.csproj -->
        
        <PackageReference Include="Grpc.Tools" Version="2.71.0">
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,6 +28,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
     
   </ItemGroup>
+<!-- 
+  <ItemGroup>
+  <ProjectReference Include=" /home/giulio/Scrivania/MAG/ARCHITETTURA-MICROSERVIZIO/ASMProject/acmeat/acmeat-db/acmeat.db.client.csproj"/>
+  </ItemGroup> -->
+
 
 
 </Project>

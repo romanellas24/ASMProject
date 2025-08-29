@@ -1,6 +1,5 @@
 package asm.couriers.courier_allocation.impl;
 
-import asm.couriers.courier_allocation.dto.AddressDTO;
 import asm.couriers.courier_allocation.dto.AvailabilityDTO;
 import asm.couriers.courier_allocation.dto.DistanceMatrixResponseDTO;
 import asm.couriers.courier_allocation.exception.MapsServiceException;
@@ -29,15 +28,18 @@ public class MapsServiceImpl implements MapsService {
                 .build();
     }
 
+    /*
+    https://api.distancematrix.ai/maps/api/distancematrix/json?origins=Westminster Abbey, 20 Deans Yd, Westminster, London SW1P 3PA, United Kingdom&destinations=St John's Church, North End Rd, Fulham, London SW6 1PB, United Kingdom&key=<your_access_token>
+     */
     @Override
-    public AvailabilityDTO getInfoDelivery(AddressDTO restAddr, AddressDTO clientAddr) throws MapsServiceException {
+    public AvailabilityDTO getInfoDelivery(String restAddr, String clientAddr) throws MapsServiceException {
 
         AvailabilityDTO availDTOTimeDistance = new AvailabilityDTO();
 
         ResponseEntity<DistanceMatrixResponseDTO> result =distanceMatrixFast.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("origins", restAddr.toTupleString())
-                        .queryParam("destinations", clientAddr.toTupleString())
+                        .queryParam("origins", restAddr)
+                        .queryParam("destinations", clientAddr)
                         .queryParam("key", this.DISTANCE_MATRIX_API_KEY)
                         .build()
                 )

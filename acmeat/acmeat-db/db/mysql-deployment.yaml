@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
-  namespace: default
+  namespace: acmeat
   labels:
     app: mysql
 spec:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: docker.io/er4ikk/mysql:v2
+        image: docker.io/er4ikk/mysql:latest
         resources:
               requests:
                 memory: "1Gi"

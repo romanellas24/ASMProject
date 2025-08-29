@@ -1,31 +1,16 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <title>Courier Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .card-custom {
-            max-width: 700px;
-            margin: auto;
-            margin-top: 50px;
-            border-radius: 20px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-
-        .btn-primary {
-            margin-top: 20px;
-        }
-
-        #customMsg h2, #customMsg h3 {
-            margin-top: 20px;
-        }
+        body { background-color: #f8f9fa; }
+        .card-custom { max-width: 700px; margin: auto; margin-top: 50px; border-radius: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        .btn-primary { margin-top: 20px; }
+        #customMsg h2, #customMsg h3 { margin-top: 20px; }
+        .delivery-details { text-align: left; margin-top: 15px; padding: 15px; background-color: #e9ecef; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -39,30 +24,62 @@
     </div>
 </div>
 
-<!-- WebSocket + Logic -->
 <script th:inline="javascript">
     const COURIER_ID = [[${courier_id}]];
     const WSURL = [[${WSurl}]];
     const DEFMSG = "<h2>Non ci sono consegne da effettuare!</h2>";
     let webSocket = {};
+    let pingInterval = null;
 
-    function deleteOrderHTML(orderId) {
+    /**
+     * Invia il messaggio di avvenuta consegna, includendo il taskId.
+     * @param {string} taskId - L'ID del task di Camunda da completare.
+     * @param {number} orderId - L'ID dell'ordine (opzionale, per logging o altro).
+     */
+    function deleteOrderHTML(taskId, orderId) {
         document.getElementById("customMsg").innerHTML = DEFMSG;
         const message = JSON.stringify({
-            "orderId": orderId,
-            "courierId": COURIER_ID,
-            "delivered": true,
+            "type": "delivery_completed",
+            "payload": {
+                "taskId": taskId,
+                "orderId": orderId,
+                "courierId": COURIER_ID,
+                "delivered": true
+            }
         });
+        console.log("Invio completamento consegna:", message);
         webSocket.send(message);
     }
 
-    function insertOrderHTML(orderId) {
-        const msg = `<h2>Hai una nuova consegna (ID: ${orderId})!</h2>
+    /**
+     * Mostra i dettagli della nuova consegna e il bottone per completarla.
+     * @param {object} deliveryPayload - L'oggetto payload ricevuto via WebSocket, che corrisponde a TaskOrderDTO.
+     */
+    function insertOrderHTML(deliveryPayload) {
+        const order = deliveryPayload.order;
+        const taskId = deliveryPayload.taskId;
+
+        const msg = `<h2>Hai una nuova consegna (ID Ordine: ${order.orderId})!</h2>
+                     <div class="delivery-details">
+                         <strong>Dettagli Spedizione:</strong>
+                         <ul>
+                            <li><strong>Da:</strong> ${order.fromAddress}</li>
+                            <li><strong>A:</strong> ${order.toAddress}</li>
+                         </ul>
+                     </div>
                      <p>Quando hai completato la consegna, premi il bottone qui sotto.</p>`;
-        const btn = `<button class="btn btn-primary" onclick="deleteOrderHTML(${orderId})">Consegnato</button>`;
+
+        // Passiamo sia il taskId che l'orderId al bottone per l'invio al server.
+        // Nota le virgolette attorno a '${taskId}' per passarlo come stringa.
+        const btn = `<button class="btn btn-primary" onclick="deleteOrderHTML('${taskId}', ${order.orderId})">Consegnato</button>`;
+
         document.getElementById("customMsg").innerHTML = msg + btn;
     }
 
+    /**
+     * Mostra un messaggio di errore nella UI.
+     * @param {string} error - Il messaggio di errore da visualizzare.
+     */
     function errorHTML(error) {
         document.getElementById("customMsg").innerHTML = `<div class="alert alert-danger">
             <strong>Errore:</strong> ${error}
@@ -70,37 +87,64 @@
         </div>`;
     }
 
+    /**
+     * Inizializza la connessione WebSocket e imposta i gestori di eventi.
+     */
     const connectWS = () => {
         webSocket = new WebSocket(WSURL + "/notification?courierId=" + COURIER_ID);
-        console.log("WSURL: " + WSURL + "/notification?courierId=" + COURIER_ID);
-        console.log("connected to ws;")
+        console.log("Tentativo di connessione a: " + WSURL + "/notification?courierId=" + COURIER_ID);
+
+        webSocket.onopen = (event) => {
+            console.log("Connessione WebSocket aperta.");
+            if (pingInterval) clearInterval(pingInterval);
+            pingInterval = setInterval(() => {
+                if (webSocket.readyState === WebSocket.OPEN) {
+                    webSocket.send('{"type":"ping"}');
+                }
+            }, 25000); // Invia un ping ogni 25 secondi
+        };
+
+        webSocket.onmessage = (event) => {
+            if (event.data === '{"type":"pong"}') {
+                console.log("<- pong ricevuto");
+                return;
+            }
+
+            try {
+                const data = JSON.parse(event.data);
+                console.log("Dati ricevuti:", data);
+
+                if (data.type === 'new_delivery') {
+                    webSocket.send('{"type":"getTask"}');
+                    console.log("Richiesta task inviata per la nuova consegna.");
+                } else if (data.type === 'task') {
+                    // Il payload contiene l'oggetto TaskOrderDTO
+                    insertOrderHTML(data.payload);
+                } else if (data.type === 'ERROR') {
+                    console.error("Errore dal server:", data.message);
+                    errorHTML(data.message);
+                }
+            } catch (e) {
+                console.error("Errore di parsing del messaggio:", e);
+                console.log("Messaggio originale:", event.data);
+            }
+        };
+
+        webSocket.onerror = (event) => {
+            console.error("Errore WebSocket:", event);
+            errorHTML("Errore di comunicazione con il server.");
+        };
+
+        webSocket.onclose = (event) => {
+            console.log("Connessione WebSocket chiusa. Codice:", event.code, "Motivo:", event.reason);
+            clearInterval(pingInterval);
+            errorHTML("Connessione persa. Ricarica la pagina.");
+        };
     }
 
     connectWS();
-
-    webSocket.onmessage = (event) => {
-        try {
-            const data = JSON.parse(event.data);
-            console.log(data);
-            if (data.type === 'ERROR') {
-                console.error("Errore:", data.message);
-                errorHTML(data.message);
-            } else {
-                insertOrderHTML(data.orderId);
-            }
-        } catch (e) {
-            console.error("Errore di parsing:", e);
-            console.log(event.data);
-        }
-    };
-
-    webSocket.onerror = (event) => {
-        console.error("Errore WebSocket:", event);
-        errorHTML("Errore di comunicazione con il server WebSocket.");
-    };
 </script>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 </body>

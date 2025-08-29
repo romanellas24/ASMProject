@@ -20,13 +20,6 @@ public class ExceptionController {
         return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AcmeNotificationException.class)
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public ResponseEntity<ExceptionDTO> acmeNotificationException(AcmeNotificationException acmeNotificationException) {
-        ExceptionDTO exceptionDTO = new ExceptionDTO(acmeNotificationException.getMessage(), 503);
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.SERVICE_UNAVAILABLE);
-    }
-
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionDTO> notFoundException(NotFoundException notFoundException) {
@@ -35,10 +28,10 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(TimeoutException.class)
-    @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
+    @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
     public ResponseEntity<ExceptionDTO> timeoutException(TimeoutException timeoutException) {
-        ExceptionDTO exceptionDTO = new ExceptionDTO(timeoutException.getMessage(), 504);
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.GATEWAY_TIMEOUT);
+        ExceptionDTO exceptionDTO = new ExceptionDTO(timeoutException.getMessage(), 408);
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.REQUEST_TIMEOUT);
     }
 
     @ExceptionHandler(InvalidDateTimeFormat.class)
@@ -47,6 +40,21 @@ public class ExceptionController {
         ExceptionDTO exceptionDTO = new ExceptionDTO(invalidDateTimeFormat.getMessage(), 400);
         return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(CompanyIdException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDTO> invalidCompanyOrderId(CompanyIdException companyIdException) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO(companyIdException.getMessage(), 400);
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidDate.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDTO> invalidDate(InvalidDate companyIdException) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO(companyIdException.getMessage(), 400);
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

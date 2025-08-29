@@ -1,9 +1,7 @@
 package restaurant;
 
-import restaurant.dto.DecisionOrderDTO;
-import restaurant.dto.OrderBasicInfoDTO;
-import restaurant.dto.WaitingOrderDTO;
-import restaurant.rabbitmq.RabbitService;
+import restaurant.dto.*;
+import restaurant.service.RabbitService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -12,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import lombok.extern.slf4j.Slf4j;
+import restaurant.service.TaskListService;
+import restaurant.utils.EventType;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,14 +24,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WSHandler implements WebSocketHandler {
 
     @Autowired
-    RabbitService rabbit;
+    private RabbitService rabbit;
+
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
-    private Map<String, WaitingOrderDTO> waitingOrders = new ConcurrentHashMap<>();
+    private final Map<Integer, OrderDTO> ordersInPending = new ConcurrentHashMap<>();
 
     // to send object (dto)
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    @Autowired
+    private TaskListService taskListService;
 
     private void sendError(WebSocketSession session, String message) {
         try {
@@ -44,29 +48,54 @@ public class WSHandler implements WebSocketHandler {
         }
     }
 
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        sessions.put(session.getId(), session);
-        session.sendMessage(new TextMessage("Connected"));
-        log.info("connection established");
-        for (WaitingOrderDTO waitingOrderDTO : waitingOrders.values()) {
-            this.sendOrder(session, waitingOrderDTO);
+    public void sendEvent(WebSocketEventDTO event) throws Exception {
+        String objString = objectMapper.writeValueAsString(event);
+        for(WebSocketSession session : sessions.values()) {
+            session.sendMessage(new TextMessage(objString));
         }
     }
 
     @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        sessions.put(session.getId(), session);
+        log.info("connection established");
+//        List<TaskDecisionOrderDTO> tasks = taskListService.getCookTasks();
+//        if (!tasks.isEmpty()) {
+//            WebSocketEventDTO event = new WebSocketEventDTO(EventType.ORDER_WAITING, Map.of("tasks", tasks));
+//            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(event)));
+//        }
+    }
+
+    @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        // decode to DTO
         String payload = message.getPayload().toString();
+
+        if ("ping".equals(payload)) {
+            session.sendMessage(new TextMessage("pong"));
+            return;
+        }
+
         try {
-            DecisionOrderDTO decision = objectMapper.readValue(payload, DecisionOrderDTO.class);
-            waitingOrders.remove(decision.getCorrelationId());
-            rabbit.publishDecision(decision);
-            for(WebSocketSession sessionActive : sessions.values()){
-                String objString = objectMapper.writeValueAsString(decision);
-                if (!sessionActive.getId().equals(session.getId())){
-                    sessionActive.sendMessage(new TextMessage(objString));
+            CommandDTO command = objectMapper.readValue(payload, CommandDTO.class);
+            switch(command.getCommand()) {
+                case COMPLETE_TASK_WAITING ->
+                        taskListService.completeTask((String) command.getPayload().get("taskId"), (Boolean) command.getPayload().get("accepted"));
+                case GET_ORDERS -> {
+                    List<TaskDecisionOrderDTO> tasks = taskListService.getOrderToPrepareTasks();
+                    if (!tasks.isEmpty()) {
+                        WebSocketEventDTO event = new WebSocketEventDTO(EventType.ORDER_CAN_START, Map.of("tasks", tasks));
+                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(event)));
+                    }
                 }
+                case GET_WAITING_ORDERS -> {
+                    List<TaskDecisionOrderDTO> tasks = taskListService.getWaitingOrderTasks();
+                    if (!tasks.isEmpty()) {
+                        WebSocketEventDTO event = new WebSocketEventDTO(EventType.ORDER_WAITING, Map.of("tasks", tasks));
+                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(event)));
+                    }
+                }
+                case COMPLETE_TASK_PREPARED ->
+                        taskListService.completeTask((String) command.getPayload().get("taskId"), true);
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -90,27 +119,13 @@ public class WSHandler implements WebSocketHandler {
         return false;
     }
 
-    public void putOrder(WaitingOrderDTO waitingOrderDTO) throws Exception {
-        waitingOrders.put(waitingOrderDTO.getCorrelationID(), waitingOrderDTO);
-        log.info("Waiting order {} added", waitingOrderDTO.getCorrelationID());
-        for(WebSocketSession session : sessions.values()) {
-            this.sendOrder(session, waitingOrderDTO);
-        }
-    }
-
-    public void sendOrder(WebSocketSession currentSession, WaitingOrderDTO waitingOrderDTO) throws Exception {
-        String objString = objectMapper.writeValueAsString(waitingOrderDTO);
-        currentSession.sendMessage(new TextMessage(objString));
-        log.info("Sent order {} to restaurateur", waitingOrderDTO.getCorrelationID());
-    }
-
-    public void sendChangesInOrder(OrderBasicInfoDTO orderBasicInfoDTO) throws Exception {
-        String objString = objectMapper.writeValueAsString(orderBasicInfoDTO);
+    public void deleteTimeoutOrder(Integer id) throws Exception {
+        ordersInPending.remove(id);
+        String objString = objectMapper.writeValueAsString(Map.of("id", id, "timeout", true));
         for(WebSocketSession session : sessions.values()) {
             session.sendMessage(new TextMessage(objString));
         }
-        log.info("Sent order {}: {} to restaurateur", orderBasicInfoDTO.getDeleted() ? "deleted" : "added", orderBasicInfoDTO.getId());
+        log.info("Timeout for order {}.",id);
     }
-
 
 }

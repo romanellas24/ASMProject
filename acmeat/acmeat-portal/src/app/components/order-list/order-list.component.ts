@@ -1,19 +1,24 @@
+
+import { Inject, OnDestroy } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { end } from '@popperjs/core';
 import { Observable, Subscription, tap } from 'rxjs';
-import { GeneralResponse, Local, OrderInfo, UserInfo } from 'src/app/entities/entities';
+import { BankToken, GeneralResponse, Local, OrderInfo, UserInfo } from 'src/app/entities/entities';
 import { LocalsService } from 'src/app/services/locals.service';
 import { OrderService } from 'src/app/services/order.service';
 import { UserService } from 'src/app/services/user.service';
+import { Token } from '@angular/compiler';
 
 @Component({
   selector: 'app-order-list',
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss']
 })
-export class OrderListComponent implements OnInit {
+export class OrderListComponent implements OnInit,OnDestroy {
 
   orderList$: Observable<OrderInfo[]> = new Observable()
+  ordersToPay$: Observable<OrderInfo[]> = new Observable()
   local$: Observable<Local> = new Observable();
   subscriptionList: Subscription[] = [];
   localList: Local[] = []
@@ -21,10 +26,16 @@ export class OrderListComponent implements OnInit {
   timeLeft$: Observable<string> = new Observable();
 
   constructor(
+     @Inject(DOCUMENT) private document: Document,
     private userSvc: UserService,
     private orderSvc: OrderService,
     private localSvc: LocalsService
   ) { }
+  ngOnDestroy(): void {
+    this.subscriptionList.forEach(
+      (el) => el.unsubscribe()
+    )
+  }
 
   ngOnInit(): void {
 
@@ -32,9 +43,9 @@ export class OrderListComponent implements OnInit {
       let user: UserInfo | undefined = this.userSvc.getUserInfo();
 
       if (user != undefined) {
-
         this.orderList$ = this.orderSvc.getOrdersByUserId(user.id)
-        this.orderList$.subscribe((orders: OrderInfo[]) => {
+        this.ordersToPay$ = this.orderSvc.getOrdersToPay(user.id)
+        this.ordersToPay$.subscribe((orders: OrderInfo[]) => {
 
 
           orders.forEach(order => {
@@ -56,20 +67,37 @@ export class OrderListComponent implements OnInit {
   }
 
 
-  async deleteOrder(orderId: number) {
-    let response: GeneralResponse | undefined = await this.orderSvc.deleteOrderById(orderId).toPromise()
+  async deleteOrder(orderId: number | undefined) {
+    if(orderId != undefined){
+
+         let response: GeneralResponse | undefined = await this.orderSvc.deleteOrderById(orderId).toPromise()
     if (response?.message != "OK") {
       window.alert("There was an error while deleting order " + orderId + " Problem:" + response?.message)
+    }else{
+      window.alert("Order with id " + orderId +"has been deleted successfully");
     }
+    }
+ 
   }
 
+  isPast(order: OrderInfo):boolean{
+     let deliveryTime :Date = new Date(order.deliveryTime);
+    let now: Date = new Date()
+    // debugger
+    
+    if(deliveryTime < now){
+      return true;
+    }
 
+    return false
+  }
 
   getCountdown(order: OrderInfo) {
 
     
     let firstDate = new Date();
     let secondDate = new Date();
+
 
     secondDate.setHours(Number.parseInt(order.deliveryTime.split(':')[0]))
     secondDate.setMinutes(Number.parseInt(order.deliveryTime.split(':')[1]))
@@ -102,4 +130,21 @@ export class OrderListComponent implements OnInit {
 
   }
 
+   public goToBank(order:OrderInfo){
+    this.subscriptionList.push(
+    this.orderSvc.getPaymentToken(order.price).subscribe(
+      (token:BankToken) =>{
+          let acmeatUrl: string = "https://acmeat.romanellas.cloud";
+          // let acmeatUrl: string = "localhost:4200";
+
+          if(order.id != undefined)
+            sessionStorage.setItem(order.id?.toString(),token.token);
+
+          this.document.location.href = `https://joliebank.romanellas.cloud/pay.html?token=${token.token}&orderId=${order.id}&callback=${acmeatUrl}`;
+      }
+    )
+  );
+   
+  
+  }
 }

@@ -17,7 +17,8 @@ public class WSConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(restaurantHandler(), "/ws").setAllowedOrigins("*");
+        registry.addHandler(restaurantHandler(), "/ws")
+                .setAllowedOrigins("*");
     }
 
     @Bean

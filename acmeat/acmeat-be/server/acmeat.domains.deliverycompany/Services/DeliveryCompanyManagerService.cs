@@ -32,14 +32,6 @@ public class GrpcDeliveryCompanyManagerService : server.deliverycompany.manager.
         _deliverycompanyReader = deliverycompanyReader;
     }
 
-    public override Task<server.deliverycompany.manager.HelloReplyClient> SayHello(server.deliverycompany.manager.HelloRequestClient request, ServerCallContext context)
-    {
-        return Task.FromResult(new server.deliverycompany.manager.HelloReplyClient
-        {
-            Message = "Hello " + request.Name
-        });
-    }
-
     public override Task<server.deliverycompany.manager.DeliveryCompany> GetDeliveryCompanyById(Id id, ServerCallContext context)
     {
         return Task.FromResult(
@@ -127,7 +119,7 @@ public class GrpcDeliveryCompanyManagerService : server.deliverycompany.manager.
     }
 
     public server.deliverycompany.DeliveryCompany ConvertGrpcToServerModel(server.deliverycompany.manager.DeliveryCompany deliverycompany){
-        return new server.deliverycompany.DeliveryCompany(deliverycompany.Id, deliverycompany.Address, deliverycompany.Price, deliverycompany.Available);
+        return new server.deliverycompany.DeliveryCompany(deliverycompany.Id, deliverycompany.Address, deliverycompany.Price, deliverycompany.Available,deliverycompany.Name);
     }
 
 
@@ -137,6 +129,7 @@ public class GrpcDeliveryCompanyManagerService : server.deliverycompany.manager.
         deliverycompanyt.Address = deliverycompany.Address;
         deliverycompanyt.Available = deliverycompany.Available;
         deliverycompanyt.Price = deliverycompany.Price;
+        deliverycompanyt.Name = deliverycompany.Name;
         return deliverycompanyt;
 
     }

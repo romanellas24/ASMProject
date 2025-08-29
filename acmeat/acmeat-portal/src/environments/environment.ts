@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-   baseUrl: "http://acmeat.com"
+   baseUrl: "http://acmeat.com",
+   paymentApiUrl: '/payments'
 };
 
 export const BASEURL={

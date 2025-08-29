@@ -26,4 +26,10 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_delivery_time")
     LocalDateTime endDeliveryTime;
+
+    @Column(name = "from_address")
+    String from_address;
+
+    @Column(name = "to_address")
+    String to_address;
 }

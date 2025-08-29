@@ -1,8 +1,8 @@
 package api.controller;
 
+import api.dto.ExceptionDTO;
 import api.dto.MenuDTO;
 import api.dto.UpdateMenuResponseDTO;
-import api.exception.InvalidDishId;
 import api.service.MenuService;
 import api.utils.MenuUpdateDate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,10 +36,11 @@ public class MenuController {
     @Operation(description = "get menu by date")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "get menu of the day"),
-            @ApiResponse(responseCode = "400", description = "invalid date format. Check example")
+            @ApiResponse(responseCode = "400", description = "invalid date format. Check example",
+                    content = @Content(schema = @Schema(implementation = ExceptionDTO.class)))
     })
     public MenuDTO getMenu(
-            @Parameter(description = "date of menu. If not present, it uses current date.", example = "24-05-2025")
+            @Parameter(description = "date of menu. If not present, it uses current date.", example = "2025-05-24")
             @RequestParam(name = "date", required = false) LocalDate date) {
         if (date == null) {
             date = LocalDate.now();
@@ -55,7 +56,8 @@ public class MenuController {
     @Operation(summary = "update menu", description = "update menu using list of dishes. If it's later then 10a.m., this call will modify menu of following day, otherwise today's menu will be modified")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "menu updated"),
-            @ApiResponse(responseCode = "404", description = "dish id not found")
+            @ApiResponse(responseCode = "404", description = "dish id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDTO.class)))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "dishes' ids list to update menu",
@@ -68,9 +70,6 @@ public class MenuController {
     public UpdateMenuResponseDTO updateMenu(@RequestBody List<Integer> dishIds){
         LocalDate date = MenuUpdateDate.get();
         menuService.updateMenu(date, dishIds);
-        if (date == LocalDate.now().plusDays(1)) {
-            menuService.notifyMenuChanges(date);
-        }
         return new UpdateMenuResponseDTO(date);
     }
 }

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 OVERLAY_DIR="./overlays"
-# INGRESS="./super-gateway-ingress.yaml"
 
 echo "deploy ingress controller nginx"
 
@@ -24,7 +23,5 @@ for dir in "$OVERLAY_DIR"/*; do
   fi
 done
 
-# echo "Deploy super gateway ..."
-# kubectl apply -f "$INGRESS"
 
 echo "Deploy completato con successo."

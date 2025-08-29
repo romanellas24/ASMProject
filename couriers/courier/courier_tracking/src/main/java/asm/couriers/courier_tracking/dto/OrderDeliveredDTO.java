@@ -11,4 +11,5 @@ public class OrderDeliveredDTO {
     private Integer orderId;
     private Integer courierId;
     private Boolean delivered;
+    private String taskId;
 }

@@ -1,12 +1,17 @@
-FROM node:alpine
+FROM node:alpine AS builder
 WORKDIR /app
 COPY *.json ./
 
 COPY ./src ./src
 RUN npm install
 RUN npm install -g @angular/cli
+RUN npm run build
 
-EXPOSE 4200
+# Stage 2: Serve Angular application using nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist/amceat-portal /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
 
 # CMD ["ng", "serve", "--proxy-config", "proxy.config.json", "--host","0.0.0.0"] -> for dev env
-CMD ["ng", "serve", "--proxy-config", "proxy.config.json", "--public-host","acmeat.com"]
+# CMD ["ng", "serve", "--proxy-config", "proxy.config.json"]

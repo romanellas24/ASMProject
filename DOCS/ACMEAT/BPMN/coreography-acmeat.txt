@@ -1,0 +1,420 @@
+ACTORS:
+user: human partecipant
+local: local
+del: delivery company
+bank: bank institute
+
+acmeat-portal: front end
+
+apiorder: api microservice
+
+delmanager : server microservice
+ordermanager: server microservice
+localmanager: server microservice
+dishmanager: server microservice
+usermanager: server microservice
+
+
+mysql: db microservice
+
+zeebe: zeebeClient,Camunda
+
+/*COREOGRAPHIES*/
+/* Qui sono riportate le coreografie coinvolte nel processo di business*/
+
+C_orderCreation =
+compile_order_form: user -> acmeat-portal;
+send_order_form: acmeat-portal -> apiorder;
+create_order: apiorder -> ordermanager;
+
+/* Qui avviene il deploy del diagramma BPMN all'interno dell'ordermanager */
+
+deploy_bpmn: ordermanager -> zeebe;
+process_order: zeebe -> ordermanager;
+create_order_db: ordermanager -> mysql;
+
+/*La coreografia viene scatenata dal client zeebe*/
+
+C_cancelOrder=
+cancel_order_worker: zeebe -> ordermanager;
+delete_order: ordermanager -> mysql;
+
+C_orderUpdate=
+order_update: api->ordermanager;
+order_update_db: ordermanager -> mysql;
+
+C_applyDailyUpdate
+
+
+C_getDishesInfo=
+get_dishes_info: ordermanager -> dishmanager;
+fetch_from_db: mysql->dishmanager;
+
+
+C_getUserInfo=
+get_local_info : ordermanager -> usermanager;
+fetch_from_db: mysql ->usermanager;
+
+C_getLocalInfo=
+get_local_info : ordermanager -> localmanager;
+fetch_from_db: mysql-> localmanager;
+
+C_getDelInfo=
+get_del_info : ordermanager -> delmanager;
+fetch_from_db: mysql->delmanager ;
+
+
+
+/* la coreografia viene scatenata dal client zeebe*/
+
+C_checkLocalAvailability= 
+check_local_availability: zeebe -> ordermanager;
+
+/* Carico le informazioni dell ordine*/
+C_getDishesInfo;
+C_getLocalInfo;
+
+/*Controllo se il locale è disponibile*/
+
+authenticate_to_local: ordermanager -> local;
+check_order_availability: ordermanager -> local;
+localAvailable: local -> ordermanager;
+
+
+
+
+/*Il locale risponde all'ordine fatto da acmeat*/
+
+C_handleLocalResponse=
+finish_order: local -> apiorder;
+handle_local_availability_response: apiorder -> ordermanager;
+handle_local_response: ordermanager -> zeebe;
+
+
+
+/* La coreografia viene avviata da zeebe */
+
+C_checkDeliveryCompany=
+check_delivery_company: zeebe -> ordemanager;
+/* Prendo le informazioni necessarie per contattare la società di consegna */
+C_getLocalInfo;
+C_getUserInfo;
+C_getDelInfo;
+/* Per ogni società di consegna */
+(C_checkDeliveryCompanyAvailability)*
+communicate_order_to_del: ordermanager -> del;
+response: del -> ordermanager;
+
+
+/* Chiedo alla compagnia di consegna se è disponibile */
+
+C_checkDeliveryCompanyAvailability=
+check_delivery_company_n: ordermanager -> del;
+response: del -> ordermanager;
+
+C_allocateVeichle=
+allocate_veichle: zeebe -> ordermanager
+comunicate_order_to_del: ordermanager -> del;
+response: del -> ordermanager;
+
+C_receivePaymentInfo=
+payment_form_request: user -> acmeat-portal;
+payment_form_redirect: acmeat-portal -> bank;
+payment_confirmed: bank -> acmeat-portal;
+communicating_info_for_verification: acmeat-portal -> api;
+verification: api-> ordermanager;
+triggering_zeebe : ordermanager -> zeebe;
+
+C_verifyBankToken=
+verify_bank_token: zeebe -> ordermanager;
+communicating_token: ordermanager -> bank;
+response: bank -> ordermanager;
+
+
+C_checkRulesForCancellation=
+delete_req: user -> acmeat-portal;
+delete_order: acmeat-portal -> apiorder;
+delete_order_server: apiorder -> ordermanager;
+trigger_order_delete: ordermanager -> zeebe;
+
+
+
+
+C_CommunicateOrderCancellationLocal=
+communicate_order_deletion_local: ordermanager -> local;
+response: local -> ordermanager;
+
+C_CommunicateOrderCancellationDel=
+communicate_order_deletion_del: ordermanager -> del;
+response: del -> ordemanager;
+
+C_sendRefund=
+refund_request: ordemanager -> bank;
+response: bank -> ordemanager;
+
+
+C_ACMEAT=
+C_orderCreation;
+C_checkLocalAvailability;
+/*Se ottengo un qualsiasi tipo di errore interno vado a cancellare l'ordine*/
+(
+	error: zeebe -> ordermanager;
+	C_cancelOrder;
+)
+	+
+(
+	C_handleLocalResponse;
+
+	/*Se il locale non è disponibile cancello l'ordine*/
+
+	(
+		C_cancelOrder;
+	)
+		+
+	/* Altrimenti procedo con il contattare le società di consegna*/	
+	(
+		C_checkDeliveryCompany;
+		/*In caso di errore vado a comunicare la cancellazione dell'ordine sia al locale che sul database*/
+		(
+			error: del -> ordermanager;
+			C_CommunicateOrderCancellationLocal;
+			C_cancelOrder;
+		)
+			+
+		(
+			C_orderUpdate;
+			C_AllocateVeichle;
+			/*In caso di errore vado a comunicare la cancellazione dell'ordine sia al locale che sul database*/
+			(
+				error: del -> ordermanager;
+				C_CommunicateOrderCancellationLocal;
+				C_cancelOrder;
+			)
+				+
+			(
+				C_receivePaymentInfo;
+				C_verifyBankToken;
+				/*In caso di errore vado a comunicare la cancellazione dell'ordine  alla società di consegna, locale e sul database*/
+				(
+					error: bank -> ordermanager;
+					C_sendRefund;
+					C_CommunicateOrderCancellationDel;
+					C_CommunicateOrderCancellationLocal;
+					C_cancelOrder;
+				)
+					+
+				(
+					C_orderUpdate;
+					/*Nel caso in cui l'utente desideri cancellare l'ordine allora si controlla se si può fare l'operazione e dopodichè se è affermativo si passa al flusso di cancellaizone*/
+						+
+						(
+							C_checkRulesForCancellation;
+							C_sendRefund;
+							C_CommunicateOrderCancellationDel;
+							C_CommunicateOrderCancellationLocal;
+							C_cancelOrder;
+						)
+				)
+				
+
+			)
+			
+
+		)
+
+	)
+)
+
+
+/*PROJECTIONS*/
+/*
+    Note: the rule o(bar)@b is changed in o(b) due to readability.
+    So:
+    proj(o: a -> b ,a)= o(b)
+    proj(o: a -> b ,b)= o@a
+    proj(o: a -> b ,c)= 1
+*/
+
+
+proj(C_ACMEAT,user)=
+	(
+		compile_order_form@acmeat-portal;
+		payment_form_request@acmeat-portal
+	);
+	delete_req@acmeat-portal;
+
+proj(C_ACMEAT,local)=
+	authenticate_to_local(ordermanager);
+	check_order_availability(ordermanager);
+	localAvailable@ordermanager;
+
+	finish_order@apiorder;
+
+	communicate_order_deletion_local(ordermanager);
+	response@ordermanager;
+
+	communicate_order_deletion_del(ordermanager);
+
+proj(C_ACMEAT,bank)=
+	payment_form_redirect(acmeat-portal);
+	payment_confirmed@acmeat-portal;
+
+	communicating_token: ordermanager -> bank;
+	response: bank -> ordermanager;
+
+	refund_request: ordemanager -> bank;
+	response: bank -> ordemanager;
+
+
+proj(C_ACMEAT,del)=
+	communicate_order_to_del(ordermanager);
+	response@ordermanager;
+
+	check_delivery_company_n(ordermanager);
+	response@ordermanager;
+
+	communicate_order_deletion_del(ordermanager);
+	response@ordemanager;
+
+
+proj(C_ACMEAT,acmeat-portal)=
+	compile_order_form(user);
+	send_order_form@ apiorder;
+
+
+	payment_form_request(user);
+	payment_form_redirect@bank;
+	payment_confirmed(bank);
+	communicating_info_for_verification@apiorder;
+
+	delete_req(user);
+	delete_order@apiorder;
+
+
+
+proj(C_ACMEAT,apiorder)=
+
+	send_order_form(acmeat-portal);
+	create_order@ordermanager;
+
+	finish_order(local);
+	handle_local_availability_response@ordermanager;
+
+	delete_order(acmeat-portal);
+	delete_order_server@ordermanager;
+
+
+
+proj(C_ACMEAT,delmanager)=
+	get_del_info(ordermanager);
+	fetch_from_db(mysql) ;
+
+proj(C_ACMEAT,localmanager)=
+	get_local_info(ordermanager);
+	fetch_from_db(mysql);
+
+
+
+proj(C_ACMEAT,usermanager)=
+	get_user_info(ordermanager);
+	fetch_from_db(mysql);
+
+
+proj(C_ACMEAT,dishmanager)=
+	get_dishes_info(ordermanager);
+	fetch_from_db(mysql);
+
+
+proj(C_ACMEAT,ordermanager)=
+
+	create_order(apiorder);
+
+
+	deploy_bpmn@zeebe;
+	process_order(zeebe);
+	create_order_db@mysql;
+
+	cancel_order_worker(zeebe);
+	delete_order@mysql;
+
+	order_update(apiorder);
+	order_update_db@mysql;
+
+
+	get_dishes_info@dishmanager;
+
+	get_local_info@usermanager;
+
+	get_local_info@localmanager;
+
+	get_del_info@delmanager;
+
+	check_local_availability(zeebe);
+
+	authenticate_to_local@local;
+	check_order_availability@local;
+	localAvailable(local);
+
+	handle_local_availability_response(apiorder);
+	handle_local_response@zeebe;
+
+	communicate_order_to_del@del;
+	response(del);
+
+	check_delivery_company_n@del;
+	response(del);
+
+	allocate_veichle(zeebe)
+	comunicate_order_to_del@del;
+	response(del);
+
+	triggering_zeebe@zeebe;
+
+	verify_bank_token(zeebe);
+	communicating_token@bank;
+	response(bank);
+
+	delete_order_server(apiorder);
+	trigger_order_delete@zeebe;
+
+	communicate_order_deletion_local@local;
+	response(local);
+
+	communicate_order_deletion_del@del;
+
+
+proj(C_ACMEAT,zeebe)=
+	deploy_bpmn(ordermanager);
+	process_order@ordermanager;
+
+	cancel_order_worker@ordermanager;
+
+	check_local_availability@ordermanager;
+
+	handle_local_response(ordermanager);
+
+	check_delivery_company@ordemanager;
+
+	allocate_veichle@ordermanager
+
+	triggering_zeebe(ordermanager);
+
+	trigger_order_delete(ordermanager);
+
+
+proj(C_ACMEAT,mysql)=
+	create_order_db(ordermanager);
+
+	delete_order(ordermanager);
+
+	order_update_db(ordermanager);
+
+	fetch_from_db@dishmanager;
+
+	fetch_from_db@usermanager;
+
+	fetch_from_db@localmanager;
+
+	fetch_from_db@delmanager ;
+
+

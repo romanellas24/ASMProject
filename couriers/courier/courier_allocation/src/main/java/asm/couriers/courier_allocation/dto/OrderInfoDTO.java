@@ -1,5 +1,7 @@
 package asm.couriers.courier_allocation.dto;
 
+import asm.couriers.courier_allocation.entity.Order;
+import asm.couriers.courier_allocation.utils.VehicleToDtoMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -24,4 +26,23 @@ public class OrderInfoDTO {
 
     @Schema(description = "Planned end time for the delivery in format yyyy-MM-dd HH:mm", format = "yyyy-MM-dd HH:mm")
     private LocalDateTime endDeliveryTime;
+
+    @Schema(description = "address where delivery starts")
+    private String fromAddress;
+
+    @Schema(description = "address where delivery ends")
+    private String toAddress;
+
+
+    @Schema(hidden = true)
+    public static OrderInfoDTO fromEntity(Order order){
+        OrderInfoDTO orderInfoDTO = new OrderInfoDTO();
+        orderInfoDTO.setOrderId(order.getOrderId());
+        orderInfoDTO.setVehicle(VehicleToDtoMapper.toDto(order.getVehicle()));
+        orderInfoDTO.setStartDeliveryTime(order.getStart_delivery_time());
+        orderInfoDTO.setEndDeliveryTime(order.getEnd_delivery_time());
+        orderInfoDTO.setFromAddress(order.getFrom_address());
+        orderInfoDTO.setToAddress(order.getTo_address());
+        return orderInfoDTO;
+    }
 }

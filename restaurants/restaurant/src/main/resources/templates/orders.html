@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Ordini di Oggi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -15,12 +14,16 @@
       margin-left: 1rem;
       font-size: 0.95rem;
     }
+    .action-button-container {
+      text-align: right;
+      margin-top: 1rem;
+      min-height: 40px;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Ordini del Giorno</h2>
     <div>
@@ -33,12 +36,9 @@
     ⚠️ Non sei loggato: gli ordini non verranno aggiornati automaticamente in tempo reale.
   </div>
 
-  <!-- Lista Ordini -->
   <div id="ordersList" class="list-group mb-4">
-    <!-- Ordini caricati dinamicamente -->
   </div>
 
-  <!-- Paginazione -->
   <nav>
     <ul class="pagination justify-content-center">
       <li class="page-item"><button class="page-link" id="prevPage">Precedente</button></li>
@@ -48,75 +48,131 @@
   </nav>
 </div>
 
+<template id="order-template">
+  <div class="list-group-item">
+    <h5>Ordine #<span class="order-id"></span></h5>
+    <p><strong>Consegna:</strong> <span class="delivery-time"></span></p>
+    <div><strong>Piatti:</strong><div class="dishes-html"></div></div>
+    <p class="mt-2"><strong>Totale:</strong> €<span class="total-price"></span></p>
+    <div class="action-button-container">
+    </div>
+  </div>
+</template>
+
 <script>
   const BASE_URL = "[[${beUrl}]]";
-  const WS_URL = "ws://" + BASE_URL + "/ws"
-  const API_URL = "http://" + BASE_URL + "/api";
+  const WS_URL = "wss://" + BASE_URL + "/ws";
+  const API_URL = "https://" + BASE_URL + "/api";
   let jwt = localStorage.getItem("jwt");
   let socket;
-
+  let heartbeatInterval;
   const authWarning = document.getElementById('authWarning');
 
   if (!jwt) {
-    // Mostra bottone login invece del logout
-    // Qui il logout è un button, quindi non serve cambiare testo/ href
     authWarning.classList.remove("d-none");
   } else {
-    // Solo se loggato apri WebSocket
     socket = new WebSocket(WS_URL + "?token=" + jwt);
 
-    socket.onmessage = async function (event) {
+    socket.onopen = function() {
+      heartbeatInterval = setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send("ping");
+        }
+      }, 10000);
+      const command = {
+        command: "GET_ORDERS",
+        payload: {}
+      };
+
       try {
-        const data = JSON.parse(event.data);
+        socket.send(JSON.stringify(command));
+        console.log("Comando inviato via WebSocket:", command);
+      } catch (error) {
+        console.error("Impossibile inviare comando via WebSocket:", error);
+      }
+    };
 
-        if (data.deleted && data.id) {
-          currentOrders = currentOrders.filter(order => order.id !== data.id);
-          renderOrders();
-        } else if (!data.deleted && data.id) {
-          const res = await fetch(`${API_URL}/order/${data.id}`);
-          if (!res.ok) {
-            console.warn("Ordine non trovato o errore:", data.id);
-            return;
-          }
+    socket.onmessage = async function(messageEvent) {
+      if (messageEvent.data === "pong") return;
 
-          const newOrder = await res.json();
+      try {
+        const event = JSON.parse(messageEvent.data);
+        console.log("Evento ricevuto:", event);
 
-          const deliveryTime = new Date(newOrder.deliveryTime).getTime();
-          const deliveryTimes = currentOrders.map(o => new Date(o.deliveryTime).getTime());
-
-          const minTime = Math.min(...deliveryTimes);
-          const maxTime = Math.max(...deliveryTimes);
-
-          const allowInsert =
-                  currentOrders.length < 10 ||
-                  (deliveryTime >= minTime && deliveryTime <= maxTime);
-
-          if (allowInsert) {
-            const existingIndex = currentOrders.findIndex(o => o.id === newOrder.id);
-            if (existingIndex !== -1) {
-              currentOrders[existingIndex] = newOrder;
-            } else {
-              currentOrders.push(newOrder);
-            }
-
-            renderOrders();
-          }
+        switch (event.eventType) {
+          case "ORDER_CAN_START":
+            activateOrderTask(event.payload.tasks);
+            break;
+          case "ORDER_TODO":
+            handleNewOrUpdatedOrder(event.payload.order);
+            break;
+          case "ORDER_DELETED":
+            removeOrderCardById(event.payload.orderId);
+            break;
+          case "ORDER_TIMED_OUT":
+            removeOrderCardById(event.payload.orderId, true);
+            break;
+          default:
+            console.warn("Tipo di evento non gestito:", event.eventType);
         }
       } catch (err) {
-        console.error("Errore WebSocket:", err);
+        console.error("Errore durante la gestione del messaggio WebSocket:", err);
       }
+    };
+
+    socket.onclose = function() {
+      clearInterval(heartbeatInterval);
     };
   }
 
   let currentPage = 0;
   let currentOrders = [];
+  const ordersPerPage = 9;
+
+  function handleNewOrUpdatedOrder(newOrder) {
+    if (!newOrder || typeof newOrder.id === 'undefined') return;
+
+    const existingIndex = currentOrders.findIndex(o => o.id === newOrder.id);
+    if (existingIndex !== -1) {
+      currentOrders[existingIndex] = newOrder;
+    } else {
+      currentOrders.push(newOrder);
+    }
+    renderOrders();
+  }
+
+  function activateOrderTask(tasks) {
+    for(let task of tasks){
+      if (!task || !task.orderData) return;
+      const orderId = task.orderData.id;
+      const card = document.querySelector(`.list-group-item[data-order-id='${orderId}']`);
+      if (!card) {
+        console.warn(`Card per ordine #${orderId} non trovata, impossibile attivarla.`);
+        return;
+      }
+
+      card.dataset.taskId = task.taskId;
+      card.classList.add('border-primary', 'border-2');
+
+      const actionContainer = card.querySelector('.action-button-container');
+      actionContainer.innerHTML = '';
+
+      const button = document.createElement('button');
+      button.className = 'btn btn-primary btn-sm';
+      button.textContent = 'Ordine Preparato';
+      button.onclick = () => sendTaskCompleted(task.taskId);
+      actionContainer.appendChild(button);
+    }
+  }
 
   function renderOrders() {
     const seen = new Set();
     currentOrders = currentOrders.filter(order => {
-      if (seen.has(order.id)) return false;
-      seen.add(order.id);
-      return true;
+      if (order && typeof order.id !== 'undefined' && !seen.has(order.id)) {
+        seen.add(order.id);
+        return true;
+      }
+      return false;
     });
 
     currentOrders.sort((a, b) => new Date(a.deliveryTime) - new Date(b.deliveryTime));
@@ -124,8 +180,8 @@
     const list = document.getElementById('ordersList');
     list.innerHTML = '';
 
-    const start = currentPage * 10;
-    const end = start + 10;
+    const start = currentPage * ordersPerPage;
+    const end = start + ordersPerPage;
     const pageOrders = currentOrders.slice(start, end);
 
     if (pageOrders.length === 0 && currentPage > 0) {
@@ -135,42 +191,86 @@
     }
 
     pageOrders.forEach(order => {
-      const item = document.createElement('div');
-      item.className = 'list-group-item';
+      const template = document.getElementById('order-template').content.cloneNode(true);
+      const item = template.querySelector('.list-group-item');
 
-      const time = new Date(order.deliveryTime).toLocaleTimeString('it-IT', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      item.dataset.orderId = order.id;
+      if (order.taskId) {
+        item.dataset.taskId = order.taskId;
+      }
 
-      const dishesHtml = order.dishes.map(d => `
-        <div class="dish-item">
-          <strong>${d.multiplicative}x</strong> ${d.dish.name} -
-          <em>${d.dish.description}</em>
-          <span class="text-muted">(${(d.dish.price * d.multiplicative).toFixed(2)}€)</span>
-        </div>
-      `).join('');
+      item.querySelector('.order-id').textContent = order.id;
+      item.querySelector('.delivery-time').textContent = new Date(order.deliveryTime).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      item.querySelector('.total-price').textContent = order.totalPrice.toFixed(2);
 
-      item.innerHTML = `
-        <h5>Ordine #${order.id}</h5>
-        <p><strong>Consegna:</strong> ${time}</p>
-        <div><strong>Piatti:</strong>${dishesHtml}</div>
-        <p class="mt-2"><strong>Totale:</strong> €${order.totalPrice.toFixed(2)}</p>
-      `;
+      const dishesHtmlContainer = item.querySelector('.dishes-html');
+      if(order.dishes && Array.isArray(order.dishes)) {
+        const dishesHtml = order.dishes.map(d => `
+          <div class="dish-item">
+            <strong>${d.quantity}x</strong> ${d.dish.name} -
+            <em>${d.dish.description}</em>
+            <span class="text-muted">(${(d.dish.price * d.quantity).toFixed(2)}€)</span>
+          </div>
+        `).join('');
+        dishesHtmlContainer.innerHTML = dishesHtml;
+      }
 
-      list.appendChild(item);
+      const actionContainer = item.querySelector('.action-button-container');
+      if (order.taskId) {
+        const button = document.createElement('button');
+        button.className = 'btn btn-primary btn-sm';
+        button.textContent = 'Ordine Preparato';
+        button.onclick = () => sendTaskCompleted(order.taskId);
+        actionContainer.innerHTML = '';
+        actionContainer.appendChild(button);
+      }
+
+      list.appendChild(template);
     });
 
     document.getElementById('currentPageDisplay').textContent = `Pagina ${currentPage + 1}`;
+    document.getElementById('prevPage').disabled = currentPage === 0;
+    document.getElementById('nextPage').disabled = end >= currentOrders.length;
+  }
+
+  function sendTaskCompleted(taskId) {
+    if (!taskId) {
+      console.error("ID del Task mancante per 'Ordine Preparato'");
+      return;
+    }
+    const command = {
+      command: "COMPLETE_TASK_PREPARED",
+      payload: { taskId: taskId }
+    };
+    try {
+      socket.send(JSON.stringify(command));
+      const card = document.querySelector(`.list-group-item[data-task-id='${taskId}']`);
+      if (card) {
+        const orderIdToRemove = parseInt(card.dataset.orderId);
+        currentOrders = currentOrders.filter(o => o.id !== orderIdToRemove);
+        renderOrders();
+      }
+    } catch (error) {
+      console.error("Errore invio comando 'Ordine Preparato':", error);
+    }
   }
 
   async function loadOrders() {
     try {
-      const today = new Date().toISOString().split('T')[0];
-      const res = await fetch(`${API_URL}/order?page=0&date=${today}`);
+      const res = await fetch(`${API_URL}/order?page=${currentPage}`);
       if (!res.ok) throw new Error("Errore nel caricamento degli ordini");
+      const newOrders = await res.json();
 
-      currentOrders = await res.json();
+      if (currentPage === 0) {
+        currentOrders = newOrders;
+      } else {
+        newOrders.forEach(newOrder => {
+          const existingIndex = currentOrders.findIndex(o => o.id === newOrder.id);
+          if (existingIndex === -1) {
+            currentOrders.push(newOrder);
+          }
+        });
+      }
       renderOrders();
     } catch (error) {
       console.error(error);
@@ -187,16 +287,28 @@
   });
 
   document.getElementById('nextPage').addEventListener('click', () => {
-    currentPage++;
-    renderOrders();
+    const isLastPage = (currentPage + 1) * ordersPerPage >= currentOrders.length;
+    if(!document.getElementById('nextPage').disabled){
+      currentPage++;
+      loadOrders();
+    }
   });
 
   document.addEventListener("DOMContentLoaded", () => {
     loadOrders();
   });
 
+  function removeOrderCardById(orderId) {
+    const initialLength = currentOrders.length;
+    currentOrders = currentOrders.filter(order => order.id !== orderId);
+    if (currentOrders.length < initialLength) {
+      renderOrders();
+    }
+  }
+
   function logout() {
     localStorage.removeItem("jwt");
+    if (socket) socket.close();
     window.location.href = "/auth/login";
   }
 </script>

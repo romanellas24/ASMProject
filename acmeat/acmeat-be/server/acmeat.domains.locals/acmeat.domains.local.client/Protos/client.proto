@@ -7,27 +7,23 @@ option csharp_namespace = "acmeat.server.local.client";
 package local;
 
 service GrpcLocal {
-  rpc SayHello (HelloRequestClient) returns (HelloReplyClient);
   rpc GetLocalById(Id)returns(Local);
+  rpc GetLocalByUrl(Url)returns(Local);
   rpc GetLocals(Id) returns (LocalList);
   rpc GetLocalsByCity(City) returns (LocalList);
   rpc CreateLocal(Local) returns(GeneralResponse);
   rpc UpdateLocal(Local) returns (GeneralResponse);
   rpc DeleteLocal(Local) returns (GeneralResponse);
   rpc DeleteLocalById(Local) returns (GeneralResponse);
-
 }
 
-message HelloRequestClient {
-  string name = 1;
-}
-
-message HelloReplyClient {
-  string message = 1;
-}
 
 message Id{
   int32 id = 1;
+}
+
+message Url{
+  string url =1;
 }
 
 message City{
@@ -41,16 +37,17 @@ message GeneralResponse{
 message Local{
   int32 Id=1 ;
 
-   string Name=2 ;
+  string Name=2 ;
 
-   string OpeningTime=3 ;
+  string OpeningTime=3 ;
 
-   string ClosingTime=4 ;
+  string ClosingTime=4 ;
 
-   string Address=5 ;
+  string Address=5 ;
 
-   string OpeningDays=6 ;
-   bool Available=7 ;
+  string OpeningDays=6 ;
+  bool Available=7 ;
+  string Url=8;
 }
 
 message LocalList {

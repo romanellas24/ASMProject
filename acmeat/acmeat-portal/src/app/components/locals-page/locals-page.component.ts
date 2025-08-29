@@ -1,13 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Form, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import * as moment from 'moment';
-import { combineLatest, distinctUntilChanged, map, mergeMap, Observable, repeatWhen, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, flatMap, map, mergeMap, Observable, repeatWhen, shareReplay, Subject, Subscription, switchMap, take } from 'rxjs';
 import { filter, tap } from 'rxjs';
 import { Local, Menu, MenuType } from 'src/app/entities/entities';
 import { EventsService } from 'src/app/services/events.service';
 import { LocalsService } from 'src/app/services/locals.service';
 import { MenuService } from 'src/app/services/menu.service';
+import { FilterComponent } from '../filter/filter.component';
 
 @Component({
   selector: 'app-locals-page',
@@ -18,10 +19,17 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
 
 
   localList$:Observable<Local[]> = new Observable();
+  queryUpdated$ :Subject<boolean> = new Subject();
   menList$ : Observable<Menu[]> = new Observable();
+  isLoading : boolean = false ;
+  menusList:Menu[] =[]
+  localList:Local[] =[]
   menuType:string = ""
   hourType:string = ""
-  subscriptions: Subscription [] =[]
+  subscriptions: Subscription [] =[];
+  @ViewChild(FilterComponent) filterComponent!: FilterComponent;
+
+  city:string="";
 
 
   constructor(
@@ -29,6 +37,7 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
     private activeRoute: ActivatedRoute,
     private localSvc:LocalsService,
     private eventSvc :EventsService,
+    private route : ActivatedRoute,
     private menuSvc:MenuService) { }
   ngOnDestroy(): void {
    this.subscriptions.forEach(
@@ -37,93 +46,134 @@ export class LocalsPageComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-
-    let city:string = this.activeRoute.snapshot.url[1]?.path;
-    
-    this.localList$ = this.localSvc.getLocalsByAddress(city);
-    // debugger
-    // this.localList$.pipe(
-    //   repeatWhen(() => this.eventSvc.filters$),
-      
-    //   switchMap(local => local),
-    //   filter((local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime) )
-    // )
-
-    this.subscriptions.push(
-    this.eventSvc.filters$.pipe(
-      map((formGroup :any) => {
-        this.menuType= formGroup.menuType
-        this.hourType = formGroup.hoursType
-
-        return formGroup
-      })
-    ).subscribe()
-    );
-  
-
-   
-    
-        this.updateList()
-   this.subscriptions.push(
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      distinctUntilChanged()
-      // map((event:NavigationEnd) => event.url.split('/')[-1]),
-      // tap(console.log)
-    ).subscribe((event:any) =>{
-      // debugger
-      let newUrl = event.url.split('/').slice(-1)[0]
-      this.localList$ = this.localSvc.getLocalsByAddress(newUrl);
-      
-      this.updateList()
-    }));
-  }
-
-  updateList():void{
-     this.menList$ = this.localList$.pipe(
      
-      repeatWhen(() => this.eventSvc.filters$),
-       map((locals:Local[]) => {
 
-        if(this.hourType != undefined){
-          locals = locals.filter( (local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime))
+     this.city= this.activeRoute.snapshot.url[1]?.path;
+
+
+    //  debugger
+     this.subscriptions.push(
+    this.queryUpdated$
+    .subscribe(() =>{
+     
+      // debugger
+      this.localList$ = this.localSvc.getLocalsByAddress(this.city).pipe(
+         tap(() => this.isLoading = true),
+         shareReplay(1),
+         take(1),
+         distinctUntilChanged(),
+       map((locals:Local[]) => {
+        // debugger
+        // if(this.hourType != undefined){
+        //   locals = locals.filter( (local:Local) => this.hourType =="Cena" ? this.isDinner(local.openingTime,local.closingTime): !this.isDinner(local.openingTime,local.closingTime))
+        //   this.localList = locals
+        //   this.localList = [...new Set(this.localList)]
+
+        //   return locals;
+        // }else{
+          this.localList = this.localList.concat([...locals])
+          this.localList = [...new Set(this.localList)]
           return locals;
-        }else{
-          return locals;
-        }
+        // }
+
       }),
-      mergeMap(locals => locals),
+    );
+
+     this.menList$ = this.localList$.pipe(
+      
+     
+      flatMap(locals => locals),
       // tap(console.log),
-      switchMap(local => 
+      flatMap(local => 
         
            this.menuSvc.getMenusByLocalId(local.id)
 
 
       ),
-      
+      tap(() => this.isLoading =false),
       map((menus:Menu[] ) => {
         // debugger
 
-        if(this.menuType!= undefined){
-          menus = menus.filter( menu => menu.type == this.menuType)
+        // if(this.menuType!= undefined){
+        //   menus = menus.filter( menu => menu.type == this.menuType)
+        //   this.menusList = this.menusList.concat([...menus])
+        //   this.menusList = [...new Set(this.menusList)]
+        //   return menus
+        // }else{
+          this.menusList = this.menusList.concat([...menus])
+          this.menusList = [...new Set(this.menusList)]
+          // this.isLoading = false;
           return menus
-        }else{
-          return menus
-        }
+        // }
       })
-      // tap(console.log)
     )
+    // this.isLoading = false;
+    }
+
+    ))
+    
 
 
+    // this.subscriptions.push(
+    // this.eventSvc.filters$.pipe(
+    //   map((formGroup :any) => {
+    //     // debugger
+    //     // if(formGroup.menuType != "" && (this.menuType != formGroup.menuType)){
+    //     //   this.menusList = [];
+    //     // }
+
+    //     this.menuType= formGroup.menuType
+    //     this.hourType = formGroup.hoursType
+
+    //   this.localList = []
+    //   this.menusList = [];
+    //     // this.menusList = []
+    //     this.queryUpdated$.next(true);
+
+    //     return formGroup
+    //   })
+    // ).subscribe()
+    // );
+
+    this.queryUpdated$.next(true);
+    
+   this.subscriptions.push(
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      distinctUntilChanged(),
+      // tap(console.log)
+    ).subscribe((event:any) =>{
+      // debugger
+
+      this.localList = []
+      this.menusList = [];
+      this.city = event.url.split('/').slice(-1)[0]
+      this.queryUpdated$.next(true);
+      
+    }));
   }
+
+  getLocal(localList:Local[],localId:number):Local | undefined{
+    return localList.find(local => local.id == localId)
+  }
+
+
 
   public isFish(menuType:string){
       return menuType == MenuType.FISH
   }
 
-  public isDinner(openingTime:string, closingTime:string){
-  
-var startTime = moment(openingTime, "HH:mm");
+  navigateTo(menuId:number):void{
+    // debugger
+    // this.filterComponent.reset()
+    this.queryUpdated$.next(true);
+    this.router.navigate(['menu/'+menuId],{ relativeTo: this.route })
+    
+  }
+
+  public isDinner(openingTime:string | undefined, closingTime:string | undefined){
+  if(openingTime != undefined && closingTime != undefined){
+    var startTime = moment(openingTime, "HH:mm");
 var endTime = moment(closingTime, "HH:mm");
 
     var dinnerStart= moment("19:00", "HH:mm");
@@ -133,6 +183,10 @@ var endTime = moment(closingTime, "HH:mm");
    
    
    return amIBetween;//  returns false.  if date ignored I expect TRUE
+  
+  }else{
+    return false
   }
+}
 
 }

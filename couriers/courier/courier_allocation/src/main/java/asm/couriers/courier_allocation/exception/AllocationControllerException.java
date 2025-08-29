@@ -59,12 +59,19 @@ public class AllocationControllerException {
         return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(BadData.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDTO> invalidData(Exception ex) {
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 400);
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ExceptionDTO> exception(Exception ex) {
-        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 500);
-        return new ResponseEntity<>(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+        ExceptionDTO exception = new ExceptionDTO(ex.getMessage(), 400);
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 
 

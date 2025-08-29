@@ -1,13 +1,17 @@
 package gateway.auth;
 
+import gateway.Config;
 import gateway.auth.dto.AuthenticationRequestDTO;
 import gateway.auth.dto.AuthenticationResponseDTO;
 import gateway.auth.service.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -27,6 +31,13 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
+    private final Config applicationConfig;
+
+    public AuthController(Config applicationConfig) {
+        this.applicationConfig = applicationConfig;
+        log.info("Config bean injected. Server name is: {}", this.applicationConfig.getName());
+    }
+
     @Operation(summary = "login page",responses = {
             @ApiResponse(
                     responseCode = "200",
@@ -35,20 +46,26 @@ public class AuthController {
             )
     })
     @GetMapping("/login")
-
     public Mono<String> loginPage(ServerWebExchange exchange, Model model) {
-        String scheme = exchange.getRequest().getURI().getScheme();
-        String serverName = exchange.getRequest().getURI().getHost();
-        int serverPort = exchange.getRequest().getURI().getPort();
-
-        String beUrl = scheme + "://" + serverName +
-                ((serverPort == 80 || serverPort == 443 || serverPort == -1) ? "" : ":" + serverPort);
-
-        model.addAttribute("beurl", beUrl);
+        String beUrl = "https://" + applicationConfig.getName() + ".romanellas.cloud";
+        model.addAttribute("beUrl", beUrl);
         return Mono.just("login");
     }
 
     @Operation(summary = "Authenticate user and return a JWT")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "authentication done",
+                    content = { @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthenticationResponseDTO.class))
+                    }),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "authentication failed",
+                    content = @Content)
+    })
     @PostMapping("/login")
     @ResponseBody
     public Mono<ResponseEntity<AuthenticationResponseDTO>> createAuthenticationToken(

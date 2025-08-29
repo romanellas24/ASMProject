@@ -14,4 +14,6 @@ public class OrderDTO {
     private Integer vehicleId;
     private LocalDateTime startDeliveryTime;
     private LocalDateTime endDeliveryTime;
+    private String fromAddress;
+    private String toAddress;
 }

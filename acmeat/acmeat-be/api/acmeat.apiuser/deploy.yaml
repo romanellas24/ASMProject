@@ -4,7 +4,7 @@ kind: Deployment
 
 metadata:
   name: apiuser
-  namespace: default
+  namespace: acmeat
   labels:
     app: apiuser
 

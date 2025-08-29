@@ -12,6 +12,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class LoginComponent implements OnInit {
 
+  isLoading:boolean = false;
+
   form:FormGroup = this.fb.group(
         {
           email: new FormControl('',[Validators.email,Validators.required]),
@@ -56,7 +58,8 @@ export class LoginComponent implements OnInit {
     
     let email:string = this.form.get('email')?.value
     let pwd:string = this.form.get('password')?.value
-
+    
+    this.isLoading=true;
     if(this.isFormValid()){
       let user : UserInfo | undefined | void;
       
@@ -72,6 +75,9 @@ export class LoginComponent implements OnInit {
       }else{
         window.alert("this user doesn't exist")
       }
+
+      this.isLoading=false;
+
     }
 
   }

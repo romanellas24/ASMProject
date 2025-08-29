@@ -5,9 +5,12 @@ import api.dto.DishDTO;
 import api.entity.Dish;
 import api.exception.InvalidDishId;
 import api.service.DishService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +20,7 @@ public class DishServiceImpl implements DishService {
     private DishDAO dishDAO;
 
     @Override
+    @Transactional(readOnly = true)
     public void checkIds(Integer[] ids) throws InvalidDishId {
         for (Integer id : ids) {
             this.checkId(id);
@@ -37,6 +41,19 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public List<DishDTO> getAll() {
-        return dishDAO.findAll().stream().map(DishDTO::from).toList();
+        List<Dish> dishes = dishDAO.findAll();
+        if(dishes.isEmpty())
+            return new ArrayList<>();
+        return dishes.stream().map(DishDTO::from).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DishDTO[] getDishes(Integer[] ids) {
+        DishDTO[] tmp = new DishDTO[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            tmp[i] = this.getDish(ids[i]);
+        }
+        return tmp;
     }
 }

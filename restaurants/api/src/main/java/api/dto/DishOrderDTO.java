@@ -1,6 +1,5 @@
 package api.dto;
 
-import api.entity.Dish;
 import api.entity.DishOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -17,12 +16,19 @@ public class DishOrderDTO {
     @Schema(description = "dish ordered")
     private DishDTO dish;
     @Schema(description = "quantity of dish ordered", example = "2")
-    private Integer multiplicative;
+    private Integer quantity;
 
     public static DishOrderDTO from(DishOrder dish) {
         DishOrderDTO dishDTO = new DishOrderDTO();
         dishDTO.setDish(DishDTO.from(dish.getDish()));
-        dishDTO.setMultiplicative(dish.getMultiplicative());
+        dishDTO.setQuantity(dish.getMultiplicative());
+        return dishDTO;
+    }
+
+    public static DishOrderDTO from(DishDTO dish, Integer quantity){
+        DishOrderDTO dishDTO = new DishOrderDTO();
+        dishDTO.setQuantity(quantity);
+        dishDTO.setDish(dish);
         return dishDTO;
     }
 

@@ -11,6 +11,8 @@ public class OrderToDtoMapper {
         dto.setVehicleId(order.getVehicle().getId());
         dto.setEndDeliveryTime(order.getEndDeliveryTime());
         dto.setStartDeliveryTime(order.getStartDeliveryTime());
+        dto.setToAddress(order.getTo_address());
+        dto.setFromAddress(order.getFrom_address());
         return dto;
     }
 }

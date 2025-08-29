@@ -1,14 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { BehaviorSubject, map, mergeMap, Observable, Subscription, switchMap, take, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, map, mergeMap, Observable, repeatWhen, Subject, Subscription, switchMap, take, tap, withLatestFrom } from 'rxjs';
 import { GeneralResponse, Local, Menu, MenuType, OrderInfo, UserInfo } from 'src/app/entities/entities';
 import { EventsService } from 'src/app/services/events.service';
 import { LocalsService } from 'src/app/services/locals.service';
 import { MenuService } from 'src/app/services/menu.service';
 import { OrderService } from 'src/app/services/order.service';
 import { UserService } from 'src/app/services/user.service';
-
+import { DOCUMENT } from '@angular/common';
 @Component({
   selector: 'app-sidemenu',
   templateUrl: './sidemenu.component.html',
@@ -19,14 +19,14 @@ export class SidemenuComponent implements OnInit,OnDestroy {
   orderList$ : Observable<OrderInfo[]> = new Observable();
   isAuthenticated$ : Observable<boolean> = new Observable();
   isCartMenuEnabled$ : Observable<boolean> = new Observable();
-
   local$:Observable<Local> = new Observable();
-    menu$ : Observable<Menu> = new Observable();
-
+  menu$ : Observable<Menu> = new Observable();
+  updatedSource$ :Subject<boolean> = new Subject(); 
 
   orderList:OrderInfo[]= []
   localList:Local[]=[]
   menuList:Menu[]=[]
+  isLoading:boolean = false;
 
   subscriptionList:Subscription[] = []
 
@@ -55,9 +55,11 @@ export class SidemenuComponent implements OnInit,OnDestroy {
       // TO DO REFACTOR WITH RXJS
       this.subscriptionList.push(
       this.orderList$.pipe(
-        
+        repeatWhen(()=>this.updatedSource$),
+        // tap(() => )
       ).subscribe((orders:OrderInfo[]) =>{
-
+        this.isLoading = true
+        // debugger
         this.orderList = orders
 
         this.orderList.forEach( order =>{
@@ -66,18 +68,22 @@ export class SidemenuComponent implements OnInit,OnDestroy {
 
         this.subscriptionList.push(
         this.local$.pipe(
-          tap((local:Local) => this.localList.push(local))
+          tap((local:Local) => this.localList.push(local)),
         ).subscribe()
+
       );
 
 
       this.subscriptionList.push(
         this.menu$.pipe(
-          tap((menu:Menu) => this.menuList.push(menu))
+          tap((menu:Menu) => this.menuList.push(menu)),
+          tap(()=> this.isLoading =false)
         ).subscribe()
       );
 
       })
+
+               this.isLoading=false
       } ));
 
       
@@ -132,20 +138,33 @@ export class SidemenuComponent implements OnInit,OnDestroy {
      return amIBetween;//  returns false.  if date ignored I expect TRUE
     }
 
-  async deleteOrder(orderId:number){
+  async deleteOrder(orderId:number | undefined){
+
+    if(orderId != undefined){
+      this.isLoading=true
     let response :GeneralResponse | undefined= await this.orderSvc.deleteOrderById(orderId).toPromise()
     if(response?.message != "OK"){
       window.alert("There was an error while deleting order " + orderId +" Problem:" +response?.message)
+    }else{
+      window.alert("order deleted with success!")
     }
+    this.updatedSource$.next(true)
+    this.isLoading=false
+
+    }
+    
+  }
+
+  Logout(){
+    this.userSvc.Logout()
+    window.location.reload()
   }
 
   public goToManageOrders(){
     this.router.navigate(["orders"]);
   }
 
-  public goToBank(){
-    window.alert("TO DO")
-  }
+
 
   ngOnDestroy(): void {
    this.subscriptionList.forEach(

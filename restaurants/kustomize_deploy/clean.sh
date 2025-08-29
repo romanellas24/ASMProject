@@ -1,7 +1,6 @@
 #!/bin/bash
 
 OVERLAY_DIR="./overlays"
-# INGRESS="./super-gateway-ingress.yaml"
 
 echo "start cleanup overlay"
 
@@ -18,7 +17,5 @@ for dir in "$OVERLAY_DIR"/*; do
   fi
 done
 
-# echo "Delete super gateway ingress ..."
-# kubectl delete -f "$INGRESS" --ignore-not-found
 
 echo "Cleanup completato con successo."

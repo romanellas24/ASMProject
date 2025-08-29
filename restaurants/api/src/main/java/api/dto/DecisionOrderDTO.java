@@ -10,6 +10,6 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 public class DecisionOrderDTO implements Serializable {
-    private String correlationId;
+    private Integer id;
     private Boolean accepted;
 }

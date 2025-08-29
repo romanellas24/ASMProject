@@ -1,5 +1,6 @@
 package api.entity;
 
+import api.utils.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,10 @@ public class Order {
 
     @Column(name = "delivery_time", nullable = false)
     private LocalDateTime deliveryTime;
+
+    @Enumerated(EnumType.STRING) // Dice a JPA di salvare il nome dell'enum ("PENDING", "ACCEPTED", etc.) nel database
+    @Column(name = "status", nullable = false)
+    private OrderStatus status = OrderStatus.PENDING;
 
     @Column(name = "created_at",insertable = false, updatable = false)
     private LocalDateTime createdAt;

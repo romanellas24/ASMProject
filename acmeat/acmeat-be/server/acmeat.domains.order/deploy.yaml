@@ -4,7 +4,7 @@ kind: Deployment
 
 metadata:
   name: ordermanager
-  namespace: default
+  namespace: acmeat
   labels:
     app: ordermanager
 

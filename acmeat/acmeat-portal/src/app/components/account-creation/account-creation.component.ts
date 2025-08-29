@@ -25,6 +25,8 @@ export class AccountCreationComponent implements OnInit {
       }
     )
 
+    isLoading:boolean = false;
+
     validationError$ = new Observable()
     isAuthenticated: boolean = false;
 
@@ -59,6 +61,7 @@ export class AccountCreationComponent implements OnInit {
   }
 
   public async submit(){
+    this.isLoading=true
     if(this.isFormValid()){
       
       let user:UserInfo = {
@@ -78,6 +81,7 @@ export class AccountCreationComponent implements OnInit {
       }
      this.isAuthenticated = true;
     }
+    this.isLoading=false
   }
 
 

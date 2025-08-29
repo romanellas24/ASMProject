@@ -24,6 +24,12 @@
         <div class="col text-center">
           <button (click)="login()" class="login-btn">Accedi</button>
         </div>
+
+        <div *ngIf="isLoading" class="col text-start">
+           <div class="spinner-border text-warning" role="status">
+  
+    </div>
+        </div>
       </div>
     </div>
   </div>

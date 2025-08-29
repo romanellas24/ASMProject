@@ -18,7 +18,7 @@ public static class Utils{
     }
 
     public static db.local.Local ConvertServerElementIntoDbELement(Local local){
-        db.local.Local localDB = new db.local.Local(local.Id,local.Name,local.OpeningTime,local.ClosingTime,local.Address,local.OpeningDays,local.Available);
+        db.local.Local localDB = new db.local.Local(local.Id,local.Name,local.OpeningTime,local.ClosingTime,local.Address,local.OpeningDays,local.Available,local.Url);
 
         localDB.Id = local.Id;
 

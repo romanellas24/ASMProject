@@ -31,7 +31,7 @@
 # kind: HTTPRoute
 # metadata:
 #   name: courier-tracking-route
-#   namespace: default
+#   namespace: acmeat
 # spec:
 #   parentRefs:
 #     - name: traefik-courier-gateway
