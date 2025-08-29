@@ -47,7 +47,7 @@
       <bpmn:incoming>Flow_1u5w96i</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_06jeqjb" />
     </bpmn:endEvent>
-    <bpmn:endEvent id="Event_10vgkuw" name="Payment deleted successfully">
+    <bpmn:endEvent id="Event_10vgkuw" name="Refund blocked successfully">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="jolie-not-refundable-success" />
       </bpmn:extensionElements>
@@ -85,7 +85,7 @@
       <bpmndi:BPMNShape id="Event_0n88nut_di" bpmnElement="Event_10vgkuw">
         <dc:Bounds x="860" y="248" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="837" y="291" width="83" height="27" />
+          <dc:Bounds x="840" y="291" width="77" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1tjt51v_di" bpmnElement="Flow_1tjt51v">
