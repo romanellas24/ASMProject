@@ -1,0 +1,37 @@
+@startuml
+title Blocco Rimborso Token - Flusso richiesta/risposta
+hide footbox
+
+actor "Utente (Acmeat)" as User
+participant "Edge Gateway" as EdgeGW
+participant "API Gateway (REST)" as APIGW
+participant "Payment Service" as PaySvc
+database "DB" as DB
+
+== Invio richiesta ==
+User -> EdgeGW: PUT /payments/{token}/notRefound
+activate EdgeGW
+
+EdgeGW -> APIGW: PUT /payments/{token}/notRefound
+activate APIGW
+
+APIGW -> PaySvc: PUT /payments/{token}/notRefound
+activate PaySvc
+
+== Blocco rimborso ==
+PaySvc -> DB: MySql Query
+activate DB
+DB --> PaySvc: Mysql Result
+deactivate DB
+
+== Invio della risposta ==
+PaySvc --> APIGW: { state: "Blocked" }
+deactivate PaySvc
+
+APIGW --> EdgeGW: { state: "Blocked" }
+deactivate APIGW
+
+EdgeGW --> User: { state: "Blocked" }
+deactivate EdgeGW
+
+@enduml
