@@ -18,20 +18,49 @@ activate APIGW
 APIGW -> PaySvc: PUT /payments/{token}/notRefound
 activate PaySvc
 
-== Blocco rimborso ==
-PaySvc -> DB: MySql Query
+== Verifica stato token ==
+PaySvc -> DB: MySql Query (read token)
 activate DB
-DB --> PaySvc: Mysql Result
+DB --> PaySvc: Mysql ResultSet
 deactivate DB
 
-== Invio della risposta ==
-PaySvc --> APIGW: { state: "Blocked" }
-deactivate PaySvc
+alt [token trovato e pagato]
+    == Blocco rimborso ==
+    PaySvc -> DB: MySql Query (block refund)
+    activate DB
+    DB --> PaySvc: Mysql Result (blocked)
+    deactivate DB
 
-APIGW --> EdgeGW: { state: "Blocked" }
-deactivate APIGW
+    == Invio della risposta ==
+    PaySvc --> APIGW: { state: "Blocked" }
+    deactivate PaySvc
 
-EdgeGW --> User: { state: "Blocked" }
-deactivate EdgeGW
+    APIGW --> EdgeGW: { state: "Blocked" }
+    deactivate APIGW
 
+    EdgeGW --> User: { state: "Blocked" }
+    deactivate EdgeGW
+
+else [token trovato ma non pagato]
+    == Invio della risposta ==
+    PaySvc --> APIGW: { state: "Not paid" }
+    deactivate PaySvc
+
+    APIGW --> EdgeGW: { state: "Not paid" }
+    deactivate APIGW
+
+    EdgeGW --> User: { state: "Not paid" }
+    deactivate EdgeGW
+
+else [token non trovato]
+    == Invio della risposta ==
+    PaySvc --> APIGW: { state: "Not found" }
+    deactivate PaySvc
+
+    APIGW --> EdgeGW: { state: "Not found" }
+    deactivate APIGW
+
+    EdgeGW --> User: { state: "Not found" }
+    deactivate EdgeGW
+end
 @enduml

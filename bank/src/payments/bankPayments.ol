@@ -381,20 +381,36 @@ main {
         } else {
             //result == 1, We have to refound. (Deleting transaction)
             deleteTransaction;
-            response.param.status = "Deleted";
-            response.param.code = 200
+            if(queryReturn > 0){
+                response.param.status = "Deleted";
+                response.param.code = 200
+            } else {
+                response.param.status = "Cannot delete - Refund blocked";
+                response.param.code = 400
+            }
+            
         }
     }]
 
     [putNotRefaundable(request)(response) {
         token = request.param.token;
-        makeNotRefundable;
-        response.param.status = 200;
-        response.param.msg = "Ok.";
-        if(error){
-            response.param.status = 500;
-            response.param.msg = "Cannot update!"
+        checkToken;
+        if(result == -1) {
+            response.param.msg = "Not found";
+            response.param.status = 404
+        } else if (result == 0) {
+            response.param.msg = "Not paid";
+            response.param.status = 400
+        } else {
+            makeNotRefundable;
+            response.param.status = 200;
+            response.param.msg = "Ok.";
+            if(error){
+                response.param.status = 500;
+                response.param.msg = "Cannot update!"
+            }
         }
+
     }]
 
 }
