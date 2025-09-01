@@ -11,11 +11,6 @@ public class TrackingController {
     @Autowired
     private String wsUrl;
 
-//    @GetMapping(value="/state/{vehicle_id}",produces = "application/json")
-//    public Integer getState(@PathVariable String vehicle_id) {
-//        return Integer.valueOf(vehicle_id);
-//    }
-
     @GetMapping(value="/notification/{courier_id}")
     public ModelAndView infoDelivery(@PathVariable Integer courier_id) {
         ModelAndView modelAndView = new ModelAndView("index");

@@ -1,0 +1,44 @@
+sequenceDiagram
+    loop every minute
+
+        zeebe->>tracking: check delivery boy has to deliver
+        activate zeebe
+        activate tracking
+        tracking-->>zeebe: return list of riders
+        deactivate tracking
+        
+        alt list is not empty
+            
+            loop every rider in list
+                par
+                    zeebe ->> tracking: set rider to not available 
+                    activate tracking
+                    tracking -->> zeebe: return
+                    deactivate tracking
+                and
+                    zeebe ->> tracking: prepare notification
+                    deactivate zeebe
+                    activate tracking
+                    tracking->>zeebe: new deliver process
+                    deactivate tracking
+                    activate zeebe
+                    zeebe->>tracking: send to rider
+                    activate tracking
+                    tracking ->> rider: has to deliver
+                    activate rider
+                    rider -->> tracking: done
+                    deactivate rider
+                    tracking -->> zeebe: done
+                    deactivate tracking
+                    zeebe ->>tracking: set rider to available
+                    activate tracking
+                    tracking -->>zeebe: done
+                    deactivate tracking
+                    deactivate zeebe
+                end
+            end
+            
+        end
+
+        activate zeebe
+    end

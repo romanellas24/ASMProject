@@ -1,0 +1,38 @@
+sequenceDiagram
+    activate Acmeat
+    Acmeat->>gateway: check availability    
+    activate gateway
+    gateway->>allocate: route request
+    activate allocate
+    activate allocate
+    allocate->>zeebe: start process
+    deactivate allocate
+    activate zeebe
+    zeebe->>allocate: distance needed
+    activate allocate
+    allocate->>distanceMatrix: calculate distance
+    activate distanceMatrix
+    distanceMatrix-->>allocate:return
+    deactivate distanceMatrix
+
+    alt error calling distanceMatrix
+        allocate-->>zeebe: return error
+        zeebe-->>allocate: return error
+        allocate-->>gateway: return error
+        gateway-->>Acmeat: return error
+    else
+        allocate-->>zeebe: return distance
+        deactivate allocate
+        zeebe->>allocate: check vehicle availability
+        activate allocate
+        allocate-->>zeebe: return availability
+        deactivate allocate
+        zeebe-->>allocate: return availability
+        deactivate zeebe
+        allocate-->>gateway: return availability
+        deactivate allocate
+        gateway-->>Acmeat: return availability
+        deactivate gateway
+    end
+    deactivate Acmeat
+

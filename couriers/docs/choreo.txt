@@ -1,0 +1,262 @@
+ACTORS:
+    cl: client (Acmeat)
+    gw: gateway
+    allocate: allocation microservice
+    zeebe: Zeebe service, Camunda (extern)
+    tracking: tracking microservice
+    rider: delivery rider (human participant)
+    distanceMatrix: external distance calculation service
+
+/* CHOREOGRAPHIES */
+
+C_check_avail =
+    check_availability_request: cl -> gw ;
+    route_check: gw -> allocate ;
+    start_check_process: allocate -> zeebe ;
+    distance_needed: zeebe -> allocate ;
+    calculate_distance: allocate -> distanceMatrix ;
+    (
+        (
+            distance_error: distanceMatrix -> allocate ;
+            return_distance_error: allocate -> zeebe ;
+            error_to_allocate: zeebe -> allocate ;
+            error_to_gateway: allocate -> gw ;
+            error_to_client: gw -> cl
+        )
+        +
+        (
+            return_distance: distanceMatrix -> allocate ;
+            distance_to_zeebe: allocate -> zeebe ;
+            check_vehicle: zeebe -> allocate ;
+            return_vehicle_availability: allocate -> zeebe ;
+            availability_result: zeebe -> allocate ;
+            availability_to_gateway: allocate -> gw ;
+            availability_to_client: gw -> cl
+        )
+    )
+
+C_save_order = 
+    save_order: cl -> gw ;
+    route_save: gw -> allocate ;
+    start_save_process: allocate -> zeebe ;
+    check_vehicle_save: zeebe -> allocate ;
+    return_vehicle_check: allocate -> zeebe ;
+    (
+        (
+            vehicle_not_available: zeebe -> allocate ;
+            save_error_to_gateway: allocate -> gw ;
+            save_error_to_client: gw -> cl
+        )
+        +
+        (
+            save_order_zeebe: zeebe -> allocate ;
+            order_saved_confirm: allocate -> zeebe ;
+            return_order_info: zeebe -> allocate ;
+            order_info_to_gateway: allocate -> gw ;
+            order_info_to_client: gw -> cl
+        )
+    )
+
+
+C_rider_check =
+    check_delivery: zeebe -> tracking ;
+    return_riders: tracking -> zeebe ;
+    (
+        (C_single_rider_check)* 
+        + 
+        1            /* empty list */
+    )
+
+
+C_single_rider_check =
+    (   
+        set_rider_unavailable: zeebe -> tracking ;
+        confirm_unavailable: tracking -> zeebe 
+    ) |
+    (
+        prepare_notification: zeebe -> tracking ;
+        new_deliver_process: tracking -> zeebe ;
+        send_to_rider: zeebe -> tracking ;
+        notify_rider: tracking -> rider ;
+        rider_done: rider -> tracking ;
+        confirm_done: tracking -> zeebe ;
+        set_rider_available: zeebe -> tracking;
+        confirm_available: tracking -> zeebe
+    )
+
+C_courier =
+    (
+        C_rider_check* |
+        (C_check_availability + C_save_order)*
+    )
+
+
+/* PROJECTIONS */
+/*
+    Note: the rule o(bar)@b is changed in o(b) due to readability.
+    So:
+    proj(o: a -> b ,a)= o(b)
+    proj(o: a -> b ,b)= o@a
+    proj(o: a -> b ,c)= 1
+*/
+
+Proj(C_courier, cl)=
+1 |
+(
+    (
+        (
+            check_availability@gw ; 
+            ((error_to_client(gw)) + (availability_to_client(gw)))
+        ) +
+        (
+            save_order@gw ; 
+            ((save_error_to_client(gw)) + (order_info_to_client(gw)))
+        )
+    )*
+)
+
+Proj(C_courier,gw)=
+1 |
+(
+    (
+        (
+            check_availability(cl) ; route_check@allocate ; 
+            (
+                (error_to_gateway(allocate) ; error_to_client@cl) 
+                + 
+                (availability_to_gateway(allocate) ; availability_to_client@cl)
+            )
+        ) +
+        (
+            save_order(cl) ; route_save@allocate ; 
+            (
+                (save_error_to_gateway(allocate) ; save_error_to_client@cl) 
+                + 
+                (order_info_to_gateway(allocate) ; order_info_to_client@cl)
+            )
+        )
+    )*
+)
+
+Proj(C_courier, allocate):
+1 |
+(
+    (
+        (
+            route_check(gw) ; start_check_process@zeebe ; 
+            distance_needed(zeebe) ; calculate_distance@distanceMatrix ;
+            (
+                (distance_error(distanceMatrix) ; return_distance_error@zeebe ; 
+                error_to_allocate(zeebe) ; error_to_gateway@gw) 
+                +
+                (return_distance(distanceMatrix) ; distance_to_zeebe@zeebe ; 
+                check_vehicle(zeebe) ; return_vehicle_availability@zeebe ; 
+                availability_result(zeebe) ; availability_to_gateway@gw)
+            )
+        ) +
+        (
+            route_save(gw) ; start_save_process@zeebe ; 
+            check_vehicle_save(zeebe) ; return_vehicle_check@zeebe ;
+            (
+                (vehicle_not_available(zeebe) ; save_error_to_gateway@gw) 
+                +
+                (save_order_zeebe(zeebe) ; order_saved_confirm@zeebe ; 
+                return_order_info(zeebe) ; order_info_to_gateway@gw)
+            )
+        )
+    )*
+)
+
+Proj(C_courier,zeebe)=
+(
+    (check_delivery@tracking ; return_riders(tracking) ;
+        (
+            (  
+                1 + 
+                (
+                    (set_rider_unavailable@tracking ; confirm_unavailable(tracking)) |
+                    (
+                        prepare_notification@tracking; new_deliver_process(tracking) ; 
+                        send_to_rider@tracking ; confirm_done(tracking) ;
+                        set_rider_available@tracking ; confirm_available(tracking)
+                    )
+                )*
+            )
+        )
+    )*
+) |
+(
+    (
+        (
+            start_check_process(allocate); distance_needed@allocate ;
+            (
+                (
+                    return_distance_error(allocate);error_to_allocate@allocate ;
+                )
+                +
+                (
+                    distance_to_zeebe(allocate); check_vehicle@allocate ;
+                    return_vehicle_availability(allocate); availability_result@allocate ;
+                )
+            )
+        )  
+        +
+        (
+            start_save_process(allocate); check_vehicle_save@allocate ;
+            return_vehicle_check(allocate) ;
+            (
+                (
+                    vehicle_not_available@allocate ;
+                )
+                +
+                (
+                    save_order_zeebe@ allocate ; order_saved_confirm(allocate) ;
+                    return_order_info@allocate ;            
+                )
+            )
+        )
+    )*
+)
+
+Proj(C_courier, tracking)=
+(
+    (
+        check_delivery(zeebe) ; return_riders@zeebe ;
+        (
+            (
+                (
+                    set_rider_unavailable(zeebe) ; confirm_unavailable@zeebe
+                ) |
+                (
+                    prepare_notification(zeebe) ; new_deliver_process@zeebe ;
+                    send_to_rider(zeebe) ; notify_rider@rider ; 
+                    rider_done(rider) ; confirm_done@zeebe ;
+                    set_rider_available(zeebe) ; confirm_available@zeebe
+                )
+            )*
+        )
+        +
+        1
+    )*
+) |
+1
+
+Proj(C_courier, rider)=
+(
+    (
+        notify_rider(tracking);
+        rider_done@tracking
+    )* 
+)* |
+1
+
+Proj(C_courier, distanceMatrix)=
+1 |
+(
+    calculate_distance: allocate -> distanceMatrix ;
+    (
+        distance_error@allocate 
+        +
+        return_distance@allocate
+    )
+)*

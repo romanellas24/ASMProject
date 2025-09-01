@@ -101,36 +101,6 @@ public class AllocationServiceImpl implements AllocationService {
         return orderInfoDTO;
     }
 
-//    @Override
-//    public Boolean delete_order(Integer orderId, CompanyDTO company) throws DeleteRequestTooLateException, UnauthorizedException, NotFoundException {
-//        Company compEntity = CompanyToDtoMapper.toEntity(company);
-//
-//        Order order = ordersDAO.findByOrderId(orderId);
-//        if (order == null){
-//            throw new NotFoundException("Order ID");
-//        }
-//
-//        if (!Objects.equals(order.getCompany().getId(), compEntity.getId())){
-//            throw new UnauthorizedException("You are not allowed to delete this order");
-//        }
-//
-//        //delete is possible only 15 minutes before the start of delivery
-//        //METTERE NELLO ZEEBE (DEBUG):
-////        LocalDateTime now = LocalDateTime.now();
-////        if (now.isAfter(order.getStart_delivery_time().minusMinutes(15)) && now.isBefore(order.getStart_delivery_time())){
-////            throw new DeleteRequestTooLateException("Too late. Impossible to delete order");
-////        } else if (now.isEqual(order.getStart_delivery_time()) || now.isAfter(order.getStart_delivery_time())){
-////            throw new UnauthorizedException("Delivery started or already finished");
-////        }
-//
-//        try {
-//            ordersDAO.delete(order);
-//            return true;
-//        } catch (Exception e) {
-//            log.atDebug().log(e.getMessage());
-//            return false;
-//        }
-//    }
 
     @Override
     @Transactional

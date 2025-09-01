@@ -52,7 +52,7 @@ fetch_from_db: mysql->dishmanager;
 
 
 C_getUserInfo=
-get_local_info : ordermanager -> usermanager;
+get_user_info : ordermanager -> usermanager;
 fetch_from_db: mysql ->usermanager;
 
 C_getLocalInfo=
@@ -237,184 +237,1079 @@ C_checkLocalAvailability;
 
 
 proj(C_ACMEAT,user)=
+	compile_order_form@acmeat-portal;
+	/*checkLocalAvailability*/
+	1;
 	(
-		compile_order_form@acmeat-portal;
-		payment_form_request@acmeat-portal
-	);
-	delete_req@acmeat-portal;
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			1;
+			(
+				/*errore*/
+				1;
+			)
+				+
+
+			(
+				/*orderUpdate*/
+				1;
+
+				/*allocate_veichle*/
+				1;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					payment_form_request@acmeat-portal;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								delete_req@acmeat-portal;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
 
 proj(C_ACMEAT,local)=
+	/*C_orderCreation*/
+	1;
 	authenticate_to_local(ordermanager);
 	check_order_availability(ordermanager);
 	localAvailable@ordermanager;
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		finish_order@apiorder;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			1;
+			(
+				/*errore*/
+				1;
+			)
+				+
 
-	finish_order@apiorder;
+			(
+				/*orderUpdate*/
+				1;
 
-	communicate_order_deletion_local(ordermanager);
-	response@ordermanager;
+				/*allocate_veichle*/
+				1;
 
-	communicate_order_deletion_del(ordermanager);
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					payment_form_request@acmeat-portal;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							communicate_order_deletion_local(ordermanager);
+							response@ordermanager;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								delete_req@acmeat-portal;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								communicate_order_deletion_local(ordermanager);
+								response@ordermanager;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
+
 
 proj(C_ACMEAT,bank)=
-	payment_form_redirect(acmeat-portal);
-	payment_confirmed@acmeat-portal;
+	1;
+	/*checkLocalAvailability*/
+	1;
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			1;
+			(
+				/*errore*/
+				1;
+			)
+				+
 
-	communicating_token: ordermanager -> bank;
-	response: bank -> ordermanager;
+			(
+				/*orderUpdate*/
+				1;
 
-	refund_request: ordemanager -> bank;
-	response: bank -> ordemanager;
+				/*allocate_veichle*/
+				1;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					payment_form_redirect(acmeat-portal);
+					payment_confirmed@acmeat-portal;
+					/*verifyBankToken*/
+					communicating_token: ordermanager -> bank;
+					response: bank -> ordermanager;
+						(
+							/*sendRefund*/
+							refund_request: ordemanager -> bank;
+							response: bank -> ordemanager;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								delete_req@acmeat-portal;
+								/*sendRefund*/
+								refund_request: ordemanager -> bank;
+								response: bank -> ordemanager;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
 
 
 proj(C_ACMEAT,del)=
-	communicate_order_to_del(ordermanager);
-	response@ordermanager;
+		1;
+	/*checkLocalAvailability*/
+	1;
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			check_delivery_company_n(ordermanager);
+			response@ordermanager;
+			
+			(
+				/*errore*/
+				1;
+			)
+				+
 
-	check_delivery_company_n(ordermanager);
-	response@ordermanager;
+			(
+				/*orderUpdate*/
+				1;
 
-	communicate_order_deletion_del(ordermanager);
-	response@ordemanager;
+				/*allocate_veichle*/
+				communicate_order_to_del(ordermanager);
+				response@ordermanager;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					payment_form_request@acmeat-portal;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							communicate_order_deletion_del(ordermanager);
+							response@ordemanager;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								delete_req@acmeat-portal;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								communicate_order_deletion_del(ordermanager);
+								response@ordemanager;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
 
 
 proj(C_ACMEAT,acmeat-portal)=
 	compile_order_form(user);
 	send_order_form@ apiorder;
+	/*checkLocalAvailability*/
+	1;
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			1;
+			(
+				/*errore*/
+				1;
+			)
+				+
 
+			(
+				/*orderUpdate*/
+				1;
 
-	payment_form_request(user);
-	payment_form_redirect@bank;
-	payment_confirmed(bank);
-	communicating_info_for_verification@apiorder;
+				/*allocate_veichle*/
+				1;
 
-	delete_req(user);
-	delete_order@apiorder;
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					payment_form_request(user);
+					payment_form_redirect@bank;
+					payment_confirmed(bank);
+					communicating_info_for_verification@apiorder;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								delete_req(user);
+								delete_order@apiorder;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
 
 
 
 proj(C_ACMEAT,apiorder)=
-
 	send_order_form(acmeat-portal);
 	create_order@ordermanager;
+	/*checkLocalAvailability*/
+	1;
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		finish_order(local);
+		handle_local_availability_response@ordermanager;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			1;
+			(
+				/*errore*/
+				1;
+			)
+				+
 
-	finish_order(local);
-	handle_local_availability_response@ordermanager;
+			(
+				/*orderUpdate*/
+				1;
 
-	delete_order(acmeat-portal);
-	delete_order_server@ordermanager;
+				/*allocate_veichle*/
+				1;
 
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					payment_form_request@acmeat-portal;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
 
-
-proj(C_ACMEAT,delmanager)=
-	get_del_info(ordermanager);
-	fetch_from_db(mysql) ;
-
-proj(C_ACMEAT,localmanager)=
-	get_local_info(ordermanager);
-	fetch_from_db(mysql);
-
-
-
-proj(C_ACMEAT,usermanager)=
-	get_user_info(ordermanager);
-	fetch_from_db(mysql);
-
-
-proj(C_ACMEAT,dishmanager)=
-	get_dishes_info(ordermanager);
-	fetch_from_db(mysql);
+								delete_order(acmeat-portal);
+								delete_order_server@ordermanager;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
 
 
 proj(C_ACMEAT,ordermanager)=
 
 	create_order(apiorder);
-
-
 	deploy_bpmn@zeebe;
 	process_order(zeebe);
 	create_order_db@mysql;
-
-	cancel_order_worker(zeebe);
-	delete_order@mysql;
-
-	order_update(apiorder);
-	order_update_db@mysql;
-
-
-	get_dishes_info@dishmanager;
-
-	get_local_info@usermanager;
-
-	get_local_info@localmanager;
-
-	get_del_info@delmanager;
-
+	
+	/*checkLocalAvailability*/
 	check_local_availability(zeebe);
-
+	get_dishes_info@dishmanager;
+	get_local_info@usermanager;
 	authenticate_to_local@local;
 	check_order_availability@local;
 	localAvailable(local);
+	(
+		/*error*/
+		cancel_order_worker(zeebe);
+		delete_order@mysql;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		handle_local_availability_response(apiorder);
+		handle_local_response@zeebe;
+		(
+			/*cancelOrder*/
+			cancel_order_worker(zeebe);
+			delete_order@mysql;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			get_local_info@localmanager;
+			get_del_info@delmanager;
+			check_delivery_company_n@del;
+			response(del);
+			(
+				/*errore*/
+				cancel_order_worker(zeebe);
+				delete_order@mysql;
+			)
+				+
 
-	handle_local_availability_response(apiorder);
-	handle_local_response@zeebe;
+			(
+				/*orderUpdate*/
+				order_update(apiorder);
+				order_update_db@mysql;
 
-	communicate_order_to_del@del;
-	response(del);
+				/*allocate_veichle*/
+				communicate_order_to_del@del;
+				response(del);
+				allocate_veichle(zeebe)
+				comunicate_order_to_del@del;
+				response(del);
 
-	check_delivery_company_n@del;
-	response(del);
+				(
+					/*allocateveichle and others*/
+					
 
-	allocate_veichle(zeebe)
-	comunicate_order_to_del@del;
-	response(del);
+					1;
+				)
+					+
+				(
+					/*getPaymentinfo*/
+					triggering_zeebe@zeebe;
+					/*verifyBankToken*/
+					verify_bank_token(zeebe);
+					communicating_token@bank;
+					response(bank);
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							communicate_order_deletion_del@del;
+							/*C_CommunicateOrderCancellationLocal*/
+							communicate_order_deletion_local@local;
+							response(local);
+							/*cancelOrder*/
+							cancel_order_worker(zeebe);
+							delete_order@mysql;
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
 
-	triggering_zeebe@zeebe;
+								delete_order_server(apiorder);
+								trigger_order_delete@zeebe;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								communicate_order_deletion_del@del;
 
-	verify_bank_token(zeebe);
-	communicating_token@bank;
-	response(bank);
-
-	delete_order_server(apiorder);
-	trigger_order_delete@zeebe;
-
-	communicate_order_deletion_local@local;
-	response(local);
-
-	communicate_order_deletion_del@del;
+								/*C_CommunicateOrderCancellationLocal*/
+								communicate_order_deletion_local@local;
+								response(local);
+								/*cancelOrder*/
+								cancel_order_worker(zeebe);
+								delete_order@mysql;
+								)
+						)
+				)
+			)
+		)
+	)
 
 
 proj(C_ACMEAT,zeebe)=
 	deploy_bpmn(ordermanager);
 	process_order@ordermanager;
-
-	cancel_order_worker@ordermanager;
-
+	/*checkLocalAvailability*/
 	check_local_availability@ordermanager;
+	(
+		/*error*/
+		cancel_order_worker@ordermanager;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		handle_local_response(ordermanager);
+		(
+			/*cancelOrder*/
+			cancel_order_worker@ordermanager;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			check_delivery_company@ordemanager;
+			(
+				/*errore*/
+				cancel_order_worker@ordermanager;
+			)
+				+
 
-	handle_local_response(ordermanager);
+			(
+				/*orderUpdate*/
+				1;
 
-	check_delivery_company@ordemanager;
+				/*allocate_veichle*/
+				allocate_veichle@ordermanager
 
-	allocate_veichle@ordermanager
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					cancel_order_worker@ordermanager;
+				)
+					+
+				(
+					triggering_zeebe(ordermanager);
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							cancel_order_worker@ordermanager;
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							trigger_order_delete(ordermanager);
+								 +
+							(
 
-	triggering_zeebe(ordermanager);
-
-	trigger_order_delete(ordermanager);
+								delete_req@acmeat-portal;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								cancel_order_worker@ordermanager;
+								)
+						)
+				)
+			)
+		)
+	)
 
 
 proj(C_ACMEAT,mysql)=
 	create_order_db(ordermanager);
-
-	delete_order(ordermanager);
-
-	order_update_db(ordermanager);
-
+	/*checkLocalAvailability*/
 	fetch_from_db@dishmanager;
-
-	fetch_from_db@usermanager;
-
 	fetch_from_db@localmanager;
+	(
+		/*error*/
+		delete_order(ordermanager);
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			delete_order(ordermanager);
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			fetch_from_db@usermanager;
+			fetch_from_db@localmanager;
+			fetch_from_db@delmanager ;
+			(
+				/*errore*/
+				delete_order(ordermanager);
+			)
+				+
 
-	fetch_from_db@delmanager ;
+			(
+				/*orderUpdate*/
+				order_update_db(ordermanager);
+
+				/*allocate_veichle*/
+				1;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					delete_order(ordermanager);
+				)
+					+
+				(
+					payment_form_request@acmeat-portal;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							delete_order(ordermanager);
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								delete_req@acmeat-portal;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								delete_order(ordermanager);
+								)
+						)
+				)
+			)
+		)
+	)
+
+
+
+
+proj(C_ACMEAT,delmanager)=
+		1;
+	/*checkLocalAvailability*/
+	1;
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			get_del_info(ordermanager);
+			fetch_from_db(mysql) ;
+			(
+				/*errore*/
+				1;
+			)
+				+
+
+			(
+				/*orderUpdate*/
+				1;
+
+				/*allocate_veichle*/
+				1;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					1;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								1;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
+
+proj(C_ACMEAT,localmanager)=
+		1;
+	/*checkLocalAvailability*/
+	get_local_info(ordermanager);
+	fetch_from_db(mysql);
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			get_local_info(ordermanager);
+			fetch_from_db(mysql);
+			(
+				/*errore*/
+				1;
+			)
+				+
+
+			(
+				/*orderUpdate*/
+				1;
+
+				/*allocate_veichle*/
+				1;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					1;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								1;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
+
+
+
+proj(C_ACMEAT,usermanager)=
+		1;
+	/*checkLocalAvailability*/
+	1;
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			get_user_info(ordermanager);
+			fetch_from_db(mysql);
+			(
+				/*errore*/
+				1;
+			)
+				+
+
+			(
+				/*orderUpdate*/
+				1;
+
+				/*allocate_veichle*/
+				1;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					1;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								1;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
+
+
+proj(C_ACMEAT,dishmanager)=
+		1;
+	/*checkLocalAvailability*/
+	get_dishes_info(ordermanager);
+	fetch_from_db(mysql);
+	(
+		/*error*/
+		1;
+	)
+		+
+	(
+		/*C_handleLocalResponse*/
+		1;
+		(
+			/*cancelOrder*/
+			1;
+		)
+			+
+		(
+			/*checkDeliveryCompany*/
+			1;
+			(
+				/*errore*/
+				1;
+			)
+				+
+
+			(
+				/*orderUpdate*/
+				1;
+
+				/*allocate_veichle*/
+				1;
+
+				(
+					/*allocateveichle and others*/
+					1;
+					1;
+					1;
+				)
+					+
+				(
+					1;
+					/*verifyBankToken*/
+					1:
+						(
+							/*sendRefund*/
+							1;
+							/*C_CommunicateOrderCancellationDel*/
+							1;
+							/*C_CommunicateOrderCancellationLocal*/
+							1;
+							/*C_cancelOrder*/
+							1:
+							
+						)
+							+
+						(
+							/*C_cancelOrder*/
+							1; +
+							(
+
+								1;
+								/*sendRefund*/
+								1;
+								/*C_CommunicateOrderCancellationDel*/
+								1;
+								/*C_CommunicateOrderCancellationLocal*/
+								1;
+								/*C_cancelOrder*/
+								1:
+								)
+						)
+				)
+			)
+		)
+	)
 
 

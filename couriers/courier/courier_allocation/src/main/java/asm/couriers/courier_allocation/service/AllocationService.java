@@ -10,7 +10,6 @@ public interface AllocationService {
     Integer vehicle_available(Integer deliveryTime, LocalDateTime expectedDelivery) throws VehicleNotAvailableException;
     Boolean isVehicleAvailable(Integer id, Integer deliveryTime, LocalDateTime expectedDelivery) throws BadData;
     OrderInfoDTO allocate_vehicle(RequestAllocateDTO request, CompanyDTO company) throws Exception;
-//    Boolean delete_order(Integer orderId, CompanyDTO company) throws DeleteRequestTooLateException, UnauthorizedException, NotFoundException;
 
     Boolean delete_order(Integer orderId) throws  NotFoundException;
 

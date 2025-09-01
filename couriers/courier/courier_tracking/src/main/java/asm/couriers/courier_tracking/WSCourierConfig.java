@@ -23,8 +23,4 @@ public class WSCourierConfig implements WebSocketConfigurer {
         registry.addHandler(wsCourierHandler, "/tracking/notification").setAllowedOrigins("*");
     }
 
-//    @Bean
-//    public WebSocketHandler deliveryHandler() {
-//        return new WSCourierHandler();
-//    }
 }

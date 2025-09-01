@@ -58,11 +58,7 @@ public class TaskListService {
     public List<TaskOrderDTO> getOrderToDeliver(Integer riderId) {
         return getTasksByForm(FORM_ID_DELIVERY_DONE, riderId);
     }
-
-//    public TaskOrderDTO getOrderToDeliverFromId(Integer id, Integer riderId) {
-//        return this.getOrderToDeliver(riderId).stream().filter(task -> task.getOrder().getOrderId().equals(id)).findFirst().orElse(null);
-//    }
-
+    
     private List<TaskOrderDTO> getTasksByForm(String formIdOrderPrepare, Integer riderId) {
         try {
             TaskList tasks = this.getOpenTasks(riderId);
