@@ -1,0 +1,83 @@
+@startuml
+skinparam defaultFontName Monospace
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam wrapWidth 200
+skinparam maxMessageSize 200
+
+title Deployment: Reverse Proxy Pubblico (Hetzner) → Backend microk8s (10.147.20.79)
+
+' --- Legenda/stereotipi utili ---
+legend right
+  <<CloudProvider>> = hosting/ISP
+  <<Gateway>>       = entrypoint pubblico
+  <<ReverseProxy>>  = proxy L7
+  <<Kubernetes>>    = ambiente di esecuzione microk8s
+  <<Artifact>>      = unità deployata (immagine/servizio)
+endlegend
+
+' --- Contesti di rete ---
+package "Rete Pubblica" {
+  node "Hetzner\n<<CloudProvider>>" as HETZNER #LightSkyBlue {
+
+    node "Server Pubblico\n<<Gateway>>" as PUB #LightBlue {
+      node "OS Linux" as OS_PUB {
+        artifact "nginx\n<<ReverseProxy>>\n- Terminazione TLS\n- Virtual Hosts / DNS\n- proxy_pass → 10.147.20.79" as NGINX <<Artifact>> #White
+        note right of NGINX
+          Espone tutti i domini/DNS pubblici (A/AAAA/CNAME)
+          Ascolto: :80 (HTTP), :443 (HTTPS)
+        end note
+      }
+    }
+
+  }
+
+  ' Facoltativo: modellare la risoluzione DNS esterna
+  cloud "DNS Pubblico (Records → IP Server Pubblico)" as DNS #AliceBlue
+}
+
+package "Rete Privata" {
+  node "Server Backend\nIP interno: 10.147.20.79" as PRIV #LightYellow {
+    node "OS Linux" as OS_PRIV {
+      node "microk8s\n<<Kubernetes>>" as K8S {
+        node "Ingress Controller" as K8S_ING {
+          artifact "Ingress Rules\n(host/path → services)" as INGRESS <<Artifact>> #White
+        }
+        node "Namespace: prod" as NSPROD {
+          artifact "Servizi applicativi\n(Pod/Deployments)\n- svc-auth\n- svc-api\n- svc-web" as APPS <<Artifact>> #White
+        }
+      }
+    }
+  }
+}
+
+' --- Collegamenti/Flussi ---
+DNS -[dotted]-> PUB : Risoluzione DNS → IP pubblico\n(Record A/AAAA/CNAME)
+
+' Traffico Internet verso il reverse proxy
+agent "Internet Client" as CLIENT
+CLIENT -down-> NGINX : HTTP/HTTPS :80/:443\nTLS 1.3
+
+' Inoltro/reindirizzamento dal proxy al backend
+NGINX -down-> PRIV : Reindirizzamento/Proxy → 10.147.20.79\n(L7 reverse proxy / DNAT)
+
+' Dal nodo backend verso ingress/services
+PRIV -down-> K8S_ING : :80/:443 (ingress)
+K8S_ING -down-> INGRESS
+INGRESS -down-> APPS : ClusterIP/HTTP gRPC MQ ...
+
+' --- Note architetturali ---
+note bottom of PUB
+  Il server pubblico è hostato su Hetzner
+  e funge da unico entrypoint.
+  Tutti i pacchetti sono inoltrati
+  verso 10.147.20.79.
+end note
+
+note bottom of PRIV
+  Il server backend ospita tutti i servizi
+  su microk8s. L’Ingress smista le richieste
+  verso i servizi Kubernetes.
+end note
+
+@enduml
