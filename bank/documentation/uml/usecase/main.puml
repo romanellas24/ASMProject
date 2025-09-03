@@ -1,0 +1,39 @@
+@startuml
+left to right direction
+title Sistema Bancario — Casi d'Uso
+
+actor "Cliente" as Cliente
+actor "ACMEat" as Acme
+
+rectangle "Sistema Bancario" as System {
+  usecase "Creare token" as UC_Create
+  usecase "Pagare token" as UC_Pay
+  usecase "Rimborsare token" as UC_Refund
+  usecase "Bloccare rimborso\n(Conferma transazione)" as UC_Block
+  usecase "Verificare token" as UC_Verify
+}
+
+' Attore Cliente
+Cliente --> UC_Pay
+
+' Attore ACMEat
+Acme --> UC_Create
+Acme --> UC_Refund
+Acme --> UC_Block
+
+' Include: la verifica del token è intrinseca ad ogni operazione
+UC_Create .> UC_Verify : <<include>>
+UC_Pay    .> UC_Verify : <<include>>
+UC_Refund .> UC_Verify : <<include>>
+UC_Block  .> UC_Verify : <<include>>
+
+' Relazioni: dopo il pagamento si può rimborsare o bloccare rimborso
+UC_Refund ..> UC_Pay : <<extend>>\n(post-pagamento)
+UC_Block  ..> UC_Pay : <<extend>>\n(post-pagamento)
+
+note right of UC_Verify
+  La "verifica token" è un passo
+  intrinseco in tutte le operazioni.
+end note
+
+@enduml
