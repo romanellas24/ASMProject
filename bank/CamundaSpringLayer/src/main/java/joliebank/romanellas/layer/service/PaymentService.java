@@ -72,7 +72,7 @@ public class PaymentService {
         this.dispatcher.insertPaymentData(req);
 
         try {
-            PaymentCommunicationRequest callback = future.get(10, TimeUnit.SECONDS);
+            PaymentCommunicationRequest callback = future.get(50, TimeUnit.SECONDS);
             String callbackStatus = callback.status();
             System.out.println("TOKEN: " + req.token() + "   STATUS: " + callbackStatus);
 
