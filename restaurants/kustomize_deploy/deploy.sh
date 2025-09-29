@@ -1,6 +1,7 @@
 #!/bin/bash
 
 OVERLAY_DIR="./overlays"
+# INGRESS="./super-gateway-ingress.yaml"
 
 echo "deploy ingress controller nginx"
 
@@ -18,10 +19,14 @@ for dir in "$OVERLAY_DIR"/*; do
     echo "create namespace: $NAME"
     microk8s kubectl apply -f "$dir/namespace.yaml"
 
+	microk8s kubectl apply -f "$dir/ingress.yaml"
+
     echo "user kustomize overlay of $NAME"
     microk8s kubectl apply -k "$dir"
   fi
 done
 
+# echo "Deploy super gateway ..."
+# kubectl apply -f "$INGRESS"
 
 echo "Deploy completato con successo."

@@ -34,7 +34,7 @@ rabbitPort=5672
 rabbitHost=rabbitmq.$NAME.svc.cluster.local
 rabbitUser=restaurant
 # backendUrl=http://gateway.$NAME.svc.cluster.local:8080
-backendUrl=$NAME.local
+backendUrl=$NAME.romanellas.cloud
 apiService=http://api-restaurant.$NAME.svc.cluster.local:8080
 wsService=ws://app-restaurant.$NAME.svc.cluster.local:8080
 feService=http://app-restaurant.$NAME.svc.cluster.local:8080
@@ -44,6 +44,7 @@ mysql_server=mysql-restaurant
 mysql-database-name=restaurant
 mysql-user-username=restaurateur
 localName=$NAME
+CLOSING_DAY=$(( (RANDOM % 7) + 1 ))
 EOF
 
   #generate ingress.yaml
@@ -54,7 +55,7 @@ metadata:
   name: gateway-ingress
   namespace: $NAME
   annotations:
-    nginx.ingress.kubernetes.io/affinity: cookie
+	nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
@@ -62,7 +63,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: $NAME.local
+    - host: $NAME.romanellas.cloud
       http:
         paths:
           - path: /
@@ -100,6 +101,38 @@ EOF
 
 done
 
+# generate super gateway
+# cat <<EOF > super-gateway-ingress.yaml
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: super-gateway-ingress
+#   namespace: ingress-nginx
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /\$2
+#     nginx.ingress.kubernetes.io/service-upstream: "true"
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#   - host: gateway.local #PER TEST - cambiare con ip server pubblico
+#     http:
+#       paths:
+# EOF
+
+# for NAME in "${NAMES[@]}"; do
+#   cat <<EOF >> super-gateway-ingress.yaml
+#       - path: /${NAME}(/|$)(.*)
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: ${NAME}/gateway-restaurant
+#             port:
+#               number: 8080
+
+# EOF
+# done
+
+# echo "File super-gateway-ingress.yaml generato con successo."
 
 # aggregate all envs in one file for test
 SUMMARY_FILE="./all-envs-summary.env"

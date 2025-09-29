@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: courier-tracking
-          image: tiesta/asm_courier_tracking:0.8
+          image: tiesta/asm_courier_tracking:0.11
           imagePullPolicy: IfNotPresent
           ports:
             - name: ws
@@ -47,3 +47,8 @@ spec:
                 configMapKeyRef:
                   name: courier-cm
                   key: ws-url
+            - name: COURIER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: courier-cm
+                  key: courier-name

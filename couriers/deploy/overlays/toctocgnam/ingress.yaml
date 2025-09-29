@@ -4,6 +4,7 @@ metadata:
   name: gateway-ingress
   namespace: toctocgnam
   annotations:
+    nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
@@ -11,7 +12,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: toctocgnam.local
+    - host: toctocgnam.romanellas.cloud
       http:
         paths:
           - path: /

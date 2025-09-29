@@ -31,13 +31,14 @@ EOF
 
   # generate configMap
   cat <<EOF > "$OUTDIR/config.env"
-price-per-km=$(awk -v min=0.2 -v max=0.5 'BEGIN{srand(); printf "%.5f", min+rand()*(max-min)}')
-ws-url=$NAME.local
+price-per-km=$(echo "scale=3; $(shuf -i 100-300 -n 1) / 1000" | bc)
+ws-url=wss://$NAME.romanellas.cloud/tracking
 tracking-service=courier-tracking.$NAME.svc.cluster.local:8080
 allocation-service=courier-allocation.$NAME.svc.cluster.local:8080
 mysql-server=mysql-courier
 mysql-database-name=courier_db
 mysql-user-username=courier_be
+courier-name=$NAME
 EOF
 
   #generate ingress.yaml
@@ -92,7 +93,6 @@ generatorOptions:
 EOF
 
   echo "Overlay for '$NAME' generated in $OUTDIR"
-
 done
 
 # aggregate all envs in one file for test
@@ -109,7 +109,7 @@ for NAME in "${NAMES[@]}"; do
 
   if [[ -f "$OVERLAYS_DIR/$NAME/config.env" ]]; then
     echo -e "\n# ConfigMap (sensitive or useful fields)" >> "$SUMMARY_FILE"
-    grep -E '^\s*(price-per-km|ws-url|mysql-user-username|mysql-database-name|mysql_server|allocation-service|tracking-service)' "$OVERLAYS_DIR/$NAME/config.env" |
+    grep -E '^\s*(price-per-km|ws-url|mysql-user-username|mysql-database-name|mysql_server|allocation-service|tracking-service|courier-name)' "$OVERLAYS_DIR/$NAME/config.env" |
     sed "s/^\s*/$NAME /" >> "$SUMMARY_FILE"
   fi
 done
@@ -119,3 +119,4 @@ if [[ -f "$DB_DIR/pass.env" ]]; then
   cat "$DB_DIR/pass.env" >> "$SUMMARY_FILE"
 fi
 
+echo -e "File aggregato creato: $SUMMARY_FILE"

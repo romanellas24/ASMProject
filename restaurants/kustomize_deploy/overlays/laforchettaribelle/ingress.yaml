@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: laforchettaribelle.local
+    - host: laforchettaribelle.romanellas.cloud
       http:
         paths:
           - path: /

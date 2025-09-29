@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gateway-restaurant
-          image: tiesta/asm_restaurant_gateway:0.20
+          image: tiesta/asm_restaurant_gateway:0.29
           imagePullPolicy: IfNotPresent
           ports:
             - name: all

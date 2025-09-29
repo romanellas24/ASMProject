@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gateway-courier
-          image: tiesta/asm_courier_gateway:0.2
+          image: tiesta/asm_courier_gateway:0.6
           imagePullPolicy: IfNotPresent
           ports:
             - name: all

@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: osteriamareebosco.local
+    - host: osteriamareebosco.romanellas.cloud
       http:
         paths:
           - path: /

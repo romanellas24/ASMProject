@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: ilvicolettosegreto.local
+    - host: ilvicolettosegreto.romanellas.cloud
       http:
         paths:
           - path: /

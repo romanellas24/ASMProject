@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: docker.io/tiesta/asm_courier_db:0.12
+          image: docker.io/tiesta/asm_courier_db:0.16
           ports:
           - containerPort: 3306
             name: mysql

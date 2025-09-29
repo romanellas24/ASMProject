@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: courier-allocation
-          image: tiesta/asm_courier_allocation:0.1.5
+          image: tiesta/asm_courier_allocation:0.7
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -52,3 +52,8 @@ spec:
               configMapKeyRef:
                 name: courier-cm
                 key: price-per-km
+          - name: COURIER_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: courier-cm
+                key: courier-name
