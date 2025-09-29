@@ -48,6 +48,7 @@ metadata:
   name: gateway-ingress
   namespace: $NAME
   annotations:
+    nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
@@ -118,4 +119,3 @@ if [[ -f "$DB_DIR/pass.env" ]]; then
   cat "$DB_DIR/pass.env" >> "$SUMMARY_FILE"
 fi
 
-echo -e "File aggregato creato: $SUMMARY_FILE"

@@ -384,7 +384,7 @@
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_1xj17hh" sourceRef="Activity_0dlo3xt" targetRef="Event_109kzu6" />
     </bpmn:subProcess>
-    <bpmn:startEvent id="Event_0antlh0">
+    <bpmn:startEvent id="Event_0antlh0" name="0:50 a.m.">
       <bpmn:outgoing>Flow_0kj6hef</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_13qha47">
         <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">0 50 7 * * *</bpmn:timeCycle>
@@ -572,7 +572,7 @@
       <bpmndi:BPMNShape id="Event_11zj1a5_di" bpmnElement="Event_0antlh0">
         <dc:Bounds x="3752" y="412" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3750" y="455" width="46" height="14" />
+          <dc:Bounds x="3748" y="455" width="46" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_03cihvt_di" bpmnElement="Event_03cihvt">

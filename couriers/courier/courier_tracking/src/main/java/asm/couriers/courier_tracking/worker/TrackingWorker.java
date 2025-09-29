@@ -42,9 +42,12 @@ public class TrackingWorker {
 
         LocalDateTime now = LocalDateTime.now()
                 .withSecond(0)
-                .withNano(0);;
+                .withNano(0)
+                .plusHours(2);
         List<Order> orderList = this.ordersDAO.findAllByStartDeliveryTimeLessThanEqual(now);
         List<OrderDTO> list = orderList.stream().map(OrderToDtoMapper::toDto).toList();
+
+        log.info("now:" + now + "- orders: " + list);
 
         list = list.stream().filter(order -> !ordersInProcess.contains(order.getOrderId())).toList();
 
@@ -67,8 +70,7 @@ public class TrackingWorker {
                      .messageName("rider_starts_delivering")
                      .correlationKey("order:" + order.getOrderId() + "-rider:"+order.getVehicleId())
                      .variables(job.getVariablesAsMap())
-                     .send()
-                     .join();
+                     .send();
 
              client.newCompleteCommand(job.getKey())
                      .send()
