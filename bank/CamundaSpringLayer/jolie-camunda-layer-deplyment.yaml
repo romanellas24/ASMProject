@@ -5,7 +5,7 @@ metadata:
   labels:
     app: joliebank-camunda-layer
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: joliebank-camunda-layer

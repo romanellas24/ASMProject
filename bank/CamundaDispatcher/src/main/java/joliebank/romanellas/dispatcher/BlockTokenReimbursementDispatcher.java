@@ -19,7 +19,7 @@ public class BlockTokenReimbursementDispatcher {
         client.newPublishMessageCommand()
                 .messageName("MakeTokenNotRefundableRequest")
                 .correlationKey("start")
-                .variables("{\"token\": \"3cb5fdf51e06328474880abeb4df83105ed9b3d95099ff880a086d66016b12b16b738860657675f285b15bab5d12ead4\"}")
+                .variables("{\"token\": \"534bbdef2b7e05cb2583a7d80bb54631c16d539cc88fce579804ecfe6ecba4dd9abba26ab347e1df2899db2b518f7bc2\"}")
                 .send()
                 .join();
         System.out.println("TOKEN PAGATO");

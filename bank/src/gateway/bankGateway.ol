@@ -18,15 +18,16 @@ inputPort BANK_GATEWAY {
 }
 
 inputPort BANK_GATEWAY_2 {
-    Location: "socket://localhost:9001"
-    Protocol: soap {
-        .wsdl = "./wsdl.xml"
-	    .wsdl.port = "BankGatewayInterface"
-	    .namespace = "joliebank.romanellas.cloud"
-	    .debug = true
-	    .compression = false
-    }
-    Interfaces: BankGatewayInterface
+  Location: "socket://localhost:9001"
+  Protocol: soap {
+    .wsdl = "./wsdl.xml"
+    .wsdl.service = "BANK_GATEWAY_2Service"
+    .wsdl.port = "BANK_GATEWAY_2ServicePort"
+    .debug = true
+    .compression = false
+    // Do NOT set .namespace here; let the WSDL drive it
+  }
+  Interfaces: BankGatewayInterface
 }
 
 outputPort BankPaymentsPort {
